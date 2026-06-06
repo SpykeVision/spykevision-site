@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ADL Contrast Calculator | SpykeVision</title>
   <meta name="description" content="Calculate and compare projector ADL contrast curves. Estimate from On/Off + ANSI, or plot known measurement points.">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     .calc-tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--surface-2); border-radius:var(--radius-sm); padding:4px; }
@@ -85,14 +85,14 @@
 
   <header class="site-header">
     <div class="wrap nav">
-      <a href="index.html" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
+      <a href="/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
       <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
       <ul class="nav-links">
-        <li><a href="index.html">Reviews</a></li>
-        <li><a href="index.html#coming-soon">Coming Soon</a></li>
-        <li><a href="adl-calculator.html" class="active">ADL Calculator<span class="beta-tag">beta</span></a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="about.html">About</a></li>
+        <li><a href="/reviews/">Reviews</a></li>
+        <li><a href="/#coming-soon">Coming Soon</a></li>
+        <li><a href="/adl-calculator.html" class="active">ADL Calculator<span class="beta-tag">beta</span></a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/about/">About</a></li>
       </ul>
     </div>
   </header>
@@ -176,18 +176,18 @@
 
   <footer class="site-footer">
     <div class="wrap footer-inner">
-      <a href="index.html" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
+      <a href="/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
       <nav class="footer-links">
-        <a href="index.html">Reviews</a>
-        <a href="adl-calculator.html">ADL Calculator<span class="beta-tag">beta</span></a>
-        <a href="contact.html">Contact</a>
-        <a href="about.html">About</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/adl-calculator.html">ADL Calculator<span class="beta-tag">beta</span></a>
+        <a href="/contact/">Contact</a>
+        <a href="/about/">About</a>
       </nav>
       <p class="copyright">© 2026 SpykeVision. Independent &amp; reader-supported.</p>
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="/js/main.js"></script>
   <script>
   // ── Palette (matches review charts) ──────────────────────────────────────
   var COLORS = [
@@ -208,12 +208,13 @@
     var colorIdx = document.querySelectorAll('#estimateBlocks .projector-block').length;
     var color = COLORS[colorIdx % COLORS.length];
     var idx = estCount++;
+    var nameNum = colorIdx + 1;
     var div = document.createElement('div');
     div.className = 'projector-block'; div.id = 'eb'+idx;
     div.style.borderLeftColor = color;
     div.innerHTML = '<button class="remove-btn" onclick="removeBlock(\'eb'+idx+'\')">×</button>'
       + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
-      + '<input type="text" placeholder="Projector name" value="Projector '+(idx+1)+'"></div>'
+      + '<input type="text" placeholder="Projector name" value="Projector '+nameNum+'"></div>'
       + '<div class="calc-grid">'
       + field('On/Off contrast', 'est-onoff-'+idx, 'e.g. 30000', 'Full-field on/off (0% ADL)')
       + field('ANSI contrast', 'est-ansi-'+idx, 'e.g. 800', '50% ADL checkerboard')
@@ -232,6 +233,7 @@
     var colorIdx = document.querySelectorAll('#manualBlocks .projector-block').length;
     var color = COLORS[colorIdx % COLORS.length];
     var idx = manCount++;
+    var nameNum = colorIdx + 1;
     var div = document.createElement('div');
     div.className = 'projector-block'; div.id = 'mb'+idx;
     div.style.borderLeftColor = color;
@@ -240,7 +242,7 @@
     }).join('');
     div.innerHTML = '<button class="remove-btn" onclick="removeBlock(\'mb'+idx+'\')">×</button>'
       + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
-      + '<input type="text" placeholder="Projector name" value="Projector '+(idx+1)+'"></div>'
+      + '<input type="text" placeholder="Projector name" value="Projector '+nameNum+'"></div>'
       + '<div class="calc-grid">' + fields + '</div>';
     document.getElementById('manualBlocks').appendChild(div);
   }
@@ -304,8 +306,11 @@
           // Watermark: logo + text, centred in chart area
           g.save();
           g.globalAlpha = 0.11;
-          var logoSz = 44, gap = 12;
-          g.font = 'bold 28px -apple-system,BlinkMacSystemFont,sans-serif';
+          var chartW = a.right - a.left, chartH = a.bottom - a.top;
+          var logoSz = Math.max(20, Math.round(Math.min(chartW, chartH) * 0.08));
+          var fontSize = Math.max(12, Math.round(logoSz * 0.65));
+          var gap = Math.round(logoSz * 0.27);
+          g.font = 'bold ' + fontSize + 'px -apple-system,BlinkMacSystemFont,sans-serif';
           var tw = g.measureText('SpykeVision.com').width;
           var lx = cx - (logoSz + gap + tw) / 2;
           // Draw pinwheel blades (replicates the SVG logo)
@@ -626,7 +631,7 @@
       var color = COLORS[colorIdx++ % COLORS.length];
       chart.data.datasets.push({
         label: name + ' (estimated)',
-        data: pts, borderColor: color, backgroundColor: color+'22',
+        data: pts, borderColor: color, backgroundColor: 'transparent',
         borderWidth: 2.5, pointRadius: 0, tension: 0, fill: false
       });
       // Measured points sit exactly on the curve
@@ -664,7 +669,7 @@
       var color = COLORS[colorIdx++ % COLORS.length];
       chart.data.datasets.push({
         label: name,
-        data: pts, borderColor: color, backgroundColor: color+'33',
+        data: pts, borderColor: color, backgroundColor: 'transparent',
         borderWidth: 2.5, pointRadius: pt, pointHoverRadius: ptH,
         tension: 0.3, fill: false
       });

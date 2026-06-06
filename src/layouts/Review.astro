@@ -1,0 +1,78 @@
+---
+import Base from './Base.astro';
+const { review, headings } = Astro.props;
+const fmtDate = new Date(review.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+// Build a TOC from the h2 headings in the body.
+const toc = (headings || []).filter((h) => h.depth === 2);
+const meta = [
+  fmtDate,
+  review.readTime,
+  review.extra,
+].filter(Boolean);
+---
+<Base title={`${review.title} | SpykeVision`} description={review.summary} active="reviews">
+  <main class="wrap">
+    <div class="article-hero">
+      {review.eyebrow && <p class="eyebrow">{review.eyebrow}</p>}
+      <h1>{review.title}</h1>
+      <div class="article-meta">
+        <span class="author"><span class="avatar"></span>SpykeSIK</span>
+        {meta.map((m) => (<><span>•</span><span>{m}</span></>))}
+      </div>
+    </div>
+
+    {review.cover && (
+      <div class="article-cover"><img src={review.cover} alt={review.title} /></div>
+    )}
+
+    <div class="prose">
+      {toc.length > 0 && (
+        <nav class="toc">
+          <h4>In this review</h4>
+          <ul>
+            {toc.map((h) => (<li><a href={`#${h.slug}`}>{h.text}</a></li>))}
+          </ul>
+        </nav>
+      )}
+
+      <slot />
+
+      {(review.pros.length > 0 || review.cons.length > 0) && (
+        <div class="proscons">
+          {review.pros.length > 0 && (
+            <div class="pc-box pros">
+              <h4>What's great</h4>
+              <ul>{review.pros.map((p) => (<li>{p}</li>))}</ul>
+            </div>
+          )}
+          {review.cons.length > 0 && (
+            <div class="pc-box cons">
+              <h4>Watch out for</h4>
+              <ul>{review.cons.map((c) => (<li>{c}</li>))}</ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      {review.ratings.length > 0 && (
+        <div class="ratings">
+          {review.ratings.map((r) => (
+            <div class="rating-row">
+              <span class="label">{r.label}</span>
+              <span class="rating-bar"><i style={`width:${r.score * 10}%`}></i></span>
+              <span class="val">{r.score.toFixed(1)}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {review.score != null && (
+        <div class="verdict">
+          <div class="big-score">{review.score.toFixed(1)}<span>/10</span></div>
+          {review.verdictTitle && <h3>{review.verdictTitle}</h3>}
+          {review.verdictText && <p>{review.verdictText}</p>}
+        </div>
+      )}
+    </div>
+  </main>
+</Base>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpykeVision — Content Manager</title>
+  <!-- Netlify Identity widget: handles login for the owner -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+  <!-- Decap CMS -->
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    // Custom editor components: insert special blocks into the markdown body.
+
+    // YouTube embed — paste a video ID or full URL.
+    CMS.registerEditorComponent({
+      id: 'youtube',
+      label: 'YouTube video',
+      fields: [{ name: 'id', label: 'YouTube URL or video ID', widget: 'string' }],
+      pattern: /^<div class="video-embed"[\s\S]*?data-yt="(.*?)"[\s\S]*?<\/div>$/,
+      fromBlock: (match) => ({ id: match[1] }),
+      toBlock: ({ id }) => {
+        var vid = (id || '').replace(/.*(?:youtu\.be\/|v=|embed\/)([\w-]{11}).*/, '$1');
+        return '<div class="video-embed" data-yt="' + vid + '"><iframe src="https://www.youtube-nocookie.com/embed/' + vid + '" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+      },
+      toPreview: ({ id }) => 'YouTube: ' + id,
+    });
+
+    // Before / after comparison slider — two images.
+    CMS.registerEditorComponent({
+      id: 'beforeafter',
+      label: 'Before / After slider',
+      fields: [
+        { name: 'before', label: 'Before image', widget: 'image' },
+        { name: 'after', label: 'After image', widget: 'image' },
+        { name: 'caption', label: 'Caption', widget: 'string', required: false },
+      ],
+      pattern: /^<figure class="ba"[\s\S]*?slot="first" src="(.*?)"[\s\S]*?slot="second" src="(.*?)"[\s\S]*?(?:<figcaption>([\s\S]*?)<\/figcaption>)?<\/figure>$/,
+      fromBlock: (match) => ({ before: match[1], after: match[2], caption: match[3] || '' }),
+      toBlock: ({ before, after, caption }) =>
+        '<figure class="ba"><img-comparison-slider><img slot="first" src="' + (before || '') + '" alt="before" /><img slot="second" src="' + (after || '') + '" alt="after" /></img-comparison-slider>' +
+        (caption ? '<figcaption>' + caption + '</figcaption>' : '') + '</figure>',
+      toPreview: ({ caption }) => 'Before/After slider' + (caption ? ': ' + caption : ''),
+    });
+  </script>
+</body>
+</html>

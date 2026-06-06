@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const reviews = (await getCollection('reviews', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base
+  title="Reviews | SpykeVision"
+  description="Every measurement-driven projector review on SpykeVision."
+  active="reviews"
+>
+  <main class="wrap">
+    <div class="article-hero">
+      <p class="eyebrow">All reviews</p>
+      <h1>Reviews</h1>
+    </div>
+
+    {reviews.length === 0 ? (
+      <p style="color:var(--text-3)">No reviews published yet. Check back soon.</p>
+    ) : (
+      <div class="grid" style="margin-bottom:60px">
+        {reviews.map((r) => (
+          <a href={`/reviews/${r.slug}/`} class="card">
+            <div class="card-media">
+              <img src={r.data.cover} alt={r.data.title} />
+              {r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>}
+            </div>
+            <div class="card-body">
+              {r.data.category && <span class="card-cat">{r.data.category}</span>}
+              <h3>{r.data.title}</h3>
+              <p>{r.data.summary}</p>
+              <div class="card-meta">
+                <span class="author"><span class="avatar"></span>SpykeSIK</span>
+                <span>•</span><span>{new Date(r.data.date).toLocaleDateString('en-US',{year:'numeric',month:'short'})}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </main>
+</Base>

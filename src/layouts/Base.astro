@@ -1,0 +1,33 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+const { title, description, active, theme = 'light' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en" data-theme={theme}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="stylesheet" href="/css/style.css" />
+  <!-- Before/after comparison slider (web component) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <span class="theme-icon">☀️</span>
+    <span class="theme-label">Light</span>
+  </button>
+
+  <Header active={active} />
+
+  <slot />
+
+  <Footer />
+
+  <script is:inline src="/js/main.js"></script>
+  <!-- Cloudflare Web Analytics --><script is:inline defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "92363d386413401286d548d138515fea"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const reviews = (await getCollection('reviews', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Coming Soon items live here as a simple list (not full review pages yet).
+const comingSoon = [
+  {
+    category: '4K Laser • Flagship',
+    title: 'XGIMI Titan Noir Max — In-Depth Review',
+    text: "A true optical zoom from 0.98–2.1x, a dual-iris contrast system and one of the sharpest lenses we've measured. A full lab workup is in progress: brightness across the entire zoom range, native / ANSI / ADL contrast, and lens geometry.",
+    status: 'In progress',
+  },
+  {
+    category: 'ALR Screen • Fresnel',
+    title: 'FScreen Fresnel Screen 120" Gen4 — Review',
+    text: 'A 4th-gen fixed-frame Fresnel ALR screen built for high ambient light. Lab testing in progress: gain, ambient-light rejection, color shift, viewing angles and on-screen uniformity.',
+    status: 'In progress',
+  },
+];
+---
+<Base
+  title="SpykeVision — In-depth projector reviews & measurements"
+  description="Independent, measurement-driven projector reviews. Brightness, contrast, ANSI, ADL and lens testing done right."
+  active="reviews"
+>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Measurement-driven reviews</p>
+      <h1>Projector reviews, backed by real data.</h1>
+      <p>No marketing fluff. Every review is built on hundreds of lab measurements: brightness, native &amp; ANSI contrast, color, lens quality and motion. The numbers, explained.</p>
+      <a href="/reviews/" class="btn">Browse reviews</a>
+    </div>
+  </section>
+
+  <main class="wrap">
+    {reviews.length > 0 && (
+      <section class="section" id="reviews">
+        <div class="section-head"><h2>Latest reviews</h2><a href="/reviews/">All reviews →</a></div>
+        <div class="grid">
+          {reviews.slice(0, 6).map((r) => (
+            <a href={`/reviews/${r.slug}/`} class="card">
+              <div class="card-media">
+                <img src={r.data.cover} alt={r.data.title} />
+                {r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>}
+              </div>
+              <div class="card-body">
+                {r.data.category && <span class="card-cat">{r.data.category}</span>}
+                <h3>{r.data.title}</h3>
+                <p>{r.data.summary}</p>
+                <div class="card-meta">
+                  <span class="author"><span class="avatar"></span>SpykeSIK</span>
+                  <span>•</span><span>{new Date(r.data.date).toLocaleDateString('en-US',{year:'numeric',month:'short'})}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="section" id="coming-soon">
+      <div class="section-head"><h2>Coming Soon</h2></div>
+      <div class="cs-list">
+        {comingSoon.map((c) => (
+          <a href="#" class="cs-card">
+            <div class="cs-badge">Coming soon</div>
+            <div class="cs-body">
+              <span class="card-cat">{c.category}</span>
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+              <div class="card-meta">
+                <span class="author"><span class="avatar"></span>SpykeSIK</span>
+                <span>•</span><span>{c.status}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section" id="measurements">
+      <div class="section-head"><h2>Why measurements matter</h2></div>
+      <div class="grid">
+        <div class="card"><div class="card-body">
+          <span class="card-cat" style="color:var(--accent)">Brightness</span>
+          <h3>Lumens, not lux marketing</h3>
+          <p>Real luminous output measured across every zoom and aperture position, in calibrated picture modes, not the brightest factory preset.</p>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <span class="card-cat" style="color:var(--orange)">Contrast</span>
+          <h3>Native, ANSI &amp; ADL</h3>
+          <p>On/off, checkerboard ANSI, and full ADL curves by content level, the metrics that actually predict black-level performance.</p>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <span class="card-cat" style="color:var(--purple)">Optics</span>
+          <h3>Lens &amp; geometry</h3>
+          <p>Sharpness, distortion, uniformity and lens-shift behavior, tested at the extremes, where cheaper optics fall apart.</p>
+        </div></div>
+      </div>
+    </section>
+  </main>
+</Base>

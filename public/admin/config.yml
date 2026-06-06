@@ -1,0 +1,52 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Uploaded images go into the repo and are served from your own domain.
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+publish_mode: editorial_workflow
+site_url: https://spykevision.com
+display_url: https://spykevision.com
+
+collections:
+  - name: reviews
+    label: Reviews
+    label_singular: Review
+    folder: src/content/reviews
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: eyebrow, label: Eyebrow (e.g. "In-Depth Review · Part 2"), widget: string, required: false }
+      - { name: category, label: Category tag (e.g. "4K Laser • Flagship"), widget: string, required: false }
+      - { name: summary, label: Summary (card blurb + SEO description), widget: text }
+      - { name: cover, label: Cover image, widget: image }
+      - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { name: readTime, label: Read time (e.g. "18 min read"), widget: string, required: false }
+      - { name: extra, label: Extra meta (e.g. "Firmware 1.0.99"), widget: string, required: false }
+      - { name: score, label: Overall score (0–10), widget: number, required: false, value_type: float, min: 0, max: 10, step: 0.1 }
+      - { name: draft, label: Draft (hide from site), widget: boolean, default: false }
+      - name: pros
+        label: Pros
+        widget: list
+        required: false
+        field: { name: item, label: Pro, widget: string }
+      - name: cons
+        label: Cons
+        widget: list
+        required: false
+        field: { name: item, label: Con, widget: string }
+      - name: ratings
+        label: Ratings
+        widget: list
+        required: false
+        fields:
+          - { name: label, label: Label, widget: string }
+          - { name: score, label: Score (0–10), widget: number, value_type: float, min: 0, max: 10, step: 0.1 }
+      - { name: verdictTitle, label: Verdict title, widget: string, required: false }
+      - { name: verdictText, label: Verdict text, widget: text, required: false }
+      - { name: body, label: Article body, widget: markdown }
