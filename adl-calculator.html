@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADL Contrast Calculator | Spyke Vision</title>
+  <meta name="description" content="Calculate and compare projector ADL contrast curves. Estimate from On/Off + ANSI, or plot known measurement points.">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .calc-tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--surface-2); border-radius:var(--radius-sm); padding:4px; }
+    .calc-tab { flex:1; padding:10px; border:none; background:none; border-radius:10px; font-size:15px; font-weight:600; color:var(--text-3); cursor:pointer; transition:.15s; }
+    .calc-tab.active { background:var(--surface); color:var(--text); box-shadow:var(--shadow); }
+
+    .calc-panel { display:none; }
+    .calc-panel.active { display:block; }
+
+    .calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media(max-width:640px){ .calc-grid { grid-template-columns:1fr; } }
+
+    .calc-field { display:flex; flex-direction:column; gap:6px; }
+    .calc-field label { font-size:14px; font-weight:600; color:var(--text-2); }
+    .calc-field input { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm);
+      padding:11px 14px; font-size:16px; color:var(--text); font-family:var(--font);
+      transition:border-color .15s, box-shadow .15s; }
+    .calc-field input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,122,255,.15); }
+    .calc-field .hint { font-size:12px; color:var(--text-3); }
+
+    .projector-block { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:22px; margin-bottom:16px; border-left:4px solid var(--accent); position:relative; }
+    .projector-block .color-swatch { width:16px; height:16px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle; }
+    .projector-block .remove-btn { position:absolute; top:16px; right:16px; background:none; border:none;
+      color:var(--text-3); font-size:20px; cursor:pointer; line-height:1; padding:4px; border-radius:6px; }
+    .projector-block .remove-btn:hover { background:var(--surface-2); color:var(--red); }
+    .proj-name-row { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .proj-name-row input { flex:1; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm);
+      padding:9px 14px; font-size:15px; font-weight:600; color:var(--text); font-family:var(--font); }
+    .proj-name-row input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,122,255,.15); }
+
+    .add-btn { display:flex; align-items:center; gap:8px; background:none; border:2px dashed var(--border);
+      border-radius:var(--radius); padding:14px 20px; color:var(--text-3); font-size:15px; font-weight:600;
+      cursor:pointer; width:100%; justify-content:center; transition:.15s; margin-bottom:20px; }
+    .add-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(0,122,255,.04); }
+
+    .chart-wrap { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; margin-top:8px; }
+    .chart-toolbar { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .chart-title-mini { font-size:14px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; }
+    .chart-tools { display:flex; gap:8px; flex-wrap:wrap; }
+    .chart-tool { background:var(--surface-2); border:1px solid var(--border); border-radius:999px;
+      padding:7px 14px; font-size:13px; font-weight:600; color:var(--text-2); cursor:pointer; font-family:var(--font); transition:.15s; white-space:nowrap; }
+    .chart-tool:hover { background:var(--border); color:var(--text); }
+    .chart-tool.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .chart-canvas-box { position:relative; width:100%; height:440px; }
+    .chart-canvas-box canvas { position:absolute; inset:0; width:100% !important; height:100% !important; }
+    .chart-wrap.expanded {
+      position:fixed; inset:0; z-index:300; margin:0; border-radius:0; padding:20px 24px;
+      display:flex; flex-direction:column;
+    }
+    .chart-wrap.expanded .chart-canvas-box { flex:1; height:auto; }
+    body.no-scroll { overflow:hidden; }
+    @media (max-width:760px){
+      .chart-wrap { padding:16px; }
+      .chart-canvas-box { height:320px; }
+      .chart-title-mini { display:none; }
+      .chart-tools { width:100%; justify-content:space-between; }
+      .chart-tool { padding:8px 12px; flex:1; text-align:center; }
+    }
+
+    .calc-actions { display:flex; gap:12px; flex-wrap:wrap; margin:20px 0 8px; }
+    .btn-secondary { display:inline-flex; align-items:center; gap:6px; background:var(--surface);
+      color:var(--text-2); border:1px solid var(--border); padding:11px 22px; border-radius:999px;
+      font-size:15px; font-weight:600; cursor:pointer; transition:.15s; font-family:var(--font); }
+    .btn-secondary:hover { background:var(--surface-2); color:var(--text); }
+
+    .section-label { font-size:13px; font-weight:700; color:var(--text-3); text-transform:uppercase;
+      letter-spacing:.05em; margin:16px 0 10px; }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <span class="theme-icon">☀️</span>
+    <span class="theme-label">Light</span>
+  </button>
+
+  <header class="site-header">
+    <div class="wrap nav">
+      <a href="index.html" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span></span></a>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
+      <ul class="nav-links">
+        <li><a href="index.html">Reviews</a></li>
+        <li><a href="index.html#coming-soon">Coming Soon</a></li>
+        <li><a href="adl-calculator.html" class="active">ADL Calculator</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="article-hero">
+      <p class="eyebrow">Tool</p>
+      <h1>ADL Contrast Calculator</h1>
+      <p style="color:var(--text-3);font-size:17px;margin-top:8px">Estimate a projector's full ADL curve from a few measurements, or plot known data points and compare multiple projectors.</p>
+    </div>
+
+    <div class="calc-tabs" role="tablist">
+      <button class="calc-tab active" role="tab" data-tab="estimate" onclick="switchTab('estimate')">Estimate curve</button>
+      <button class="calc-tab" role="tab" data-tab="manual" onclick="switchTab('manual')">Plot measurements</button>
+    </div>
+
+    <!-- TAB 1: ESTIMATE -->
+    <div class="calc-panel active" id="tab-estimate">
+      <div class="prose" style="margin-bottom:20px">
+        <p>Enter the known contrast measurements. The calculator uses a power-law model to interpolate the full ADL curve from On/Off (100% black) down to the measured ANSI and/or APL points. More input points = more accurate estimate.</p>
+      </div>
+
+      <div id="estimateBlocks">
+        <!-- filled by JS -->
+      </div>
+      <button class="add-btn" onclick="addEstimateBlock()">+ Add projector</button>
+
+      <div class="calc-actions">
+        <button class="btn" onclick="buildEstimateChart()">Calculate &amp; plot</button>
+        <button class="btn-secondary" onclick="clearChart('estimateChart')">Clear chart</button>
+      </div>
+
+      <div class="chart-wrap" id="estimateWrap">
+        <div class="chart-toolbar">
+          <span class="chart-title-mini">ADL contrast curve</span>
+          <div class="chart-tools">
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('estimateChart', this)">Linear scale</button>
+            <button class="chart-tool" onclick="savePNG('estimateChart','spykevision-adl-estimate')">⬇ Save PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('estimateWrap','estimateChart', this)">⛶ Expand</button>
+          </div>
+        </div>
+        <div class="chart-canvas-box"><canvas id="estimateChart"></canvas></div>
+      </div>
+
+      <div class="prose" style="margin-top:20px">
+        <h3>How the estimate works</h3>
+        <p>The curve is interpolated in log space directly through every value you enter — On/Off (0% APL), 1% APL, 5% APL and ANSI (50% APL) — so it always passes exactly through your measured points. Gaps between points are interpolated and the tail beyond your last point is extrapolated from the local slope. The result is an estimate — real-world ADL behaviour can deviate, especially on projectors with aggressive dynamic iris.</p>
+      </div>
+    </div>
+
+    <!-- TAB 2: MANUAL -->
+    <div class="calc-panel" id="tab-manual">
+      <div class="prose" style="margin-bottom:20px">
+        <p>Enter the exact measured contrast values for each APL level. Leave fields blank if not measured — the chart will connect only the points you provide. Add multiple projectors to compare them side by side.</p>
+      </div>
+
+      <div id="manualBlocks">
+        <!-- filled by JS -->
+      </div>
+      <button class="add-btn" onclick="addManualBlock()">+ Add projector</button>
+
+      <div class="calc-actions">
+        <button class="btn" onclick="buildManualChart()">Plot</button>
+        <button class="btn-secondary" onclick="clearChart('manualChart')">Clear chart</button>
+      </div>
+
+      <div class="chart-wrap" id="manualWrap">
+        <div class="chart-toolbar">
+          <span class="chart-title-mini">ADL contrast curve</span>
+          <div class="chart-tools">
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('manualChart', this)">Linear scale</button>
+            <button class="chart-tool" onclick="savePNG('manualChart','spykevision-adl-measured')">⬇ Save PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('manualWrap','manualChart', this)">⛶ Expand</button>
+          </div>
+        </div>
+        <div class="chart-canvas-box"><canvas id="manualChart"></canvas></div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a href="index.html" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span></span></a>
+      <nav class="footer-links">
+        <a href="index.html">Reviews</a>
+        <a href="adl-calculator.html">ADL Calculator</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+      </nav>
+      <p class="copyright">© 2026 Spyke Vision. Independent &amp; reader-supported.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+  // ── Palette (matches review charts) ──────────────────────────────────────
+  var COLORS = [
+    '#0a84ff','#ff9500','#34c759','#ff3b30','#af52de',
+    '#5ac8fa','#ffcc00','#ff2d55','#30d158','#636366'
+  ];
+
+  // ── Tab switching ─────────────────────────────────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.calc-tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab===name); });
+    document.querySelectorAll('.calc-panel').forEach(function(p){ p.classList.toggle('active', p.id==='tab-'+name); });
+  }
+
+  // ── Estimate tab ──────────────────────────────────────────────────────────
+  var estCount = 0;
+  function addEstimateBlock() {
+    var idx = estCount++;
+    var color = COLORS[idx % COLORS.length];
+    var div = document.createElement('div');
+    div.className = 'projector-block'; div.id = 'eb'+idx;
+    div.style.borderLeftColor = color;
+    div.innerHTML = '<button class="remove-btn" onclick="removeBlock(\'eb'+idx+'\')">×</button>'
+      + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
+      + '<input type="text" placeholder="Projector name" value="Projector '+(idx+1)+'"></div>'
+      + '<div class="calc-grid">'
+      + field('On/Off contrast', 'est-onoff-'+idx, 'e.g. 30000', 'Full-field on/off (0% APL)')
+      + field('ANSI contrast', 'est-ansi-'+idx, 'e.g. 800', '50% APL checkerboard')
+      + field('1% APL contrast', 'est-apl1-'+idx, 'e.g. 15000', 'Optional')
+      + field('5% APL contrast', 'est-apl5-'+idx, 'e.g. 8000', 'Optional')
+      + '</div>';
+    document.getElementById('estimateBlocks').appendChild(div);
+  }
+
+  // ── Manual tab ────────────────────────────────────────────────────────────
+  var manCount = 0;
+  var APL_POINTS = [0, 0.25, 0.5, 1, 5, 10, 20, 30, 50];
+  var APL_LABELS = ['On/Off (0%)','0.25%','0.5%','1%','5%','10%','20%','30%','50%'];
+
+  function addManualBlock() {
+    var idx = manCount++;
+    var color = COLORS[idx % COLORS.length];
+    var div = document.createElement('div');
+    div.className = 'projector-block'; div.id = 'mb'+idx;
+    div.style.borderLeftColor = color;
+    var fields = APL_POINTS.map(function(apl,i){
+      return field(APL_LABELS[i]+' contrast','man-'+idx+'-'+i, 'e.g. '+ Math.round(30000*Math.pow(1-apl/100,1.8)||30000), 'Optional');
+    }).join('');
+    div.innerHTML = '<button class="remove-btn" onclick="removeBlock(\'mb'+idx+'\')">×</button>'
+      + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
+      + '<input type="text" placeholder="Projector name" value="Projector '+(idx+1)+'"></div>'
+      + '<div class="calc-grid">' + fields + '</div>';
+    document.getElementById('manualBlocks').appendChild(div);
+  }
+
+  function field(label, id, ph, hint) {
+    return '<div class="calc-field"><label for="'+id+'">'+label+'</label>'
+      + '<input type="number" id="'+id+'" min="0" placeholder="'+ph+'">'
+      + (hint ? '<span class="hint">'+hint+'</span>' : '')
+      + '</div>';
+  }
+  function removeBlock(id) { var el=document.getElementById(id); if(el) el.remove(); }
+
+  // ── Chart helpers ─────────────────────────────────────────────────────────
+  var charts = {};
+  var scalePref  = { estimateChart:'linear', manualChart:'linear' };
+  var chartRange = { estimateChart:null,     manualChart:null };   // {min,max} of plotted data
+
+  function getOrCreateChart(canvasId) {
+    if (charts[canvasId]) { charts[canvasId].destroy(); }
+    var ctx = document.getElementById(canvasId).getContext('2d');
+    charts[canvasId] = new Chart(ctx, {
+      type: 'line',
+      data: { datasets: [] },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: { position:'bottom', labels:{ color:'#8e8e93', font:{size:13,weight:'600'}, padding:16, usePointStyle:true,
+            filter: function(item){ return item.text.indexOf('(measured)') === -1; }
+          }},
+          tooltip: { backgroundColor:'rgba(28,28,30,.92)', titleColor:'#f2f2f7', bodyColor:'#ebebf5cc',
+            padding:12, cornerRadius:10,
+            filter: function(item){ return item.dataset.label !== 'Crossover'; },
+            callbacks: { label: function(ctx){ return ' '+ctx.dataset.label+': '+Math.round(ctx.parsed.y).toLocaleString()+':1'; } }
+          }
+        },
+        scales: {
+          x: { type:'linear', min:0, max:50, title:{display:true,text:'APL (%)',color:'#8e8e93',font:{size:13}},
+            ticks:{color:'#8e8e93',font:{size:12}}, grid:{color:'rgba(142,142,147,.15)'} },
+          y: { type: scalePref[canvasId],
+            title:{display:true,text:'Contrast ratio',color:'#8e8e93',font:{size:13}},
+            ticks:{color:'#8e8e93',font:{size:12}, callback:function(v){return v>=1000?Math.round(v/1000)+'k:1':v+':1';}},
+            grid:{color:'rgba(142,142,147,.15)'} }
+        }
+      },
+      plugins: [{
+        id: 'svOverlay',
+        afterDraw: function(chart) {
+          var a = chart.chartArea; if (!a) return;
+          var g = chart.ctx;
+          var cx = (a.left+a.right)/2, cy = (a.top+a.bottom)/2;
+          // Watermark: logo + text, centred in chart area
+          g.save();
+          g.globalAlpha = 0.11;
+          var logoSz = 44, gap = 12;
+          g.font = 'bold 28px -apple-system,BlinkMacSystemFont,sans-serif';
+          var tw = g.measureText('SpykeVision.com').width;
+          var lx = cx - (logoSz + gap + tw) / 2;
+          // Draw pinwheel blades (replicates the SVG logo)
+          var bladeAngles = [0,60,120,180,240,300];
+          var bladeColors = ['#0a84ff','#0a84ff','#ff9500','#0a84ff','#0a84ff','#0a84ff'];
+          var sc = logoSz / 32;
+          bladeAngles.forEach(function(deg, k) {
+            g.save();
+            g.translate(lx + logoSz/2, cy);
+            g.rotate(deg * Math.PI / 180);
+            g.scale(sc, sc);
+            g.translate(-16, -16);
+            g.beginPath(); g.moveTo(29,16); g.lineTo(22.5,27.26); g.lineTo(18,19.46); g.closePath();
+            g.fillStyle = bladeColors[k]; g.fill();
+            g.restore();
+          });
+          // Text
+          g.fillStyle = '#8e8e93';
+          g.textAlign = 'left'; g.textBaseline = 'middle';
+          g.fillText('SpykeVision.com', lx + logoSz + gap, cy);
+          g.restore();
+          // Crossover annotations
+          var xSc = chart.scales.x, ySc = chart.scales.y;
+          if (!xSc || !ySc) return;
+          chart.data.datasets.forEach(function(ds) {
+            if (ds.label !== 'Crossover' || !ds.data) return;
+            g.save();
+            g.font = '600 11px -apple-system,BlinkMacSystemFont,sans-serif';
+            ds.data.forEach(function(pt) {
+              var px = xSc.getPixelForValue(pt.x);
+              var py = ySc.getPixelForValue(pt.y);
+              if (px < a.left || px > a.right || py < a.top || py > a.bottom) return;
+              var txt = pt.x.toFixed(1) + '% · ' + Math.round(pt.y).toLocaleString() + ':1';
+              var tw = g.measureText(txt).width + 10, th = 16;
+              var lx = px + 10, ly = py - th - 6;
+              if (lx + tw > a.right) lx = px - tw - 10;
+              if (ly < a.top) ly = py + 6;
+              g.fillStyle = 'rgba(28,28,30,0.82)';
+              g.beginPath(); g.rect(lx, ly, tw, th); g.fill();
+              g.fillStyle = '#f2f2f7';
+              g.textAlign = 'left'; g.textBaseline = 'top';
+              g.fillText(txt, lx + 5, ly + 2);
+            });
+            g.restore();
+          });
+        }
+      }]
+    });
+    return charts[canvasId];
+  }
+
+  function clearChart(id) {
+    chartRange[id] = null;
+    getOrCreateChart(id);     // fresh empty chart
+    applyYScale(id);
+    charts[id].update();
+  }
+
+  // Round up to next "nice" linear ceiling with ~25% headroom above max
+  function niceLinearMax(max) {
+    var target = max * 1.25;
+    var mag = Math.pow(10, Math.floor(Math.log10(target)));
+    var norm = target / mag;
+    var steps = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 9, 10];
+    for (var k = 0; k < steps.length; k++) { if (steps[k] >= norm) return steps[k] * mag; }
+    return 10 * mag;
+  }
+
+  // ── Apply y-axis scale (used on build AND on toggle, so they never diverge) ─
+  function applyYScale(canvasId) {
+    var chart = charts[canvasId]; if (!chart) return;
+    var y = chart.options.scales.y;
+    var r = chartRange[canvasId];
+    if (scalePref[canvasId] === 'logarithmic') {
+      y.type = 'logarithmic';
+      var lo = r ? r.min : 100, hi = r ? r.max : 30000;
+      var ticks = niceLogTicks(lo, hi);
+      y.min = ticks[0];
+      y.max = ticks[ticks.length - 1];
+      y.afterBuildTicks = function(axis){ axis.ticks = ticks.map(function(v){ return {value:v}; }); };
+    } else {
+      y.type = 'linear';
+      y.afterBuildTicks = undefined;
+      y.min = 0;
+      y.max = r ? niceLinearMax(r.max) : 30000;   // headroom above data; 30k for empty chart
+    }
+  }
+
+  // ── Toolbar: log/linear toggle ────────────────────────────────────────────
+  function toggleScale(canvasId, btn) {
+    var next = scalePref[canvasId]==='logarithmic' ? 'linear' : 'logarithmic';
+    scalePref[canvasId] = next;
+    btn.textContent = next==='logarithmic' ? 'Log scale' : 'Linear scale';
+    btn.classList.toggle('active', next==='logarithmic');
+    applyYScale(canvasId);
+    if (charts[canvasId]) charts[canvasId].update();
+  }
+
+  // ── Toolbar: expand / fullscreen ──────────────────────────────────────────
+  function toggleExpand(wrapId, canvasId, btn) {
+    var wrap = document.getElementById(wrapId);
+    var expanded = wrap.classList.toggle('expanded');
+    document.body.classList.toggle('no-scroll', expanded);
+    btn.textContent = expanded ? '✕ Close' : '⛶ Expand';
+    setTimeout(function(){ if (charts[canvasId]) charts[canvasId].resize(); }, 60);
+  }
+  document.addEventListener('keydown', function(e){
+    if (e.key==='Escape') {
+      document.querySelectorAll('.chart-wrap.expanded').forEach(function(w){
+        w.classList.remove('expanded'); document.body.classList.remove('no-scroll');
+        var c = w.querySelector('canvas'); if (c && charts[c.id]) setTimeout(function(){charts[c.id].resize();},60);
+        var b = w.querySelector('.chart-tool[onclick*="toggleExpand"]'); if (b) b.textContent='⛶ Expand';
+      });
+    }
+  });
+
+  // ── Toolbar: save PNG ─────────────────────────────────────────────────────
+  function savePNG(canvasId, filename) {
+    var chart = charts[canvasId];
+    if (!chart) { alert('Plot the chart first.'); return; }
+    var src = chart.canvas;
+    var out = document.createElement('canvas');
+    out.width = src.width; out.height = src.height;   // native (DPR-scaled) resolution
+    var g = out.getContext('2d');
+    // solid background so PNG isn't transparent
+    var bg = getComputedStyle(document.querySelector('.chart-wrap')).backgroundColor || '#ffffff';
+    g.fillStyle = bg; g.fillRect(0,0,out.width,out.height);
+    g.drawImage(src, 0, 0);
+    var a = document.createElement('a');
+    a.download = filename + '.png';
+    a.href = out.toDataURL('image/png');
+    a.click();
+  }
+
+  // ── Estimate: interpolate through measured points ─────────────────────────
+  // A single power-law γ can't honour both a steep low-APL drop and a shallow
+  // mid-APL value, so instead we interpolate in log space *through* every
+  // measured point. The curve is guaranteed to pass through each entered value.
+  function interpAt(nodes, apl) {
+    if (apl <= nodes[0].apl) return nodes[0].cr;
+    for (var i = 1; i < nodes.length; i++) {
+      if (apl <= nodes[i].apl) {
+        var a = nodes[i-1], b = nodes[i];
+        var f = (apl - a.apl) / (b.apl - a.apl);
+        return Math.exp(Math.log(a.cr) + f * (Math.log(b.cr) - Math.log(a.cr)));
+      }
+    }
+    // beyond last node: extrapolate using the last segment's log-slope
+    var n = nodes.length, a = nodes[n-2], b = nodes[n-1];
+    var slope = (Math.log(b.cr) - Math.log(a.cr)) / (b.apl - a.apl);
+    return Math.exp(Math.log(b.cr) + slope * (apl - b.apl));
+  }
+
+  // Clean 1-2-5 logarithmic ticks (matches industry charts like projectiondream).
+  // Adds `padDown` extra steps below the minimum so the lowest point (typically
+  // ANSI, rarely >1000) sits comfortably above the axis floor instead of on it.
+  function niceLogTicks(min, max, padDown, padUp) {
+    padDown = padDown == null ? 2 : padDown;
+    padUp   = padUp   == null ? 2 : padUp;
+    var mults = [1, 2, 5], ladder = [];
+    var d = Math.pow(10, Math.floor(Math.log10(min)) - 2);
+    while (d <= max * 100) {
+      for (var k = 0; k < mults.length; k++) ladder.push(d * mults[k]);
+      d *= 10;
+    }
+    // lo: step down padDown rungs below min; hi: step up padUp rungs above max
+    var lo = 0, hi = 0;
+    for (var i = 0; i < ladder.length; i++) {
+      if (ladder[i] <= min) lo = i;
+      if (ladder[i] <= max) hi = i;
+    }
+    lo = Math.max(0, lo - padDown);
+    hi = Math.min(ladder.length - 1, hi + padUp);
+    return ladder.slice(lo, hi + 1);
+  }
+
+  // ── Intersection detection (both charts) ─────────────────────────────────
+  // Proper segment-segment intersection — works even when curves have different
+  // x-grids (manual chart) or different lengths (one curve ends early).
+  function addIntersections(chart) {
+    var lines = chart.data.datasets.filter(function(d) {
+      return (!d.type || d.type === 'line') && d.data && d.data.length > 1;
+    });
+    if (lines.length < 2) return;
+    var crossPts = [];
+    for (var i = 0; i < lines.length - 1; i++) {
+      for (var j = i + 1; j < lines.length; j++) {
+        var d1 = lines[i].data, d2 = lines[j].data;
+        for (var a = 0; a < d1.length - 1; a++) {
+          var x1=d1[a].x, y1=d1[a].y, x2=d1[a+1].x, y2=d1[a+1].y;
+          for (var b = 0; b < d2.length - 1; b++) {
+            var x3=d2[b].x, y3=d2[b].y, x4=d2[b+1].x, y4=d2[b+1].y;
+            var xlo=Math.max(x1,x3), xhi=Math.min(x2,x4);
+            if (xlo >= xhi) continue;
+            var yAlo = y1 + (xlo-x1)/(x2-x1)*(y2-y1);
+            var yAhi = y1 + (xhi-x1)/(x2-x1)*(y2-y1);
+            var yBlo = y3 + (xlo-x3)/(x4-x3)*(y4-y3);
+            var yBhi = y3 + (xhi-x3)/(x4-x3)*(y4-y3);
+            var dlo = yAlo-yBlo, dhi = yAhi-yBhi;
+            if (dlo * dhi < 0) {
+              var f = dlo / (dlo - dhi);
+              crossPts.push({
+                x: Math.round((xlo + f*(xhi-xlo)) * 10) / 10,
+                y: Math.round(yAlo + f*(yAhi-yAlo))
+              });
+            }
+          }
+        }
+      }
+    }
+    if (!crossPts.length) return;
+    chart.data.datasets.push({
+      label: 'Crossover',
+      data: crossPts, type: 'scatter',
+      borderColor: '#ff9500', backgroundColor: '#fff',
+      borderWidth: 3, pointRadius: 9, pointHoverRadius: 12,
+      pointStyle: 'crossRot', showLine: false
+    });
+  }
+
+  function buildEstimateChart() {
+    var chart = getOrCreateChart('estimateChart');
+    var blocks = document.getElementById('estimateBlocks').querySelectorAll('.projector-block');
+    var colorIdx = 0;
+    var dataMin = Infinity, dataMax = -Infinity;
+    blocks.forEach(function(block){
+      var name = block.querySelector('.proj-name-row input').value || 'Projector';
+      var id = block.id.replace('eb','');
+      var onoff = parseFloat(document.getElementById('est-onoff-'+id).value);
+      var ansi  = parseFloat(document.getElementById('est-ansi-'+id).value);
+      var apl1  = parseFloat(document.getElementById('est-apl1-'+id).value);
+      var apl5  = parseFloat(document.getElementById('est-apl5-'+id).value);
+      if (!onoff || onoff <= 0) return;
+      // Build sorted node list (On/Off at 0% + every measured point)
+      var nodes = [{apl:0, cr:onoff}];
+      if (apl1  > 0) nodes.push({apl:1,  cr:apl1});
+      if (apl5  > 0) nodes.push({apl:5,  cr:apl5});
+      if (ansi  > 0) nodes.push({apl:50, cr:ansi});
+      nodes.sort(function(a,b){ return a.apl - b.apl; });
+      // Interpolate the full curve through the nodes
+      var pts = [];
+      for (var apl=0; apl<=50; apl+=0.5) {
+        var y = interpAt(nodes, apl);
+        pts.push({ x:apl, y: y });
+        if (y < dataMin) dataMin = y;
+        if (y > dataMax) dataMax = y;
+      }
+      var color = COLORS[colorIdx++ % COLORS.length];
+      chart.data.datasets.push({
+        label: name + ' (estimated)',
+        data: pts, borderColor: color, backgroundColor: color+'22',
+        borderWidth: 2.5, pointRadius: 0, tension: 0, fill: false
+      });
+      // Measured points sit exactly on the curve
+      chart.data.datasets.push({
+        label: name+' (measured)',
+        data: nodes.map(function(n){return{x:n.apl,y:n.cr};}), type:'scatter',
+        borderColor: color, backgroundColor: color,
+        pointRadius: 6, pointHoverRadius: 8, showLine: false
+      });
+    });
+    chartRange.estimateChart = isFinite(dataMin) && isFinite(dataMax) ? {min:dataMin, max:dataMax} : null;
+    applyYScale('estimateChart');
+    addIntersections(chart);
+    chart.update();
+  }
+
+  // ── Manual: plot known points ─────────────────────────────────────────────
+  function buildManualChart() {
+    var chart = getOrCreateChart('manualChart');
+    var blocks = document.getElementById('manualBlocks').querySelectorAll('.projector-block');
+    var colorIdx = 0;
+    var dataMin = Infinity, dataMax = -Infinity;
+    blocks.forEach(function(block){
+      var name = block.querySelector('.proj-name-row input').value || 'Projector';
+      var id = block.id.replace('mb','');
+      var pts = [];
+      APL_POINTS.forEach(function(apl,i){
+        var v = parseFloat(document.getElementById('man-'+id+'-'+i).value);
+        if (v > 0) { pts.push({x: apl, y: v}); if (v<dataMin) dataMin=v; if (v>dataMax) dataMax=v; }
+      });
+      if (!pts.length) return;
+      var color = COLORS[colorIdx++ % COLORS.length];
+      chart.data.datasets.push({
+        label: name,
+        data: pts, borderColor: color, backgroundColor: color+'33',
+        borderWidth: 2.5, pointRadius: 5, pointHoverRadius: 7,
+        tension: 0.3, fill: false
+      });
+    });
+    chartRange.manualChart = isFinite(dataMin) && isFinite(dataMax) ? {min:dataMin, max:dataMax} : null;
+    applyYScale('manualChart');
+    addIntersections(chart);
+    chart.update();
+  }
+
+  // Init with one block each tab
+  addEstimateBlock();
+  addManualBlock();
+
+  // Show an empty axis grid on load (instead of a blank white box)
+  function initEmptyChart(canvasId) {
+    getOrCreateChart(canvasId);
+    applyYScale(canvasId);
+    charts[canvasId].update();
+  }
+  initEmptyChart('estimateChart');
+  initEmptyChart('manualChart');
+  </script>
+</body>
+</html>
