@@ -112,7 +112,7 @@
     <!-- TAB 1: ESTIMATE -->
     <div class="calc-panel active" id="tab-estimate">
       <div class="prose" style="margin-bottom:20px">
-        <p>Enter the known contrast measurements. The calculator uses a power-law model to interpolate the full ADL curve from On/Off (100% black) down to the measured ANSI and/or APL points. More input points = more accurate estimate.</p>
+        <p>Enter the known contrast measurements. The calculator uses a power-law model to interpolate the full ADL curve from On/Off (100% black) down to the measured ANSI and/or ADL points. More input points = more accurate estimate.</p>
       </div>
 
       <div id="estimateBlocks">
@@ -139,14 +139,14 @@
 
       <div class="prose" style="margin-top:20px">
         <h3>How the estimate works</h3>
-        <p>The curve is interpolated in log space directly through every value you enter (On/Off, 1% APL, 5% APL, ANSI) so it always passes exactly through your measured points. Gaps between points are interpolated and the tail beyond your last point is extrapolated from the local slope. The result is an estimate; real-world ADL behaviour can deviate, especially on projectors with aggressive dynamic iris.</p>
+        <p>The curve is interpolated in log space directly through every value you enter (On/Off, 1% ADL, 5% ADL, ANSI) so it always passes exactly through your measured points. Gaps between points are interpolated and the tail beyond your last point is extrapolated from the local slope. The result is an estimate; real-world ADL behaviour can deviate, especially on projectors with aggressive dynamic iris.</p>
       </div>
     </div>
 
     <!-- TAB 2: MANUAL -->
     <div class="calc-panel" id="tab-manual">
       <div class="prose" style="margin-bottom:20px">
-        <p>Enter the exact measured contrast values for each APL level. Leave fields blank if not measured; the chart will connect only the points you provide. Add multiple projectors to compare them side by side.</p>
+        <p>Enter the exact measured contrast values for each ADL level. Leave fields blank if not measured; the chart will connect only the points you provide. Add multiple projectors to compare them side by side.</p>
       </div>
 
       <div id="manualBlocks">
@@ -199,6 +199,7 @@
   function switchTab(name) {
     document.querySelectorAll('.calc-tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab===name); });
     document.querySelectorAll('.calc-panel').forEach(function(p){ p.classList.toggle('active', p.id==='tab-'+name); });
+    localStorage.setItem('sv-calc-tab', name);
   }
 
   // ── Estimate tab ──────────────────────────────────────────────────────────
@@ -213,10 +214,10 @@
       + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
       + '<input type="text" placeholder="Projector name" value="Projector '+(idx+1)+'"></div>'
       + '<div class="calc-grid">'
-      + field('On/Off contrast', 'est-onoff-'+idx, 'e.g. 30000', 'Full-field on/off (0% APL)')
-      + field('ANSI contrast', 'est-ansi-'+idx, 'e.g. 800', '50% APL checkerboard')
-      + field('1% APL contrast', 'est-apl1-'+idx, 'e.g. 15000', 'Optional')
-      + field('5% APL contrast', 'est-apl5-'+idx, 'e.g. 8000', 'Optional')
+      + field('On/Off contrast', 'est-onoff-'+idx, 'e.g. 30000', 'Full-field on/off (0% ADL)')
+      + field('ANSI contrast', 'est-ansi-'+idx, 'e.g. 800', '50% ADL checkerboard')
+      + field('1% ADL contrast', 'est-apl1-'+idx, 'e.g. 15000', 'Optional')
+      + field('5% ADL contrast', 'est-apl5-'+idx, 'e.g. 8000', 'Optional')
       + '</div>';
     document.getElementById('estimateBlocks').appendChild(div);
   }
@@ -276,7 +277,7 @@
           }
         },
         scales: {
-          x: { type:'linear', min:0, max:50, title:{display:true,text:'APL (%)',color:'#8e8e93',font:{size:13}},
+          x: { type:'linear', min:0, max:50, title:{display:true,text:'ADL (%)',color:'#8e8e93',font:{size:13}},
             ticks:{color:'#8e8e93',font:{size:12}}, grid:{color:'rgba(142,142,147,.15)'} },
           y: { type: scalePref[canvasId],
             title:{display:true,text:'Contrast ratio',color:'#8e8e93',font:{size:13}},
@@ -343,6 +344,13 @@
         }
       }]
     });
+    // Hide tooltip when finger lifts (prevents stuck tooltip on mobile)
+    ctx.canvas.addEventListener('touchend', function() {
+      if (charts[canvasId]) {
+        charts[canvasId].tooltip.setActiveElements([], {x:0, y:0});
+        charts[canvasId].update('none');
+      }
+    }, { passive: true });
     return charts[canvasId];
   }
 
@@ -591,9 +599,84 @@
     chart.update();
   }
 
-  // Init with one block each tab
-  addEstimateBlock();
-  addManualBlock();
+  // ── Persist inputs across reloads ────────────────────────────────────────
+  function saveCalcState() {
+    var estData = [];
+    document.querySelectorAll('#estimateBlocks .projector-block').forEach(function(block) {
+      var id = block.id.replace('eb','');
+      estData.push({
+        name:  block.querySelector('.proj-name-row input').value,
+        onoff: document.getElementById('est-onoff-'+id).value,
+        ansi:  document.getElementById('est-ansi-'+id).value,
+        apl1:  document.getElementById('est-apl1-'+id).value,
+        apl5:  document.getElementById('est-apl5-'+id).value
+      });
+    });
+    localStorage.setItem('sv-calc-estimate', JSON.stringify(estData));
+
+    var manData = [];
+    document.querySelectorAll('#manualBlocks .projector-block').forEach(function(block) {
+      var id = block.id.replace('mb','');
+      manData.push({
+        name: block.querySelector('.proj-name-row input').value,
+        vals: APL_POINTS.map(function(apl, i) {
+          var el = document.getElementById('man-'+id+'-'+i);
+          return el ? el.value : '';
+        })
+      });
+    });
+    localStorage.setItem('sv-calc-manual', JSON.stringify(manData));
+  }
+
+  function loadCalcState() {
+    // Estimate blocks
+    var estLoaded = false;
+    try {
+      var estData = JSON.parse(localStorage.getItem('sv-calc-estimate') || '[]');
+      if (estData.length) {
+        estCount = 0;
+        estData.forEach(function(d) {
+          addEstimateBlock();
+          var idx = estCount - 1;
+          document.querySelector('#eb'+idx+' .proj-name-row input').value = d.name || '';
+          if (d.onoff) document.getElementById('est-onoff-'+idx).value = d.onoff;
+          if (d.ansi)  document.getElementById('est-ansi-'+idx).value  = d.ansi;
+          if (d.apl1)  document.getElementById('est-apl1-'+idx).value  = d.apl1;
+          if (d.apl5)  document.getElementById('est-apl5-'+idx).value  = d.apl5;
+        });
+        estLoaded = true;
+      }
+    } catch(e) {}
+    if (!estLoaded) addEstimateBlock();
+
+    // Manual blocks
+    var manLoaded = false;
+    try {
+      var manData = JSON.parse(localStorage.getItem('sv-calc-manual') || '[]');
+      if (manData.length) {
+        manCount = 0;
+        manData.forEach(function(d) {
+          addManualBlock();
+          var idx = manCount - 1;
+          document.querySelector('#mb'+idx+' .proj-name-row input').value = d.name || '';
+          if (d.vals) d.vals.forEach(function(v, i) {
+            var el = document.getElementById('man-'+idx+'-'+i);
+            if (el && v) el.value = v;
+          });
+        });
+        manLoaded = true;
+      }
+    } catch(e) {}
+    if (!manLoaded) addManualBlock();
+
+    // Active tab
+    var savedTab = localStorage.getItem('sv-calc-tab');
+    if (savedTab && savedTab !== 'estimate') switchTab(savedTab);
+
+    // Wire up auto-save on any input change
+    document.getElementById('estimateBlocks').addEventListener('input', saveCalcState);
+    document.getElementById('manualBlocks').addEventListener('input', saveCalcState);
+  }
 
   // Show an empty axis grid on load (instead of a blank white box)
   function initEmptyChart(canvasId) {
@@ -601,6 +684,8 @@
     applyYScale(canvasId);
     charts[canvasId].update();
   }
+
+  loadCalcState();
   initEmptyChart('estimateChart');
   initEmptyChart('manualChart');
   </script>
