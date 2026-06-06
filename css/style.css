@@ -89,6 +89,21 @@ a:hover { color: var(--accent-dk); }
 }
 .brand .wm { display: inline-flex; gap: 0; align-items: baseline; }
 .brand .wm .v { color: var(--accent); }
+/* beta pill badge — elevated oval like "Hot" in nav refs */
+.beta-tag {
+  display: inline-block;
+  background: var(--text);
+  color: var(--surface);
+  font-size: 8px;
+  font-weight: 800;
+  padding: 2px 7px 3px;
+  border-radius: 999px;
+  vertical-align: super;
+  margin-left: 4px;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  text-transform: lowercase;
+}
 
 
 .site-footer .brand .logo-mark { width: 22px; height: 22px; }
