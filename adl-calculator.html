@@ -262,6 +262,7 @@
   function getOrCreateChart(canvasId) {
     if (charts[canvasId]) { charts[canvasId].destroy(); }
     var ctx = document.getElementById(canvasId).getContext('2d');
+    var mob = window.innerWidth < 640;
     charts[canvasId] = new Chart(ctx, {
       type: 'line',
       data: { datasets: [] },
@@ -270,7 +271,11 @@
         maintainAspectRatio: false,
         interaction: { mode:'index', intersect:false },
         plugins: {
-          legend: { position:'bottom', labels:{ color:'#8e8e93', font:{size:13,weight:'600'}, padding:16, usePointStyle:true,
+          legend: { position:'bottom', labels:{ color:'#8e8e93',
+            font:{size: mob ? 11 : 13, weight:'600'},
+            padding: mob ? 8 : 16,
+            pointStyleWidth: mob ? 8 : 12,
+            usePointStyle:true,
             filter: function(item){ return item.text.indexOf('(measured)') === -1; }
           }},
           tooltip: { backgroundColor:'rgba(28,28,30,.92)', titleColor:'#f2f2f7', bodyColor:'#ebebf5cc',
@@ -280,11 +285,11 @@
           }
         },
         scales: {
-          x: { type:'linear', min:0, max:50, title:{display:true,text:'ADL (%)',color:'#8e8e93',font:{size:13}},
-            ticks:{color:'#8e8e93',font:{size:12}}, grid:{color:'rgba(142,142,147,.15)'} },
+          x: { type:'linear', min:0, max:50, title:{display:!mob,text:'ADL (%)',color:'#8e8e93',font:{size:12}},
+            ticks:{color:'#8e8e93',font:{size: mob ? 10 : 12}}, grid:{color:'rgba(142,142,147,.15)'} },
           y: { type: scalePref[canvasId],
-            title:{display:true,text:'Contrast ratio',color:'#8e8e93',font:{size:13}},
-            ticks:{color:'#8e8e93',font:{size:12}, callback:function(v){return v>=1000?Math.round(v/1000)+'k:1':v+':1';}},
+            title:{display:!mob,text:'Contrast ratio',color:'#8e8e93',font:{size:12}},
+            ticks:{color:'#8e8e93',font:{size: mob ? 10 : 12}, callback:function(v){return v>=1000?Math.round(v/1000)+'k:1':v+':1';}},
             grid:{color:'rgba(142,142,147,.15)'} }
         }
       },
@@ -528,17 +533,20 @@
       }
     }
     if (!crossPts.length) return;
+    var mob = window.innerWidth < 640;
     chart.data.datasets.push({
       label: 'Crossover',
       data: crossPts, type: 'scatter',
       borderColor: '#ff9500', backgroundColor: '#fff',
-      borderWidth: 3, pointRadius: 9, pointHoverRadius: 12,
+      borderWidth: mob ? 2 : 3, pointRadius: mob ? 6 : 9, pointHoverRadius: mob ? 8 : 12,
       pointStyle: 'crossRot', showLine: false
     });
   }
 
   function buildEstimateChart() {
     var chart = getOrCreateChart('estimateChart');
+    var mob = window.innerWidth < 640;
+    var pt = mob ? 4 : 6, ptH = mob ? 5 : 8;
     var blocks = document.getElementById('estimateBlocks').querySelectorAll('.projector-block');
     var colorIdx = 0;
     var dataMin = Infinity, dataMax = -Infinity;
@@ -575,7 +583,7 @@
         label: name+' (measured)',
         data: nodes.map(function(n){return{x:n.apl,y:n.cr};}), type:'scatter',
         borderColor: color, backgroundColor: color,
-        pointRadius: 6, pointHoverRadius: 8, showLine: false
+        pointRadius: pt, pointHoverRadius: ptH, showLine: false
       });
     });
     chartRange.estimateChart = isFinite(dataMin) && isFinite(dataMax) ? {min:dataMin, max:dataMax} : null;
@@ -587,6 +595,8 @@
   // ── Manual: plot known points ─────────────────────────────────────────────
   function buildManualChart() {
     var chart = getOrCreateChart('manualChart');
+    var mob = window.innerWidth < 640;
+    var pt = mob ? 4 : 5, ptH = mob ? 5 : 7;
     var blocks = document.getElementById('manualBlocks').querySelectorAll('.projector-block');
     var colorIdx = 0;
     var dataMin = Infinity, dataMax = -Infinity;
@@ -603,7 +613,7 @@
       chart.data.datasets.push({
         label: name,
         data: pts, borderColor: color, backgroundColor: color+'33',
-        borderWidth: 2.5, pointRadius: 5, pointHoverRadius: 7,
+        borderWidth: 2.5, pointRadius: pt, pointHoverRadius: ptH,
         tension: 0.3, fill: false
       });
     });
