@@ -253,7 +253,10 @@
 
   // ── Chart helpers ─────────────────────────────────────────────────────────
   var charts = {};
-  var scalePref  = { estimateChart:'linear', manualChart:'linear' };
+  var scalePref  = {
+    estimateChart: localStorage.getItem('sv-scale-estimate') || 'logarithmic',
+    manualChart:   localStorage.getItem('sv-scale-manual')   || 'logarithmic'
+  };
   var chartRange = { estimateChart:null,     manualChart:null };   // {min,max} of plotted data
 
   function getOrCreateChart(canvasId) {
@@ -395,10 +398,21 @@
   function toggleScale(canvasId, btn) {
     var next = scalePref[canvasId]==='logarithmic' ? 'linear' : 'logarithmic';
     scalePref[canvasId] = next;
+    localStorage.setItem('sv-scale-' + (canvasId === 'estimateChart' ? 'estimate' : 'manual'), next);
     btn.textContent = next==='logarithmic' ? 'Log scale' : 'Linear scale';
     btn.classList.toggle('active', next==='logarithmic');
     applyYScale(canvasId);
     if (charts[canvasId]) charts[canvasId].update();
+  }
+
+  // Sync button state to the saved scale preference
+  function syncScaleButtons() {
+    document.querySelectorAll('.chart-tool[data-scale="log"]').forEach(function(btn) {
+      var canvasId = btn.getAttribute('onclick').match(/'(\w+)'/)[1];
+      var isLog = scalePref[canvasId] === 'logarithmic';
+      btn.textContent = isLog ? 'Log scale' : 'Linear scale';
+      btn.classList.toggle('active', isLog);
+    });
   }
 
   // ── Toolbar: expand / fullscreen ──────────────────────────────────────────
@@ -686,6 +700,7 @@
   }
 
   loadCalcState();
+  syncScaleButtons();
   initEmptyChart('estimateChart');
   initEmptyChart('manualChart');
   </script>
