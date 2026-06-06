@@ -205,8 +205,9 @@
   // ── Estimate tab ──────────────────────────────────────────────────────────
   var estCount = 0;
   function addEstimateBlock() {
+    var colorIdx = document.querySelectorAll('#estimateBlocks .projector-block').length;
+    var color = COLORS[colorIdx % COLORS.length];
     var idx = estCount++;
-    var color = COLORS[idx % COLORS.length];
     var div = document.createElement('div');
     div.className = 'projector-block'; div.id = 'eb'+idx;
     div.style.borderLeftColor = color;
@@ -228,8 +229,9 @@
   var APL_LABELS = ['On/Off (0%)','0.25%','0.5%','1%','5%','10%','20%','30%','50%'];
 
   function addManualBlock() {
+    var colorIdx = document.querySelectorAll('#manualBlocks .projector-block').length;
+    var color = COLORS[colorIdx % COLORS.length];
     var idx = manCount++;
-    var color = COLORS[idx % COLORS.length];
     var div = document.createElement('div');
     div.className = 'projector-block'; div.id = 'mb'+idx;
     div.style.borderLeftColor = color;
@@ -274,8 +276,8 @@
           legend: { position:'bottom', labels:{ color:'#8e8e93',
             font:{size: mob ? 11 : 13, weight:'600'},
             padding: mob ? 8 : 16,
-            pointStyleWidth: mob ? 8 : 12,
             usePointStyle:true,
+            boxWidth: mob ? 10 : 14, boxHeight: mob ? 10 : 14,
             filter: function(item){ return item.text.indexOf('(measured)') === -1; }
           }},
           tooltip: { backgroundColor:'rgba(28,28,30,.92)', titleColor:'#f2f2f7', bodyColor:'#ebebf5cc',
@@ -457,22 +459,46 @@
   }
 
   // ── Estimate: interpolate through measured points ─────────────────────────
-  // A single power-law γ can't honour both a steep low-APL drop and a shallow
-  // mid-APL value, so instead we interpolate in log space *through* every
-  // measured point. The curve is guaranteed to pass through each entered value.
+  // ADL contrast follows a power law CR ∝ APL^-k, which is a straight line in
+  // log-log space (log CR vs log APL). We interpolate/extrapolate there for the
+  // measured region — far more accurate than log-linear, and the tail no longer
+  // collapses to near-zero. The 0→first-point segment can't use log(APL) (log 0
+  // is undefined), so it uses the standard CR = On/Off·(1−APL/100)^γ model,
+  // which correctly approaches On/Off as APL→0. The curve passes through every
+  // entered value exactly.
   function interpAt(nodes, apl) {
-    if (apl <= nodes[0].apl) return nodes[0].cr;
-    for (var i = 1; i < nodes.length; i++) {
-      if (apl <= nodes[i].apl) {
-        var a = nodes[i-1], b = nodes[i];
-        var f = (apl - a.apl) / (b.apl - a.apl);
-        return Math.exp(Math.log(a.cr) + f * (Math.log(b.cr) - Math.log(a.cr)));
+    var onoff = nodes[0].cr;
+    if (apl <= 0) return onoff;
+    var m = nodes.slice(1);              // measured points (APL > 0)
+    if (!m.length) return onoff;
+
+    // 0 → first measured point: (1−APL/100)^γ model (linear in u = ln(1−APL/100))
+    var first = m[0];
+    if (apl <= first.apl) {
+      var u = Math.log(1 - apl/100), uf = Math.log(1 - first.apl/100);
+      var f = u / uf;
+      return Math.exp(Math.log(onoff) + f * (Math.log(first.cr) - Math.log(onoff)));
+    }
+
+    // Between measured points: straight line in log-log (power law)
+    for (var i = 1; i < m.length; i++) {
+      if (apl <= m[i].apl) {
+        var a = m[i-1], b = m[i];
+        var g = (Math.log(apl) - Math.log(a.apl)) / (Math.log(b.apl) - Math.log(a.apl));
+        return Math.exp(Math.log(a.cr) + g * (Math.log(b.cr) - Math.log(a.cr)));
       }
     }
-    // beyond last node: extrapolate using the last segment's log-slope
-    var n = nodes.length, a = nodes[n-2], b = nodes[n-1];
-    var slope = (Math.log(b.cr) - Math.log(a.cr)) / (b.apl - a.apl);
-    return Math.exp(Math.log(b.cr) + slope * (apl - b.apl));
+
+    // Beyond the last measured point: extrapolate the power-law slope (log-log)
+    if (m.length >= 2) {
+      var p = m[m.length-2], q = m[m.length-1];
+      var k = (Math.log(q.cr) - Math.log(p.cr)) / (Math.log(q.apl) - Math.log(p.apl));
+      return Math.exp(Math.log(q.cr) + k * (Math.log(apl) - Math.log(q.apl)));
+    }
+    // Only one measured point: fall back to the (1−APL/100)^γ model from On/Off
+    var s = m[0];
+    var gamma = Math.log(s.cr / onoff) / Math.log(1 - s.apl/100);
+    return onoff * Math.pow(1 - apl/100, gamma);
   }
 
   // Clean 1-2-5 logarithmic ticks (matches industry charts like projectiondream).
@@ -543,6 +569,30 @@
     });
   }
 
+  // Expand chartRange min/max to include crossover y-values so log scale
+  // doesn't clip the intersection marker below the visible axis.
+  function expandRangeForCrossovers(chart, cid) {
+    var r = chartRange[cid]; if (!r) return;
+    chart.data.datasets.forEach(function(d) {
+      if (d.label === 'Crossover' && d.data) {
+        d.data.forEach(function(pt) {
+          if (pt.y < r.min) r.min = pt.y;
+          if (pt.y > r.max) r.max = pt.y;
+        });
+      }
+    });
+  }
+
+  // Dismiss all chart tooltips on touch end anywhere on the page
+  document.addEventListener('touchend', function() {
+    ['estimateChart', 'manualChart'].forEach(function(id) {
+      if (charts[id]) {
+        charts[id].tooltip.setActiveElements([], {x:0, y:0});
+        charts[id].update('none');
+      }
+    });
+  }, { passive: true });
+
   function buildEstimateChart() {
     var chart = getOrCreateChart('estimateChart');
     var mob = window.innerWidth < 640;
@@ -587,8 +637,9 @@
       });
     });
     chartRange.estimateChart = isFinite(dataMin) && isFinite(dataMax) ? {min:dataMin, max:dataMax} : null;
-    applyYScale('estimateChart');
     addIntersections(chart);
+    expandRangeForCrossovers(chart, 'estimateChart');
+    applyYScale('estimateChart');
     chart.update();
   }
 
@@ -618,8 +669,9 @@
       });
     });
     chartRange.manualChart = isFinite(dataMin) && isFinite(dataMax) ? {min:dataMin, max:dataMax} : null;
-    applyYScale('manualChart');
     addIntersections(chart);
+    expandRangeForCrossovers(chart, 'manualChart');
+    applyYScale('manualChart');
     chart.update();
   }
 
