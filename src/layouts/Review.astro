@@ -28,20 +28,26 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
     </div>
   )}
 
-  <main class="wrap article-page" data-draft={review.draft ? 'true' : null}>
-    <div class="article-hero">
-      {review.eyebrow && <p class="eyebrow">{review.eyebrow}</p>}
-      <h1>{review.title}</h1>
-      <div class="article-meta">
-        <span class="author"><span class="avatar"></span>SpykeSIK</span>
-        {meta.map((m) => (<><span>•</span><span>{m}</span></>))}
+  <!-- Full-bleed hero with cover image as background -->
+  <div
+    class={`article-hero-fb${review.cover ? '' : ' article-hero-fb--plain'}`}
+    style={review.cover ? `background-image:url('${review.cover}')` : ''}
+    data-draft={review.draft ? 'true' : null}
+  >
+    <div class="article-hero-overlay">
+      <div class="wrap">
+        {review.eyebrow && <p class="eyebrow">{review.eyebrow}</p>}
+        <h1>{review.title}</h1>
+        {review.summary && <p class="hero-summary">{review.summary}</p>}
+        <div class="article-meta">
+          <span class="author"><span class="avatar"></span>SpykeSIK</span>
+          {meta.map((m) => (<><span class="meta-sep">·</span><span>{m}</span></>))}
+        </div>
       </div>
     </div>
+  </div>
 
-    {review.cover && (
-      <div class="article-cover"><img src={review.cover} alt={review.title} /></div>
-    )}
-
+  <main class="wrap article-page" data-draft={review.draft ? 'true' : null}>
     <div class="prose">
       {toc.length > 0 && (
         <nav class="toc">
@@ -85,9 +91,15 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
 
       {review.score != null && (
         <div class="verdict">
+          <p class="verdict-label">VERDICT</p>
           <div class="big-score">{review.score.toFixed(1)}<span>/10</span></div>
           {review.verdictTitle && <h3>{review.verdictTitle}</h3>}
           {review.verdictText && <p>{review.verdictText}</p>}
+          {review.buyLink && (
+            <a href={review.buyLink} target="_blank" rel="noopener" class="btn btn-buy">
+              Official page / Buy →
+            </a>
+          )}
         </div>
       )}
     </div>
