@@ -424,6 +424,24 @@ a:hover { color: var(--accent-dk); }
   border: 0;
 }
 
+/* ── Local video player ────────────────────────────────── */
+figure.video-local {
+  margin: 28px 0;
+}
+figure.video-local video {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+  background: #000;
+  max-height: 70vh;
+}
+figure.video-local figcaption {
+  text-align: center;
+  font-size: 0.82em;
+  color: var(--text-2);
+  margin-top: 8px;
+}
+
 /* ── Before / After slider ─────────────────────────────── */
 figure.ba {
   margin: 28px 0;
