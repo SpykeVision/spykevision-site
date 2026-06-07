@@ -34,17 +34,33 @@
     Dyn: [4567,4781,5000,4153,4330,4543,4804,4934,5020,4596,4651,4648],
   };
 
+  /* ── Theme-adaptive colors ───────────────────────────── */
+  var st = getComputedStyle(document.documentElement);
+  function cv(name) { return st.getPropertyValue(name).trim(); }
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  var TC = {
+    text:    cv('--text-2')  || (isDark ? '#ccc'    : '#3a3a3c'),
+    text3:   cv('--text-3')  || (isDark ? '#888'    : '#8e8e93'),
+    border:  cv('--border')  || (isDark ? '#38383a' : '#e2e2e7'),
+    surface: cv('--surface') || (isDark ? '#1c1c1e' : '#ffffff'),
+    ttBg:    isDark ? '#1c1c1e' : '#ffffff',
+    ttBord:  isDark ? '#38383a' : '#e2e2e7',
+    ttTitle: cv('--text')    || (isDark ? '#f2f2f7' : '#1c1c1e'),
+  };
+
   /* ── Chart.js defaults ───────────────────────────────── */
-  Chart.defaults.color = '#999';
+  Chart.defaults.color = TC.text3;
   Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
-  var GRID = { color: '#252525' };
+  Chart.defaults.font.size = 12;
+  var GRID = { color: TC.border };
 
   /* ── Helpers ──────────────────────────────────────────── */
   function ttOpts(fmtFn) {
     return {
       mode: 'index', intersect: false,
-      backgroundColor: '#1e1e1e', titleColor: '#fff',
-      bodyColor: '#ccc', borderColor: '#3a3a3a', borderWidth: 1, padding: 12,
+      backgroundColor: TC.ttBg, titleColor: TC.ttTitle,
+      bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1, padding: 12,
       callbacks: fmtFn ? { label: function (ctx) { return ' ' + ctx.dataset.label + ': ' + fmtFn(ctx.parsed.y); } } : {},
     };
   }
@@ -76,6 +92,9 @@
 
   var sortState = {};
   function mkTable(parent, head, rows, tableId) {
+    var hr = document.createElement('hr');
+    hr.className = 'chart-divider';
+    parent.appendChild(hr);
     var wrap = document.createElement('div');
     wrap.className = 'chart-table-wrap';
     var tbl = document.createElement('table');
@@ -158,8 +177,9 @@
       },
       options: {
         responsive: true,
+        aspectRatio: 1.6,
         plugins: {
-          legend: { position: 'bottom', labels: { color: '#bbb', boxWidth: 12 } },
+          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
         },
         scales: {
@@ -226,8 +246,9 @@
       },
       options: {
         responsive: true,
+        aspectRatio: 1.6,
         plugins: {
-          legend: { position: 'bottom', labels: { color: '#bbb', boxWidth: 12 } },
+          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
@@ -301,8 +322,9 @@
       },
       options: {
         responsive: true,
+        aspectRatio: 1.6,
         plugins: {
-          legend: { position: 'bottom', labels: { color: '#bbb', boxWidth: 12 } },
+          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: {
             mode: 'nearest', intersect: true,
             backgroundColor: '#1e1e1e', titleColor: '#fff',
@@ -404,8 +426,9 @@
       },
       options: {
         responsive: true,
+        aspectRatio: 1.6,
         plugins: {
-          legend: { position: 'bottom', labels: { color: '#bbb', boxWidth: 12 } },
+          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v + '%'; }),
         },
         scales: {
@@ -495,8 +518,9 @@
       },
       options: {
         responsive: true,
+        aspectRatio: 1.6,
         plugins: {
-          legend: { position: 'bottom', labels: { color: '#bbb', boxWidth: 12 } },
+          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v ? v.toLocaleString() + ':1' : '—'; }),
         },
         scales: {
@@ -556,8 +580,9 @@
       },
       options: {
         responsive: true,
+        aspectRatio: 1.6,
         plugins: {
-          legend: { position: 'bottom', labels: { color: '#bbb', boxWidth: 12 } },
+          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
