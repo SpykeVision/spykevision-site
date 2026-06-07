@@ -826,7 +826,9 @@ figure.ba figcaption {
   flex: 1 1 0;
   min-width: 0;
   position: relative;
+  height: 360px;
 }
+.chart-main canvas { height: 100% !important; }
 .chart-side {
   flex: 0 0 240px;
   position: relative;
@@ -892,6 +894,10 @@ figure.ba figcaption {
 @media (max-width: 720px) {
   .chart-row { flex-direction: column; }
   .chart-side { flex: 0 0 auto; width: 100%; }
+}
+
+@media (max-width: 600px) {
+  .chart-main { height: 280px; }
 }
 
 /* Mobile: compact tables so they fit without excessive scrolling */

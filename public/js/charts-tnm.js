@@ -182,7 +182,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.4,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
@@ -256,7 +256,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.4,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
@@ -336,7 +336,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.4,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: {
@@ -426,6 +426,7 @@
 
     // Full-width chart (no side panel)
     var mainWrap = document.createElement('div');
+    mainWrap.className = 'chart-main';
     el.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -436,7 +437,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 2.2,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v + '%'; }),
@@ -527,7 +528,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.4,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v ? v.toLocaleString() + ':1' : '—'; }),
@@ -589,7 +590,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.4,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
