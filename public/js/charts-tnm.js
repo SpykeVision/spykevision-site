@@ -34,26 +34,20 @@
     Dyn: [4567,4781,5000,4153,4330,4543,4804,4934,5020,4596,4651,4648],
   };
 
-  /* ── Theme-adaptive colors ───────────────────────────── */
-  var st = getComputedStyle(document.documentElement);
-  function cv(name) { return st.getPropertyValue(name).trim(); }
-  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-
+  /* ── Dark chart theme (fixed) ────────────────────────── */
   var TC = {
-    text:    cv('--text-2')  || (isDark ? '#ccc'    : '#3a3a3c'),
-    text3:   cv('--text-3')  || (isDark ? '#888'    : '#8e8e93'),
-    border:  cv('--border')  || (isDark ? '#38383a' : '#e2e2e7'),
-    surface: cv('--surface') || (isDark ? '#1c1c1e' : '#ffffff'),
-    ttBg:    isDark ? '#1c1c1e' : '#ffffff',
-    ttBord:  isDark ? '#38383a' : '#e2e2e7',
-    ttTitle: cv('--text')    || (isDark ? '#f2f2f7' : '#1c1c1e'),
+    text:    '#ccc',
+    text3:   '#888',
+    ttBg:    '#1e1e1e',
+    ttBord:  '#3a3a3a',
+    ttTitle: '#fff',
   };
 
   /* ── Chart.js defaults ───────────────────────────────── */
-  Chart.defaults.color = TC.text3;
+  Chart.defaults.color = '#999';
   Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
   Chart.defaults.font.size = 12;
-  var GRID = { color: TC.border };
+  var GRID = { color: '#2a2a2a' };
 
   /* ── Helpers ──────────────────────────────────────────── */
   function ttOpts(fmtFn) {
@@ -229,10 +223,15 @@
       },
     });
 
-    // Table
-    var rows = KEYS.map(function (k) { return [C[k].label].concat(LM[k]); });
-    var tbl = mkTableCard(el, 'BRIGHTNESS — FULL RANGE', 'Lumens (lm) · click a column to sort', ['Aperture'].concat(ZOOMS), rows, 'tbl-brightness');
-    colorFirstCol(tbl, KEYS);
+    // Table: transposed — rows=zoom, cols=aperture (fits mobile)
+    var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
+    var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return LM[k][i]; })); });
+    var tbl = mkTableCard(el, 'BRIGHTNESS — FULL RANGE', 'Lumens (lm) · click a column to sort', head, rows, 'tbl-brightness');
+    // Color aperture column headers
+    var ths = tbl.querySelectorAll('thead th');
+    KEYS.forEach(function (k, i) {
+      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
+    });
   }
 
   /* ══════════════════════════════════════════════════════
@@ -299,9 +298,13 @@
       },
     });
 
-    var rows = KEYS.map(function (k) { return [C[k].label].concat(CR[k]); });
-    var tbl = mkTableCard(el, 'NATIVE CONTRAST — FULL RANGE', 'On/Off ratio · click a column to sort', ['Aperture'].concat(ZOOMS), rows, 'tbl-contrast');
-    colorFirstCol(tbl, KEYS);
+    var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
+    var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return CR[k][i]; })); });
+    var tbl = mkTableCard(el, 'NATIVE CONTRAST — FULL RANGE', 'On/Off ratio · click a column to sort', head, rows, 'tbl-contrast');
+    var ths = tbl.querySelectorAll('thead th');
+    KEYS.forEach(function (k, i) {
+      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
+    });
   }
 
   /* ══════════════════════════════════════════════════════
@@ -391,14 +394,18 @@
       },
     });
 
-    // Table: both lm and CR:1 in one cell per zoom column
-    var rows = KEYS.map(function (k) {
-      return [C[k].label].concat(LM[k].map(function (v, i) {
-        return v.toLocaleString() + ' lm<br><span style="color:var(--text-3);font-size:11px">' + CR[k][i].toLocaleString() + ':1</span>';
+    // Table: transposed — rows=zoom, cols=aperture, cell=lm/CR
+    var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
+    var rows = ZOOMS.map(function (z, i) {
+      return [z].concat(KEYS.map(function (k) {
+        return LM[k][i].toLocaleString() + ' lm<br><span style="color:#888;font-size:11px">' + CR[k][i].toLocaleString() + ':1</span>';
       }));
     });
-    var tbl = mkTableCard(el, 'BRIGHTNESS & CONTRAST — FULL RANGE', 'Lumens / contrast ratio per operating point · click a column to sort', ['Aperture'].concat(ZOOMS), rows, 'tbl-combined');
-    colorFirstCol(tbl, KEYS);
+    var tbl = mkTableCard(el, 'BRIGHTNESS & CONTRAST — FULL RANGE', 'Lumens / contrast ratio · click a column to sort', head, rows, 'tbl-combined');
+    var ths = tbl.querySelectorAll('thead th');
+    KEYS.forEach(function (k, i) {
+      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
+    });
   }
 
   /* ══════════════════════════════════════════════════════
@@ -459,10 +466,14 @@
       if (tds2[i]) tds2[i].innerHTML = '<span class="color-dot" style="background:' + C[d.k].hex + '"></span>' + C[d.k].label;
     });
 
-    // Full quality score table
-    var rows = KEYS.map(function (k) { return [C[k].label].concat(QUAL[k].map(function (v) { return v + '%'; })); });
-    var tbl = mkTableCard(el, 'QUALITY METRIC — FULL RANGE', 'Brightness × Contrast normalized · click a column to sort', ['Aperture'].concat(ZOOMS), rows, 'tbl-quality');
-    colorFirstCol(tbl, KEYS);
+    // Full quality score table: transposed
+    var headQ = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
+    var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return QUAL[k][i] + '%'; })); });
+    var tbl = mkTableCard(el, 'QUALITY METRIC — FULL RANGE', 'Brightness × Contrast normalized · click a column to sort', headQ, rows, 'tbl-quality');
+    var ths = tbl.querySelectorAll('thead th');
+    KEYS.forEach(function (k, i) {
+      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
+    });
   }
 
   /* ══════════════════════════════════════════════════════
