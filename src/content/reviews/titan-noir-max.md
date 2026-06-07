@@ -2,7 +2,8 @@
 title: XGIMI Titan Noir Max — Lens Quality, Brightness & Contrast
 eyebrow: In-Depth Review · Part 2
 category: 4K Laser • Flagship
-summary: Lens quality, brightness and contrast measurements for the XGIMI Titan Noir Max. Native, ANSI and ADL contrast across the full zoom range.
+summary: Lens quality, brightness and contrast measurements for the XGIMI Titan
+  Noir Max. Native, ANSI and ADL contrast across the full zoom range.
 cover: /images/brightness.png
 date: 2026-06-01
 readTime: 18 min read
@@ -21,13 +22,21 @@ cons:
   - Uniformity varies with zoom/shift on my sample
   - Laser throttling on sustained white fields
 ratings:
-  - { label: Brightness, score: 9.6 }
-  - { label: Contrast, score: 9.2 }
-  - { label: Lens / optics, score: 9.4 }
-  - { label: Sharpness, score: 8.8 }
-  - { label: Value, score: 8.6 }
+  - label: Brightness
+    score: 9.6
+  - label: Contrast
+    score: 9.2
+  - label: Lens / optics
+    score: 9.4
+  - label: Sharpness
+    score: 8.8
+  - label: Value
+    score: 8.6
 verdictTitle: A measurement-backed flagship
-verdictText: The Titan Noir Max combines a genuinely versatile lens with a dual-iris contrast system that, on paper and on the bench, delivers the goods. A few firmware-fixable quirks keep it from perfection, but this is one of the most capable home-theater projectors available today.
+verdictText: The Titan Noir Max combines a genuinely versatile lens with a
+  dual-iris contrast system that, on paper and on the bench, delivers the goods.
+  A few firmware-fixable quirks keep it from perfection, but this is one of the
+  most capable home-theater projectors available today.
 ---
 
 Hey everyone, Part 2 is finally here. I put a significant amount of work into the measurements and testing for the Titan Noir Max (TNM), so let's get right into it. This part covers the lens, the optics, and the full brightness and contrast workup.
@@ -105,4 +114,4 @@ Finally, **ADL** (average display level) contrast shows how black level behaves 
 
 <figure><img src="/images/adl.png" alt="ADL contrast vs content brightness"><figcaption>ADL contrast vs content level at F7, shifted lens. 50% ADL equals ANSI.</figcaption></figure>
 
-Part 1 (design, setup & features) is on the [AVS Forum](https://www.avsforum.com). Part 3 (color & HDR) coming soon.
+Part 1 (unboxing, design & build quality) is [here](/reviews/titan-noir-max-part-1/). Part 3 (color & HDR) coming soon.
