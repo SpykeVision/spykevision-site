@@ -286,13 +286,112 @@ a:hover { color: var(--accent-dk); }
 .prose figure img { border-radius: var(--radius-sm); box-shadow: var(--shadow); width: 100%; }
 .prose figcaption { text-align: center; color: var(--text-3); font-size: 14px; margin-top: 10px; }
 
+/* Photo gallery — grid of clickable images */
+.prose .gallery {
+  display: grid; gap: 10px; margin: 28px 0;
+  grid-template-columns: 1fr 1fr; align-items: start;
+}
+.prose .gallery figure { margin: 0; padding-bottom: 4px; }
+.prose .gallery figcaption { font-size: 12px; margin-top: 5px; }
+.prose .gallery img {
+  border-radius: var(--radius-sm); box-shadow: var(--shadow);
+  width: 100%; object-fit: cover; aspect-ratio: 4/3; display: block;
+  cursor: zoom-in;
+}
+.prose .gallery.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+/* Odd-count galleries — hero image + thumbnail strip */
+.prose .gallery.carousel { display: block; }
+.car-container { display: flex; align-items: center; gap: 6px; }
+.car-main { flex: 1; min-width: 0; }
+.car-main figure { margin: 0; }
+.car-btn {
+  flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+  border: none; background: var(--surface-2); color: var(--text);
+  font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .15s; opacity: 0.4;
+}
+.car-btn:hover { opacity: 0.9; }
+.car-thumbs {
+  display: flex; gap: 6px; overflow-x: auto;
+  padding: 8px 0 4px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.car-thumb {
+  flex-shrink: 0; width: 72px; height: 54px;
+  border: 2px solid transparent; border-radius: 6px;
+  overflow: hidden; cursor: pointer; padding: 0; background: none;
+  opacity: 0.5; transition: border-color .15s, opacity .15s;
+}
+.car-thumb.active { border-color: var(--accent); opacity: 1; }
+.car-thumb:hover:not(.active) { opacity: 0.75; }
+.car-thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  aspect-ratio: unset; box-shadow: none; border-radius: 0; cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .prose .gallery, .prose .gallery.cols-3 { grid-template-columns: 1fr 1fr; }
+  .car-btn { width: 28px; height: 28px; font-size: 16px; }
+  .car-thumb { width: 58px; height: 44px; }
+}
+
+/* Lightbox overlay */
+.lb-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.92); backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.lb-overlay.open { display: flex; }
+.lb-overlay img {
+  max-width: 90vw; max-height: 82vh;
+  border-radius: 10px; box-shadow: 0 16px 60px rgba(0,0,0,.55);
+  object-fit: contain; display: block;
+}
+.lb-caption {
+  color: rgba(255,255,255,.75); font-size: 13px; margin-top: 12px;
+  text-align: center; max-width: 80%;
+}
+.lb-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,.14); border: none; border-radius: 50%;
+  width: 50px; height: 50px; font-size: 22px; color: #fff;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(6px); transition: background .15s;
+  -webkit-backdrop-filter: blur(6px);
+}
+.lb-btn:hover { background: rgba(255,255,255,.28); }
+.lb-btn.prev { left: 16px; }
+.lb-btn.next { right: 16px; }
+.lb-close {
+  position: absolute; top: 14px; right: 16px;
+  background: rgba(255,255,255,.14); border: none; border-radius: 50%;
+  width: 42px; height: 42px; font-size: 20px; color: #fff;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.lb-counter {
+  position: absolute; bottom: 16px;
+  color: rgba(255,255,255,.5); font-size: 12px; letter-spacing: .04em;
+}
+@media (max-width: 600px) {
+  .lb-btn { width: 40px; height: 40px; font-size: 18px; }
+  .lb-btn.prev { left: 6px; }
+  .lb-btn.next { right: 6px; }
+}
+
 /* callout / note */
 .note {
   background: #eef4ff; border-left: 4px solid var(--accent);
   border-radius: var(--radius-sm); padding: 16px 18px; margin: 24px 0;
-  font-size: 16px; color: var(--text-2);
+  font-size: 16px; color: #1c1c1e;
 }
 .note strong { color: var(--accent-dk); }
+[data-theme="dark"] .note { background: rgba(0,122,255,.14); color: #e5e5ea; }
+[data-theme="dark"] .note strong { color: #6ab0ff; }
 
 /* spec table — larger, cleaner, with header support */
 .spec-table { width: 100%; border-collapse: collapse; margin: 28px 0; background: var(--surface);
@@ -628,5 +727,92 @@ figure.ba figcaption {
   font-size: 0.82em;
   color: var(--text-2);
   margin-top: 8px;
+}
+
+/* ── Interactive Charts (Chart.js) ─────────────────────── */
+.chart-section {
+  background: #141414;
+  border-radius: 14px;
+  padding: 28px 24px 24px;
+  margin: 32px 0;
+  color: #e0e0e0;
+  font-size: 14px;
+}
+.cs-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.cs-title strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.cs-title span {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-top: 3px;
+}
+.chart-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.chart-main {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+}
+.chart-side {
+  flex: 0 0 220px;
+  position: relative;
+}
+.chart-table-wrap {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  color: #bbb;
+}
+.data-table th {
+  background: #1e1e1e;
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: .06em;
+  padding: 10px 10px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.data-table th:hover { background: #272727; }
+.data-table th.sort-asc::after  { content: ' ↑'; }
+.data-table th.sort-desc::after { content: ' ↓'; }
+.data-table td {
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid #232323;
+}
+.data-table tbody tr:hover td { background: #1a1a1a; }
+.data-table .label-col { text-align: left; white-space: nowrap; }
+.color-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+@media (max-width: 680px) {
+  .chart-row { flex-direction: column; }
+  .chart-side { flex: 0 0 auto; width: 100%; }
 }
 
