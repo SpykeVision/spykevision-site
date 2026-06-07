@@ -52,9 +52,23 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
       {toc.length > 0 && (
         <nav class="toc">
           <h4>In this review</h4>
-          <ul>
-            {toc.map((h) => (<li><a href={`#${h.slug}`}>{h.text}</a></li>))}
-          </ul>
+          {review.tocGroups ? (
+            review.tocGroups.map((group) => {
+              const items = toc.filter(h => group.sections.includes(h.text));
+              return items.length > 0 ? (
+                <>
+                  <p class="toc-group-label">{group.label}</p>
+                  <ul>
+                    {items.map((h) => (<li><a href={`#${h.slug}`}>{h.text}</a></li>))}
+                  </ul>
+                </>
+              ) : null;
+            })
+          ) : (
+            <ul>
+              {toc.map((h) => (<li><a href={`#${h.slug}`}>{h.text}</a></li>))}
+            </ul>
+          )}
         </nav>
       )}
 

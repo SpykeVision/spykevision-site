@@ -37,6 +37,30 @@ verdictText: The Titan Noir Max combines a genuinely versatile lens with a
   dual-iris contrast system that, on paper and on the bench, delivers the goods.
   A few firmware-fixable quirks keep it from perfection, but this is one of the
   most capable home-theater projectors available today.
+tocGroups:
+  - label: Packaging & Build
+    sections:
+      - The Outer Box
+      - The Carry Case
+      - Design & Build
+      - The Feet
+      - Airflow & Controls — Read This
+      - Accessories Box
+      - The Remote
+      - "First Light: Brightness at 250 Inches"
+  - label: The Lens
+    sections:
+      - The Lens
+      - Distortion & Lens Shift
+      - "Zoom Range: Firmware 1.0.99"
+      - XPR-Shift & Screen-Door Effect
+      - Sharpness & Optical Resolution
+      - White Field Uniformity
+  - label: Measurements
+    sections:
+      - Brightness & Contrast Measurements
+      - "Dual Iris: Summary"
+      - DBLE (Dynamic Black Level Enhancement)
 ---
 
 Let's get this started. As promised, I'll post my findings in blocks to get as much useful info out before the Kickstarter ends. Today starts with packaging, build quality, accessories, the remote, and initial physical impressions — then we get into full measurements.

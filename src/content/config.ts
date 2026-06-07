@@ -20,6 +20,11 @@ const reviews = defineCollection({
     ratings: z.array(z.object({ label: z.string(), score: z.number() })).default([]),
     verdictTitle: z.string().optional(),
     verdictText: z.string().optional(),
+    buyLink: z.string().url().optional(),
+    tocGroups: z.array(z.object({
+      label: z.string(),
+      sections: z.array(z.string()),
+    })).optional(),
   }),
 });
 
