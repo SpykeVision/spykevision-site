@@ -435,11 +435,22 @@ figure.video-local video {
   background: #000;
   max-height: 70vh;
 }
-figure.video-local figcaption {
+figure.video-local figcaption,
+figure.video-r2 figcaption {
   text-align: center;
   font-size: 0.82em;
   color: var(--text-2);
   margin-top: 8px;
+}
+figure.video-r2 {
+  margin: 28px 0;
+}
+figure.video-r2 video {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+  background: #000;
+  max-height: 70vh;
 }
 
 /* ── Before / After slider ─────────────────────────────── */

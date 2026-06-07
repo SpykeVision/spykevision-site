@@ -27,6 +27,25 @@
       toPreview: ({ id }) => 'YouTube: ' + id,
     });
 
+    // R2 / CDN video — paste URL from the upload page (/admin/upload/).
+    CMS.registerEditorComponent({
+      id: 'r2video',
+      label: 'Video (R2 / CDN)',
+      fields: [
+        { name: 'src', label: 'Video URL (from /admin/upload/)', widget: 'string' },
+        { name: 'poster', label: 'Poster image URL (optional)', widget: 'string', required: false },
+        { name: 'caption', label: 'Caption', widget: 'string', required: false },
+      ],
+      pattern: /^<figure class="video-r2"[\s\S]*?<source src="(.*?)"[\s\S]*?(?:poster="(.*?)")?[\s\S]*?(?:<figcaption>([\s\S]*?)<\/figcaption>)?<\/figure>$/,
+      fromBlock: (match) => ({ src: match[1], poster: match[2] || '', caption: match[3] || '' }),
+      toBlock: ({ src, poster, caption }) =>
+        '<figure class="video-r2"><video controls playsinline' +
+        (poster ? ' poster="' + poster + '"' : '') +
+        '><source src="' + (src || '') + '" type="video/' + ((src || '').endsWith('.webm') ? 'webm' : 'mp4') + '"></video>' +
+        (caption ? '<figcaption>' + caption + '</figcaption>' : '') + '</figure>',
+      toPreview: ({ src, caption }) => 'R2 Video: ' + (src || '') + (caption ? ' — ' + caption : ''),
+    });
+
     // Local video upload — mp4/webm served from /uploads/.
     CMS.registerEditorComponent({
       id: 'localvideo',

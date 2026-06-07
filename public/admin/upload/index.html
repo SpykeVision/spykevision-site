@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video Upload — SpykeVision</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+           background: #0f0f10; color: #e8e8ed; min-height: 100vh;
+           display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 16px;
+            padding: 36px 32px; width: 100%; max-width: 520px; }
+    h1 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .sub { font-size: 13px; color: #8e8e93; margin-bottom: 28px; }
+    .drop {
+      border: 2px dashed #3a3a3c; border-radius: 12px; padding: 40px 24px;
+      text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
+      margin-bottom: 20px; position: relative;
+    }
+    .drop.over { border-color: #0a84ff; background: rgba(10,132,255,.08); }
+    .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon { font-size: 36px; margin-bottom: 10px; }
+    .drop-label { font-size: 15px; color: #8e8e93; }
+    .drop-label strong { color: #e8e8ed; }
+    .drop-hint { font-size: 12px; color: #636366; margin-top: 6px; }
+    .file-name { font-size: 14px; font-weight: 600; margin-bottom: 20px; color: #0a84ff;
+                 word-break: break-all; display: none; }
+    .progress-wrap { display: none; margin-bottom: 20px; }
+    .progress-bar { height: 6px; background: #2c2c2e; border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #0a84ff; border-radius: 99px;
+                     width: 0; transition: width .15s; }
+    .progress-text { font-size: 12px; color: #8e8e93; margin-top: 6px; text-align: right; }
+    .btn { display: block; width: 100%; padding: 14px; background: #0a84ff; color: #fff;
+           border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+           cursor: pointer; transition: opacity .2s; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .result { display: none; margin-top: 20px; }
+    .result-label { font-size: 12px; color: #8e8e93; margin-bottom: 6px; }
+    .result-url { background: #2c2c2e; border-radius: 8px; padding: 12px 14px;
+                  font-size: 13px; font-family: monospace; word-break: break-all;
+                  color: #30d158; user-select: all; cursor: text; }
+    .copy-btn { margin-top: 10px; display: block; width: 100%; padding: 11px;
+                background: #2c2c2e; color: #e8e8ed; border: none; border-radius: 8px;
+                font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s; }
+    .copy-btn:hover { background: #3a3a3c; }
+    .error { display: none; color: #ff453a; font-size: 13px; margin-top: 12px; }
+    .back { display: block; text-align: center; margin-top: 20px; font-size: 13px;
+            color: #8e8e93; text-decoration: none; }
+    .back:hover { color: #e8e8ed; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>Upload video</h1>
+  <p class="sub">Files go to Cloudflare R2 — served from your own CDN, no size limit in git.</p>
+
+  <div class="drop" id="dropZone">
+    <input type="file" id="fileInput" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" />
+    <div class="drop-icon">🎬</div>
+    <div class="drop-label"><strong>Drop a video file here</strong> or click to browse</div>
+    <div class="drop-hint">mp4 · webm · mov &nbsp;·&nbsp; max 500 MB</div>
+  </div>
+
+  <p class="file-name" id="fileName"></p>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-text" id="progressText">0%</div>
+  </div>
+
+  <button class="btn" id="uploadBtn" disabled>Upload</button>
+  <p class="error" id="errorMsg"></p>
+
+  <div class="result" id="result">
+    <p class="result-label">Public URL — copy and paste into CMS:</p>
+    <div class="result-url" id="resultUrl"></div>
+    <button class="copy-btn" id="copyBtn">Copy URL</button>
+  </div>
+
+  <a href="/admin/" class="back">← Back to CMS</a>
+</div>
+
+<script>
+  var fileInput = document.getElementById('fileInput');
+  var dropZone  = document.getElementById('dropZone');
+  var fileName  = document.getElementById('fileName');
+  var uploadBtn = document.getElementById('uploadBtn');
+  var progressWrap = document.getElementById('progressWrap');
+  var progressFill = document.getElementById('progressFill');
+  var progressText = document.getElementById('progressText');
+  var result    = document.getElementById('result');
+  var resultUrl = document.getElementById('resultUrl');
+  var copyBtn   = document.getElementById('copyBtn');
+  var errorMsg  = document.getElementById('errorMsg');
+  var selectedFile = null;
+
+  function setFile(file) {
+    if (!file) return;
+    selectedFile = file;
+    fileName.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(1) + ' MB)';
+    fileName.style.display = 'block';
+    uploadBtn.disabled = false;
+    result.style.display = 'none';
+    errorMsg.style.display = 'none';
+  }
+
+  fileInput.addEventListener('change', function() { setFile(this.files[0]); });
+
+  dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('over'); });
+  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('over'); });
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault(); dropZone.classList.remove('over');
+    setFile(e.dataTransfer.files[0]);
+  });
+
+  uploadBtn.addEventListener('click', async function() {
+    if (!selectedFile) return;
+    uploadBtn.disabled = true;
+    errorMsg.style.display = 'none';
+    progressWrap.style.display = 'block';
+    progressFill.style.width = '0%';
+    progressText.textContent = '0%';
+
+    try {
+      // 1. Get presigned URL
+      var res = await fetch('/api/r2-presign?filename=' + encodeURIComponent(selectedFile.name) +
+        '&type=' + encodeURIComponent(selectedFile.type) +
+        '&size=' + selectedFile.size);
+      if (!res.ok) { throw new Error(await res.text()); }
+      var data = await res.json();
+
+      // 2. Upload directly to R2 via XHR (for progress events)
+      await new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('PUT', data.uploadUrl);
+        xhr.setRequestHeader('Content-Type', selectedFile.type);
+        xhr.upload.addEventListener('progress', function(e) {
+          if (e.lengthComputable) {
+            var pct = Math.round(e.loaded / e.total * 100);
+            progressFill.style.width = pct + '%';
+            progressText.textContent = pct + '%';
+          }
+        });
+        xhr.addEventListener('load', function() {
+          if (xhr.status >= 200 && xhr.status < 300) resolve();
+          else reject(new Error('Upload failed: ' + xhr.status));
+        });
+        xhr.addEventListener('error', function() { reject(new Error('Network error')); });
+        xhr.send(selectedFile);
+      });
+
+      // 3. Show result
+      progressFill.style.width = '100%';
+      progressText.textContent = '100%';
+      resultUrl.textContent = data.publicUrl;
+      result.style.display = 'block';
+    } catch (err) {
+      errorMsg.textContent = err.message;
+      errorMsg.style.display = 'block';
+      uploadBtn.disabled = false;
+    }
+  });
+
+  copyBtn.addEventListener('click', function() {
+    navigator.clipboard.writeText(resultUrl.textContent).then(function() {
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function() { copyBtn.textContent = 'Copy URL'; }, 2000);
+    });
+  });
+</script>
+</body>
+</html>
