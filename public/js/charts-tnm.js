@@ -188,7 +188,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.6,
+        aspectRatio: 1.4,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
@@ -257,7 +257,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.6,
+        aspectRatio: 1.4,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
@@ -325,15 +325,15 @@
           return {
             label: C[k].label,
             data: LM[k].map(function (v, i) { return { x: v, y: CR[k][i] }; }),
-            backgroundColor: C[k].hex + 'bb',
+            backgroundColor: C[k].hex + 'cc',
             borderColor: C[k].hex,
-            pointRadius: 5, pointHoverRadius: 7,
+            pointRadius: 7, pointHoverRadius: 9,
           };
         }),
       },
       options: {
         responsive: true,
-        aspectRatio: 1.6,
+        aspectRatio: 1.4,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: {
@@ -379,8 +379,8 @@
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#1e1e1e', titleColor: '#fff',
-            bodyColor: '#ccc', borderColor: '#3a3a3a', borderWidth: 1,
+            backgroundColor: TC.ttBg, titleColor: TC.ttTitle,
+            bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1,
             callbacks: { label: function (ctx) { return ' ' + ctx.parsed.y + '× contrast multiplier'; } },
           },
         },
@@ -391,18 +391,14 @@
       },
     });
 
-    // Table: lm and CR interleaved per aperture
-    var rows = [];
-    KEYS.forEach(function (k) {
-      rows.push([C[k].label + ' lm'].concat(LM[k]));
-      rows.push([C[k].label + ' CR:1'].concat(CR[k]));
+    // Table: both lm and CR:1 in one cell per zoom column
+    var rows = KEYS.map(function (k) {
+      return [C[k].label].concat(LM[k].map(function (v, i) {
+        return v.toLocaleString() + ' lm<br><span style="color:var(--text-3);font-size:11px">' + CR[k][i].toLocaleString() + ':1</span>';
+      }));
     });
-    var tbl = mkTableCard(el, 'BRIGHTNESS & CONTRAST — FULL RANGE', 'Lumens and On/Off ratio per operating point · click a column to sort', ['Aperture'].concat(ZOOMS), rows, 'tbl-combined');
-    var tds = tbl.querySelectorAll('tbody tr td:first-child');
-    KEYS.forEach(function (k, i) {
-      if (tds[i * 2])     tds[i * 2].innerHTML     = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label + ' lm';
-      if (tds[i * 2 + 1]) tds[i * 2 + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label + ' CR:1';
-    });
+    var tbl = mkTableCard(el, 'BRIGHTNESS & CONTRAST — FULL RANGE', 'Lumens / contrast ratio per operating point · click a column to sort', ['Aperture'].concat(ZOOMS), rows, 'tbl-combined');
+    colorFirstCol(tbl, KEYS);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -421,13 +417,9 @@
       QUAL[k] = LM[k].map(function (v, i) { return Math.round(v * CR[k][i] / globalMax * 100); });
     });
 
-    var row = document.createElement('div');
-    row.className = 'chart-row';
-    el.appendChild(row);
-
+    // Full-width chart (no side panel)
     var mainWrap = document.createElement('div');
-    mainWrap.className = 'chart-main';
-    row.appendChild(mainWrap);
+    el.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
       type: 'line',
@@ -437,7 +429,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.6,
+        aspectRatio: 2.2,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v + '%'; }),
@@ -449,12 +441,7 @@
       },
     });
 
-    // Side: best zoom per aperture table
-    var sideWrap = document.createElement('div');
-    sideWrap.className = 'chart-side';
-    row.appendChild(sideWrap);
-    mkTitle(sideWrap, 'BEST ZOOM PER APERTURE', '');
-
+    // Best zoom per aperture — separate card
     var best = [
       { k:'F2',  zoom:'1.5×', lm:4162,  cr:2195,  range:'1.8–1.0×' },
       { k:'F3',  zoom:'1.6×', lm:3221,  cr:3867,  range:'2.1–1.3×' },
@@ -466,13 +453,13 @@
     var bestRows = best.map(function (d) {
       return [C[d.k].label, d.zoom, d.lm.toLocaleString() + ' lm', d.cr.toLocaleString() + ':1', d.range];
     });
-    var tbl2 = mkTable(sideWrap, ['Ap.','Peak','Brightness','Contrast','Range ≥90%'], bestRows, 'tbl-quality-best');
+    var tbl2 = mkTableCard(el, 'BEST ZOOM PER APERTURE', 'Peak quality score and good range (≥90%) · click a column to sort', ['Ap.','Peak','Brightness','Contrast','Range ≥90%'], bestRows, 'tbl-quality-best');
     var tds2 = tbl2.querySelectorAll('tbody tr td:first-child');
     best.forEach(function (d, i) {
       if (tds2[i]) tds2[i].innerHTML = '<span class="color-dot" style="background:' + C[d.k].hex + '"></span>' + C[d.k].label;
     });
 
-    // Main table
+    // Full quality score table
     var rows = KEYS.map(function (k) { return [C[k].label].concat(QUAL[k].map(function (v) { return v + '%'; })); });
     var tbl = mkTableCard(el, 'QUALITY METRIC — FULL RANGE', 'Brightness × Contrast normalized · click a column to sort', ['Aperture'].concat(ZOOMS), rows, 'tbl-quality');
     colorFirstCol(tbl, KEYS);
@@ -529,7 +516,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.6,
+        aspectRatio: 1.4,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v ? v.toLocaleString() + ':1' : '—'; }),
@@ -591,7 +578,7 @@
       },
       options: {
         responsive: true,
-        aspectRatio: 1.6,
+        aspectRatio: 1.4,
         plugins: {
           legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
