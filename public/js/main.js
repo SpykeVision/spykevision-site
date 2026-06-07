@@ -138,21 +138,45 @@
     box.addEventListener('click', function () { box.style.display = 'none'; });
   }
 
-  // Active TOC highlight on scroll
-  var tocLinks = document.querySelectorAll('.toc a');
+  // Build floating section nav (desktop) from the inline TOC, show on scroll
+  var inlineToc = document.querySelector('.toc');
+  var floatToc = null;
+  if (inlineToc) {
+    floatToc = document.createElement('nav');
+    floatToc.className = 'toc-float';
+    floatToc.innerHTML = '<h4>In this review</h4>' +
+      '<ul>' + Array.prototype.map.call(inlineToc.querySelectorAll('li'), function (li) {
+        return '<li>' + li.innerHTML + '</li>';
+      }).join('') + '</ul>';
+    document.body.appendChild(floatToc);
+
+    // Show floating nav once the inline TOC scrolls out of view
+    window.addEventListener('scroll', function () {
+      var heroBottom = inlineToc.getBoundingClientRect().bottom;
+      floatToc.classList.toggle('visible', heroBottom < 0);
+    }, { passive: true });
+  }
+
+  // Active section highlight (both inline + floating TOC)
+  var tocLinks = document.querySelectorAll('.toc a, .toc-float a');
   if (tocLinks.length && 'IntersectionObserver' in window) {
     var map = {};
     tocLinks.forEach(function (a) {
       var id = a.getAttribute('href').slice(1);
-      var el = document.getElementById(id);
-      if (el) map[id] = a;
+      if (!map[id]) map[id] = [];
+      map[id].push(a);
     });
     var obs = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
-          tocLinks.forEach(function (a) { a.style.color = ''; a.style.fontWeight = ''; });
-          var a = map[e.target.id];
-          if (a) { a.style.color = 'var(--accent)'; a.style.fontWeight = '700'; }
+          tocLinks.forEach(function (a) {
+            a.classList.remove('active');
+            if (a.closest('.toc')) { a.style.color = ''; a.style.fontWeight = ''; }
+          });
+          (map[e.target.id] || []).forEach(function (a) {
+            a.classList.add('active');
+            if (a.closest('.toc')) { a.style.color = 'var(--accent)'; a.style.fontWeight = '700'; }
+          });
         }
       });
     }, { rootMargin: '-10% 0px -80% 0px' });

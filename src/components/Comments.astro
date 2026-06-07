@@ -1,0 +1,32 @@
+---
+// Giscus comments (GitHub Discussions). After enabling Discussions on the repo
+// and configuring at https://giscus.app, paste the two IDs below.
+// Until both are filled, the comments block stays hidden — nothing breaks.
+const REPO = 'SpykeVision/spykevision-site';
+const REPO_ID = '';        // e.g. R_kgDOxxxxxxx
+const CATEGORY = 'General';
+const CATEGORY_ID = '';    // e.g. DIC_kwDOxxxxxxx
+const enabled = Boolean(REPO_ID && CATEGORY_ID);
+---
+{enabled && (
+  <section class="comments article-page wrap">
+    <h2 class="comments-title">Comments</h2>
+    <script
+      is:inline
+      src="https://giscus.app/client.js"
+      data-repo={REPO}
+      data-repo-id={REPO_ID}
+      data-category={CATEGORY}
+      data-category-id={CATEGORY_ID}
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="preferred_color_scheme"
+      data-lang="en"
+      crossorigin="anonymous"
+      async
+    ></script>
+  </section>
+)}
