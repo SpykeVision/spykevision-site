@@ -833,7 +833,18 @@ figure.ba figcaption {
 }
 .chart-table-wrap {
   overflow-x: auto;
+  position: relative;
 }
+/* Fade-right hint that table is scrollable */
+.chart-table-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0; width: 28px;
+  background: linear-gradient(to left, var(--surface) 0%, transparent 100%);
+  pointer-events: none;
+}
+.chart-table-wrap::-webkit-scrollbar { height: 4px; }
+.chart-table-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -880,5 +891,16 @@ figure.ba figcaption {
 @media (max-width: 720px) {
   .chart-row { flex-direction: column; }
   .chart-side { flex: 0 0 auto; width: 100%; }
+}
+
+/* Mobile: compact tables so they fit without excessive scrolling */
+@media (max-width: 600px) {
+  .chart-section { padding: 18px 14px 18px; }
+  .cs-title strong { font-size: 12px; letter-spacing: .03em; }
+  .cs-title span { font-size: 11px; }
+  .data-table { font-size: 11px; }
+  .data-table th { padding: 8px 6px; font-size: 9px; letter-spacing: .02em; }
+  .data-table td { padding: 7px 6px; }
+  .data-table .label-col { font-size: 11px; }
 }
 
