@@ -407,6 +407,98 @@ a:hover { color: var(--accent-dk); }
   .theme-toggle { right: 12px; top: auto; bottom: 80px; transform: none; }
 }
 
+/* ── Draft / Preview mode ──────────────────────────────── */
+
+/* Draft cards hidden by default; shown only in preview mode */
+.card[data-draft="true"] { display: none; }
+
+/* Draft badge on cards */
+.draft-badge {
+  display: inline-block;
+  background: #ff9f0a22;
+  color: #ff9f0a;
+  border: 1px solid #ff9f0a55;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+/* Preview bar — top strip shown to owner in preview mode */
+#previewBar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 9999;
+  background: #ff9f0a;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.preview-bar-exit {
+  color: #000;
+  text-decoration: none;
+  background: rgba(0,0,0,.12);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+.preview-bar-exit:hover { background: rgba(0,0,0,.22); }
+
+/* Push page content down when preview bar is showing */
+.preview-mode body { padding-top: 40px; }
+
+/* Draft banner inside review page */
+.draft-banner {
+  background: #ff9f0a18;
+  border-bottom: 1px solid #ff9f0a44;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff9f0a;
+}
+.draft-banner-edit {
+  color: #ff9f0a;
+  text-decoration: none;
+  border: 1px solid #ff9f0a66;
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.draft-banner-edit:hover { background: #ff9f0a22; }
+
+/* Draft overlay — full-screen block for non-preview visitors on a draft page */
+.draft-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: var(--bg);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.draft-overlay-box {
+  text-align: center;
+  max-width: 360px;
+}
+.draft-overlay-icon { font-size: 48px; margin-bottom: 16px; }
+.draft-overlay-box h2 { font-size: 24px; margin-bottom: 10px; }
+.draft-overlay-box p  { color: var(--text-2); margin-bottom: 24px; }
+
 /* ── YouTube embed ─────────────────────────────────────── */
 .video-embed {
   position: relative;

@@ -3,7 +3,8 @@ import { getCollection } from 'astro:content';
 import Review from '../../layouts/Review.astro';
 
 export async function getStaticPaths() {
-  const reviews = await getCollection('reviews', ({ data }) => !data.draft);
+  // Build all slugs including drafts — draft pages are gated client-side.
+  const reviews = await getCollection('reviews');
   return reviews.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 

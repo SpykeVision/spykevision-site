@@ -1,3 +1,53 @@
+// Preview mode — owner visits /?preview=TOKEN to unlock draft articles
+(function () {
+  var TOKEN = 'svk-prev-7x4m9';
+  var KEY   = 'svk-preview';
+
+  // Activate / deactivate from URL param
+  var params = new URLSearchParams(location.search);
+  if (params.get('preview') === TOKEN) {
+    try { localStorage.setItem(KEY, TOKEN); } catch(e){}
+    params.delete('preview');
+    var qs = params.toString();
+    history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+  } else if (params.get('preview') === 'off') {
+    try { localStorage.removeItem(KEY); } catch(e){}
+    params.delete('preview');
+    history.replaceState(null, '', location.pathname);
+  }
+
+  var active;
+  try { active = localStorage.getItem(KEY) === TOKEN; } catch(e){}
+  if (!active) {
+    // Not in preview mode: show draft overlay if present, hide draft cards
+    var overlay = document.getElementById('draftOverlay');
+    if (overlay) overlay.style.display = 'flex';
+    return;
+  }
+
+  // Preview mode is ON
+  document.documentElement.classList.add('preview-mode');
+
+  // Show draft cards
+  document.querySelectorAll('[data-draft="true"]').forEach(function (el) {
+    el.style.display = '';
+  });
+
+  // On draft review pages: hide overlay, show banner
+  var overlay = document.getElementById('draftOverlay');
+  var banner  = document.getElementById('draftBanner');
+  if (overlay) overlay.style.display = 'none';
+  if (banner)  banner.style.display  = 'flex';
+
+  // Inject the preview bar
+  var bar = document.createElement('div');
+  bar.id = 'previewBar';
+  bar.innerHTML =
+    '<span>Preview mode</span>' +
+    '<a href="/?preview=off" class="preview-bar-exit">Exit preview</a>';
+  document.body.insertBefore(bar, document.body.firstChild);
+})();
+
 // Contact form via Web3Forms
 (function () {
   var form = document.getElementById('contactForm');

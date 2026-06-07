@@ -2,7 +2,8 @@
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 
-const reviews = (await getCollection('reviews', ({ data }) => !data.draft))
+// Include drafts — hidden from public by CSS/JS, visible to owner in preview mode.
+const reviews = (await getCollection('reviews'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 <Base
@@ -21,12 +22,13 @@ const reviews = (await getCollection('reviews', ({ data }) => !data.draft))
     ) : (
       <div class="grid" style="margin-bottom:60px">
         {reviews.map((r) => (
-          <a href={`/reviews/${r.slug}/`} class="card">
+          <a href={`/reviews/${r.slug}/`} class="card" data-draft={r.data.draft ? 'true' : null}>
             <div class="card-media">
               <img src={r.data.cover} alt={r.data.title} />
               {r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>}
             </div>
             <div class="card-body">
+              {r.data.draft && <span class="draft-badge">Draft</span>}
               {r.data.category && <span class="card-cat">{r.data.category}</span>}
               <h3>{r.data.title}</h3>
               <p>{r.data.summary}</p>

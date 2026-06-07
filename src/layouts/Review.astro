@@ -2,16 +2,32 @@
 import Base from './Base.astro';
 const { review, headings } = Astro.props;
 const fmtDate = new Date(review.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-// Build a TOC from the h2 headings in the body.
 const toc = (headings || []).filter((h) => h.depth === 2);
-const meta = [
-  fmtDate,
-  review.readTime,
-  review.extra,
-].filter(Boolean);
+const meta = [fmtDate, review.readTime, review.extra].filter(Boolean);
+const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
 ---
 <Base title={`${review.title} | SpykeVision`} description={review.summary} active="reviews">
-  <main class="wrap">
+  <!-- Draft overlay: shown to non-preview visitors when article is a draft -->
+  {review.draft && (
+    <div id="draftOverlay" class="draft-overlay">
+      <div class="draft-overlay-box">
+        <div class="draft-overlay-icon">🔒</div>
+        <h2>Not published yet</h2>
+        <p>This review is still a draft and hasn't been published.</p>
+        <a href="/" class="btn">← Back to home</a>
+      </div>
+    </div>
+  )}
+
+  <!-- Draft banner: shown in preview mode when article is a draft -->
+  {review.draft && (
+    <div id="draftBanner" class="draft-banner" style="display:none">
+      <span>Draft — not visible to visitors</span>
+      <a href={cmsEditUrl} class="draft-banner-edit">Edit in CMS →</a>
+    </div>
+  )}
+
+  <main class="wrap" data-draft={review.draft ? 'true' : null}>
     <div class="article-hero">
       {review.eyebrow && <p class="eyebrow">{review.eyebrow}</p>}
       <h1>{review.title}</h1>
