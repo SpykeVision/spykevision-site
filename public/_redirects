@@ -3,3 +3,6 @@
 /index.html        /                          301
 /about.html        /about/                    301
 /contact.html      /contact/                  301
+
+# API routes → Netlify Functions
+/api/r2-presign    /.netlify/functions/r2-presign    200

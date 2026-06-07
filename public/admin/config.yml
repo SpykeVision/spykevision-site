@@ -2,6 +2,9 @@ backend:
   name: git-gateway
   branch: main
 
+# Enables local CMS editing (safe on prod — only activates on localhost)
+local_backend: true
+
 # Uploaded images go into the repo and are served from your own domain.
 media_folder: "public/uploads"
 public_folder: "/uploads"

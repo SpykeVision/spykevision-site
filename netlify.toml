@@ -5,3 +5,9 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+[dev]
+  command = "npm run dev"
+  port = 4999
+  targetPort = 4321
+  autoLaunch = false
