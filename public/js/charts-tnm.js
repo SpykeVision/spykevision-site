@@ -73,8 +73,8 @@
       label: C[key].label, data: data,
       borderColor: C[key].hex, backgroundColor: C[key].hex + '22',
       pointBackgroundColor: C[key].hex,
-      pointRadius: 3, pointHoverRadius: 5,
-      borderWidth: 2, tension: 0.2, fill: false,
+      pointRadius: 4, pointHoverRadius: 7,
+      borderWidth: 2.5, tension: 0.3, fill: false,
     };
     if (dashed) ds.borderDash = [5, 4];
     return ds;
@@ -181,7 +181,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '420px';
+    mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -199,7 +199,13 @@
         },
         scales: {
           x: { grid: GRID },
-          y: { type: 'logarithmic', grid: GRID, ticks: { callback: function (v) { var s = v.toLocaleString(); return s; } } },
+          y: { type: 'logarithmic', grid: GRID, ticks: {
+            maxTicksLimit: 10,
+            callback: function (v) {
+              var nice = [500,600,700,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,7000,8000,9000,10000];
+              return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
+            }
+          } },
         },
       },
     });
@@ -259,7 +265,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '420px';
+    mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -277,7 +283,13 @@
         },
         scales: {
           x: { grid: GRID },
-          y: { type: 'logarithmic', grid: GRID, ticks: { callback: function (v) { var s = v.toLocaleString(); return s; } } },
+          y: { type: 'logarithmic', grid: GRID, ticks: {
+            maxTicksLimit: 10,
+            callback: function (v) {
+              var nice = [500,600,700,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,7000,8000,9000,10000];
+              return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
+            }
+          } },
         },
       },
     });
@@ -335,7 +347,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '420px';
+    mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -446,7 +458,7 @@
     // Full-width chart (no side panel)
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '420px';
+    mainWrap.style.height = '480px';
     el.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -510,7 +522,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '420px';
+    mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
     var AN = {
@@ -590,7 +602,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '420px';
+    mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
     var ADL_L = ['On/Off','1%','2%','5%','10%','20%','50%'];
@@ -619,7 +631,13 @@
         },
         scales: {
           x: { grid: GRID },
-          y: { type: 'logarithmic', grid: GRID, ticks: { callback: function (v) { var s = v.toLocaleString(); return s; } } },
+          y: { type: 'logarithmic', grid: GRID, ticks: {
+            maxTicksLimit: 10,
+            callback: function (v) {
+              var nice = [500,600,700,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,7000,8000,9000,10000];
+              return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
+            }
+          } },
         },
       },
     });

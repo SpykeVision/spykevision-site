@@ -826,7 +826,7 @@ figure.ba figcaption {
   flex: 1 1 0;
   min-width: 0;
   position: relative;
-  height: 420px;
+  height: 480px;
 }
 .chart-side {
   flex: 0 0 240px;
