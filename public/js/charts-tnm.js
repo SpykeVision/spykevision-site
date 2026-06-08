@@ -193,13 +193,13 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 4 } },
+        layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
         },
         scales: {
-          x: { grid: GRID },
+          x: { grid: GRID, afterFit: function (s) { s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -278,13 +278,13 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 4 } },
+        layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
-          x: { grid: GRID },
+          x: { grid: GRID, afterFit: function (s) { s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -472,13 +472,13 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 4 } },
+        layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v + '%'; }),
         },
         scales: {
-          x: { grid: GRID },
+          x: { grid: GRID, afterFit: function (s) { s.paddingRight = 0; } },
           y: { grid: GRID, min: 0, max: 105, ticks: { callback: function (v) { return v + '%'; } } },
         },
       },
@@ -566,13 +566,13 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 4 } },
+        layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: { mode: 'index', intersect: false, backgroundColor: TC.ttBg, titleColor: TC.ttTitle, bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1, padding: 12 },
         },
         scales: {
-          x: { grid: GRID },
+          x: { grid: GRID, afterFit: function (s) { s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -636,13 +636,13 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 4 } },
+        layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
-          x: { grid: GRID },
+          x: { grid: GRID, afterFit: function (s) { s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
