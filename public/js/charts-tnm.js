@@ -181,7 +181,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '360px';
+    mainWrap.style.height = '420px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -194,12 +194,12 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
+          legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
         },
         scales: {
           x: { grid: GRID },
-          y: { grid: GRID, beginAtZero: false, ticks: { callback: function (v) { return v.toLocaleString(); } } },
+          y: { type: 'logarithmic', grid: GRID, ticks: { callback: function (v) { var s = v.toLocaleString(); return s; } } },
         },
       },
     });
@@ -259,7 +259,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '360px';
+    mainWrap.style.height = '420px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -272,12 +272,12 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
+          legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
           x: { grid: GRID },
-          y: { grid: GRID, beginAtZero: false, ticks: { callback: function (v) { return v.toLocaleString(); } } },
+          y: { type: 'logarithmic', grid: GRID, ticks: { callback: function (v) { var s = v.toLocaleString(); return s; } } },
         },
       },
     });
@@ -335,7 +335,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '360px';
+    mainWrap.style.height = '420px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -355,7 +355,7 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
+          legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: {
             mode: 'nearest', intersect: true,
             backgroundColor: '#1e1e1e', titleColor: '#fff',
@@ -446,7 +446,7 @@
     // Full-width chart (no side panel)
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '360px';
+    mainWrap.style.height = '420px';
     el.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -459,7 +459,7 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
+          legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v + '%'; }),
         },
         scales: {
@@ -510,7 +510,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '360px';
+    mainWrap.style.height = '420px';
     row.appendChild(mainWrap);
 
     var AN = {
@@ -551,12 +551,12 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
+          legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v ? v.toLocaleString() + ':1' : '—'; }),
         },
         scales: {
           x: { grid: GRID },
-          y: { grid: GRID, beginAtZero: false },
+          y: { type: 'logarithmic', grid: GRID, ticks: { callback: function (v) { return v.toLocaleString(); } } },
         },
       },
     });
@@ -590,7 +590,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '360px';
+    mainWrap.style.height = '420px';
     row.appendChild(mainWrap);
 
     var ADL_L = ['On/Off','1%','2%','5%','10%','20%','50%'];
@@ -614,12 +614,12 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'bottom', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
+          legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
           x: { grid: GRID },
-          y: { grid: GRID, beginAtZero: false, ticks: { callback: function (v) { return v.toLocaleString(); } } },
+          y: { type: 'logarithmic', grid: GRID, ticks: { callback: function (v) { var s = v.toLocaleString(); return s; } } },
         },
       },
     });

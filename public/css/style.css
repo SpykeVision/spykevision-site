@@ -826,7 +826,7 @@ figure.ba figcaption {
   flex: 1 1 0;
   min-width: 0;
   position: relative;
-  height: 360px;
+  height: 420px;
 }
 .chart-side {
   flex: 0 0 240px;
@@ -891,7 +891,7 @@ figure.ba figcaption {
 }
 
 @media (max-width: 600px) {
-  .chart-main { height: 280px; }
+  .chart-main { height: 300px; }
 }
 
 /* Mobile: compact tables so they fit without excessive scrolling */
