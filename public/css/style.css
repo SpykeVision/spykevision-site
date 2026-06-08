@@ -832,6 +832,7 @@ figure.ba figcaption {
 .chart-side {
   flex: 0 0 240px;
   position: relative;
+  min-height: 260px;
 }
 .chart-divider {
   border: none;
@@ -842,13 +843,7 @@ figure.ba figcaption {
   overflow-x: auto;
   position: relative;
 }
-.chart-table-wrap::after {
-  content: '';
-  position: absolute;
-  right: 0; top: 0; bottom: 0; width: 24px;
-  background: linear-gradient(to left, #141414 0%, transparent 100%);
-  pointer-events: none;
-}
+/* removed scroll-fade overlay (caused visual trail when scrolling) */
 .chart-table-wrap::-webkit-scrollbar { height: 4px; }
 .chart-table-wrap::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 .data-table {

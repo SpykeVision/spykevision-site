@@ -44,7 +44,8 @@
   };
 
   /* ── Chart.js defaults ───────────────────────────────── */
-  if (typeof ChartDataLabels !== 'undefined') Chart.register(ChartDataLabels);
+  // DataLabels used only on bar charts (local registration, not global)
+  var DL_PLUGIN = (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [];
   Chart.defaults.color = '#999';
   Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
   Chart.defaults.font.size = 12;
@@ -210,6 +211,7 @@
 
     new Chart(mkCanvas(sideWrap), {
       type: 'bar',
+      plugins: DL_PLUGIN,
       data: {
         labels: ['ISF Night', 'Laser 10+', 'Performance'],
         datasets: [{
@@ -286,6 +288,7 @@
 
     new Chart(mkCanvas(sideWrap), {
       type: 'bar',
+      plugins: DL_PLUGIN,
       data: {
         labels: KEYS.map(function (k) { return C[k].label; }),
         datasets: [{
@@ -379,6 +382,7 @@
 
     new Chart(mkCanvas(sideWrap), {
       type: 'bar',
+      plugins: DL_PLUGIN,
       data: {
         labels: ZOOMS,
         datasets: [{
