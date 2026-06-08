@@ -827,8 +827,8 @@ figure.ba figcaption {
   min-width: 0;
   position: relative;
   height: 360px;
+  overflow: hidden;
 }
-.chart-main canvas { height: 100% !important; }
 .chart-side {
   flex: 0 0 240px;
   position: relative;

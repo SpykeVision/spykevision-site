@@ -44,10 +44,18 @@
   };
 
   /* ── Chart.js defaults ───────────────────────────────── */
+  if (typeof ChartDataLabels !== 'undefined') Chart.register(ChartDataLabels);
   Chart.defaults.color = '#999';
   Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
   Chart.defaults.font.size = 12;
   var GRID = { color: '#2a2a2a' };
+
+  // Datalabels config for bar charts
+  var DL_OPTS = {
+    anchor: 'end', align: 'start', offset: 4,
+    color: '#fff', font: { size: 11, weight: '700' },
+    formatter: function (v) { return v ? v.toLocaleString() : ''; },
+  };
 
   /* ── Helpers ──────────────────────────────────────────── */
   function ttOpts(fmtFn) {
@@ -205,20 +213,22 @@
       data: {
         labels: ['ISF Night', 'Laser 10+', 'Performance'],
         datasets: [{
+          label: 'Lumens',
           data: [4190, 5248, 7657],
-          backgroundColor: ['#4FC3F7', '#FFA726', '#EF5350'],
+          backgroundColor: ['#4FC3F7cc', '#FFA726cc', '#EF5350cc'],
           borderRadius: 4,
         }],
       },
       options: {
-        responsive: true,
+        responsive: true, maintainAspectRatio: true,
         plugins: {
           legend: { display: false },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
+          datalabels: Object.assign({}, DL_OPTS, { formatter: function (v) { return v.toLocaleString() + ' lm'; } }),
         },
         scales: {
           x: { grid: { display: false } },
-          y: { grid: GRID, ticks: { callback: function (v) { return (v / 1000).toFixed(0) + 'k'; } } },
+          y: { display: false },
         },
       },
     });
@@ -276,24 +286,25 @@
 
     new Chart(mkCanvas(sideWrap), {
       type: 'bar',
-      indexAxis: 'y',
       data: {
         labels: KEYS.map(function (k) { return C[k].label; }),
         datasets: [{
+          label: 'Peak CR',
           data: [2217, 3918, 4579, 6176, 8650, 5020],
-          backgroundColor: KEYS.map(function (k) { return C[k].hex; }),
+          backgroundColor: KEYS.map(function (k) { return C[k].hex + 'cc'; }),
           borderRadius: 4,
         }],
       },
       options: {
-        responsive: true,
+        responsive: true, maintainAspectRatio: true,
         plugins: {
           legend: { display: false },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
+          datalabels: Object.assign({}, DL_OPTS, { formatter: function (v) { return v.toLocaleString() + ':1'; } }),
         },
         scales: {
-          x: { grid: GRID, ticks: { callback: function (v) { return (v / 1000).toFixed(0) + 'k'; } } },
-          y: { grid: { display: false } },
+          x: { grid: { display: false } },
+          y: { display: false },
         },
       },
     });
@@ -371,25 +382,26 @@
       data: {
         labels: ZOOMS,
         datasets: [{
+          label: 'Multiplier',
           data: CR.F7.map(function (v, i) { return Math.round(v / CR.F2[i] * 10) / 10; }),
-          backgroundColor: '#AB47BC99',
-          borderColor: '#AB47BC',
-          borderWidth: 1, borderRadius: 3,
+          backgroundColor: '#AB47BCcc',
+          borderRadius: 3,
         }],
       },
       options: {
-        responsive: true,
+        responsive: true, maintainAspectRatio: true,
         plugins: {
           legend: { display: false },
           tooltip: {
             backgroundColor: TC.ttBg, titleColor: TC.ttTitle,
             bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1,
-            callbacks: { label: function (ctx) { return ' ' + ctx.parsed.y + '× contrast multiplier'; } },
+            callbacks: { label: function (ctx) { return ' ' + ctx.parsed.y + '×'; } },
           },
+          datalabels: Object.assign({}, DL_OPTS, { font: { size: 10, weight: '700' }, formatter: function (v) { return v + '×'; } }),
         },
         scales: {
           x: { grid: { display: false }, ticks: { font: { size: 9 } } },
-          y: { grid: GRID, min: 0 },
+          y: { display: false, min: 0 },
         },
       },
     });
