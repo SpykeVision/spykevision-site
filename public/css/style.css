@@ -822,8 +822,12 @@ figure.ba figcaption {
   gap: 24px;
   align-items: flex-start;
 }
+.chart-row .chart-main {
+  flex: 1 1 auto;
+  width: auto;
+}
 .chart-main {
-  flex: 1 1 0;
+  width: 100%;
   min-width: 0;
   position: relative;
   height: 480px;
