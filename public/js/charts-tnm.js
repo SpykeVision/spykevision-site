@@ -200,7 +200,7 @@
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, ticks: { align: 'inner' }, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -286,7 +286,7 @@
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, ticks: { align: 'inner' }, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -481,7 +481,7 @@
           tooltip: ttOpts(function (v) { return v + '%'; }),
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, ticks: { align: 'inner' }, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { grid: GRID, min: 0, max: 105, ticks: { callback: function (v) { return v + '%'; } } },
         },
       },
@@ -576,7 +576,7 @@
           tooltip: { mode: 'index', intersect: false, backgroundColor: TC.ttBg, titleColor: TC.ttTitle, bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1, padding: 12 },
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, ticks: { align: 'inner' }, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -632,9 +632,9 @@
       data: {
         labels: ADL_L,
         datasets: [
-          { label:'Zoom 1.0×', data:ADL.z10, borderColor:'#4FC3F7', backgroundColor:'#4FC3F722', pointBackgroundColor:'#4FC3F7', pointRadius:4, borderWidth:2, tension:0.4, fill:false },
-          { label:'Zoom 1.5×', data:ADL.z15, borderColor:'#FFA726', backgroundColor:'#FFA72622', pointBackgroundColor:'#FFA726', pointRadius:4, borderWidth:2, tension:0.4, fill:false },
-          { label:'Zoom 2.0×', data:ADL.z20, borderColor:'#EF5350', backgroundColor:'#EF535022', pointBackgroundColor:'#EF5350', pointRadius:4, borderWidth:2, tension:0.4, fill:false },
+          { label:'Zoom 1.0×', data:ADL.z10, borderColor:'#4FC3F7', backgroundColor:'#4FC3F722', pointBackgroundColor:'#4FC3F7', pointRadius:4, borderWidth:2, tension:0.5, fill:false },
+          { label:'Zoom 1.5×', data:ADL.z15, borderColor:'#FFA726', backgroundColor:'#FFA72622', pointBackgroundColor:'#FFA726', pointRadius:4, borderWidth:2, tension:0.5, fill:false },
+          { label:'Zoom 2.0×', data:ADL.z20, borderColor:'#EF5350', backgroundColor:'#EF535022', pointBackgroundColor:'#EF5350', pointRadius:4, borderWidth:2, tension:0.5, fill:false },
         ],
       },
       options: {
@@ -647,7 +647,7 @@
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, ticks: { align: 'inner' }, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { type: 'logarithmic', min: 300, grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
