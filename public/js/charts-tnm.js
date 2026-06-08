@@ -181,6 +181,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
+    mainWrap.style.height = '360px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -258,6 +259,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
+    mainWrap.style.height = '360px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -333,6 +335,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
+    mainWrap.style.height = '360px';
     row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -443,6 +446,7 @@
     // Full-width chart (no side panel)
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
+    mainWrap.style.height = '360px';
     el.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
@@ -506,6 +510,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
+    mainWrap.style.height = '360px';
     row.appendChild(mainWrap);
 
     var AN = {
@@ -585,6 +590,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
+    mainWrap.style.height = '360px';
     row.appendChild(mainWrap);
 
     var ADL_L = ['On/Off','1%','2%','5%','10%','20%','50%'];
