@@ -193,6 +193,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        clip: false,
         layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
@@ -278,6 +279,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        clip: false,
         layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
@@ -472,6 +474,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        clip: false,
         layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
@@ -566,6 +569,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        clip: false,
         layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
@@ -636,6 +640,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        clip: false,
         layout: { padding: 0 },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
