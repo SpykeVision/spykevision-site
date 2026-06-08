@@ -51,6 +51,18 @@
   Chart.defaults.font.size = 12;
   var GRID = { color: '#2a2a2a' };
 
+  // Forces first/last data points flush with chart edges on line charts (offset:false)
+  Chart.register({
+    id: 'edgeAlign',
+    beforeRender: function(chart) {
+      var s = chart.scales['x'];
+      if (!s || s.options.offset !== false) return;
+      s._startPixel = s.left;
+      s._endPixel = s.right;
+      s._pixelRange = s.right - s.left;
+    }
+  });
+
   // Datalabels config for bar charts
   var DL_OPTS = {
     anchor: 'end', align: 'start', offset: 4,
