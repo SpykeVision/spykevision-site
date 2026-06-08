@@ -199,7 +199,7 @@
         },
         scales: {
           x: { grid: GRID },
-          y: { grid: GRID, ticks: { callback: function (v) { return v.toLocaleString(); } } },
+          y: { grid: GRID, beginAtZero: false, ticks: { callback: function (v) { return v.toLocaleString(); } } },
         },
       },
     });
@@ -277,7 +277,7 @@
         },
         scales: {
           x: { grid: GRID },
-          y: { grid: GRID, ticks: { callback: function (v) { return v.toLocaleString(); } } },
+          y: { grid: GRID, beginAtZero: false, ticks: { callback: function (v) { return v.toLocaleString(); } } },
         },
       },
     });
@@ -556,7 +556,7 @@
         },
         scales: {
           x: { grid: GRID },
-          y: { grid: GRID, min: 0 },
+          y: { grid: GRID, beginAtZero: false },
         },
       },
     });
@@ -619,7 +619,7 @@
         },
         scales: {
           x: { grid: GRID },
-          y: { grid: GRID, ticks: { callback: function (v) { return v.toLocaleString(); } } },
+          y: { grid: GRID, beginAtZero: false, ticks: { callback: function (v) { return v.toLocaleString(); } } },
         },
       },
     });
