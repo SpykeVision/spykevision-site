@@ -200,7 +200,7 @@
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -286,7 +286,7 @@
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -481,7 +481,7 @@
           tooltip: ttOpts(function (v) { return v + '%'; }),
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { grid: GRID, min: 0, max: 105, ticks: { callback: function (v) { return v + '%'; } } },
         },
       },
@@ -576,7 +576,7 @@
           tooltip: { mode: 'index', intersect: false, backgroundColor: TC.ttBg, titleColor: TC.ttTitle, bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1, padding: 12 },
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
@@ -647,7 +647,7 @@
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
         },
         scales: {
-          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingRight = 0; } },
+          x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { type: 'logarithmic', grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
