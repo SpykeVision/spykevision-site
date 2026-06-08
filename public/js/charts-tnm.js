@@ -620,7 +620,7 @@
     mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
-    var ADL_L = ['On/Off','1%','2%','5%','10%','20%','50%'];
+    var ADL_L = ['0%','1%','2%','5%','10%','20%','50%'];
     var ADL = {
       z10: [6100,5861,5721,4830,3870,2320,846],
       z15: [6400,5928,5533,4368,3320,2184,764],
@@ -632,9 +632,9 @@
       data: {
         labels: ADL_L,
         datasets: [
-          { label:'Zoom 1.0×', data:ADL.z10, borderColor:'#4FC3F7', backgroundColor:'#4FC3F722', pointBackgroundColor:'#4FC3F7', pointRadius:4, borderWidth:2, tension:0.2, fill:false },
-          { label:'Zoom 1.5×', data:ADL.z15, borderColor:'#FFA726', backgroundColor:'#FFA72622', pointBackgroundColor:'#FFA726', pointRadius:4, borderWidth:2, tension:0.2, fill:false },
-          { label:'Zoom 2.0×', data:ADL.z20, borderColor:'#EF5350', backgroundColor:'#EF535022', pointBackgroundColor:'#EF5350', pointRadius:4, borderWidth:2, tension:0.2, fill:false },
+          { label:'Zoom 1.0×', data:ADL.z10, borderColor:'#4FC3F7', backgroundColor:'#4FC3F722', pointBackgroundColor:'#4FC3F7', pointRadius:4, borderWidth:2, tension:0.4, fill:false },
+          { label:'Zoom 1.5×', data:ADL.z15, borderColor:'#FFA726', backgroundColor:'#FFA72622', pointBackgroundColor:'#FFA726', pointRadius:4, borderWidth:2, tension:0.4, fill:false },
+          { label:'Zoom 2.0×', data:ADL.z20, borderColor:'#EF5350', backgroundColor:'#EF535022', pointBackgroundColor:'#EF5350', pointRadius:4, borderWidth:2, tension:0.4, fill:false },
         ],
       },
       options: {
@@ -648,10 +648,10 @@
         },
         scales: {
           x: { grid: GRID, offset: false, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
-          y: { type: 'logarithmic', grid: GRID, ticks: {
+          y: { type: 'logarithmic', min: 300, grid: GRID, ticks: {
             maxTicksLimit: 10,
             callback: function (v) {
-              var nice = [500,600,700,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,7000,8000,9000,10000];
+              var nice = [300,400,500,600,700,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,7000,8000,9000,10000];
               return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
             }
           } },
@@ -664,7 +664,7 @@
       ['1.5×'].concat(ADL.z15),
       ['2.0×'].concat(ADL.z20),
     ];
-    var tbl = mkTableCard(el, 'ADL CONTRAST — F7.0 SHIFTED', 'Contrast vs content brightness (APL) · click a column to sort', ['Zoom'].concat(ADL_L), rows, 'tbl-adl');
+    var tbl = mkTableCard(el, 'ADL CONTRAST — F7.0 SHIFTED', 'Contrast vs content brightness (APL) · 0% = on/off · click a column to sort', ['Zoom'].concat(ADL_L), rows, 'tbl-adl');
     var zCols = ['#4FC3F7','#FFA726','#EF5350'];
     var tds = tbl.querySelectorAll('tbody tr td:first-child');
     ['1.0×','1.5×','2.0×'].forEach(function (z, i) {
