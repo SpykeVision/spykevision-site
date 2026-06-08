@@ -193,6 +193,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { right: 4 } },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
@@ -277,6 +278,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { right: 4 } },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
@@ -470,6 +472,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { right: 4 } },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v + '%'; }),
@@ -539,8 +542,9 @@
         label: lbl, data: data,
         borderColor: color, backgroundColor: color + '22',
         pointBackgroundColor: color,
-        pointRadius: 3, pointHoverRadius: 5,
-        borderWidth: 2, tension: 0.2, fill: false,
+        pointRadius: 4, pointHoverRadius: 7,
+        borderWidth: 2.5, tension: 0.3, fill: false,
+        spanGaps: dashed, // connect dots on centered (dashed) lines
       };
       if (dashed) ds.borderDash = [5, 4];
       return ds;
@@ -562,13 +566,20 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { right: 4 } },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
-          tooltip: ttOpts(function (v) { return v ? v.toLocaleString() + ':1' : '—'; }),
+          tooltip: { mode: 'index', intersect: false, backgroundColor: TC.ttBg, titleColor: TC.ttTitle, bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1, padding: 12 },
         },
         scales: {
           x: { grid: GRID },
-          y: { type: 'logarithmic', grid: GRID, ticks: { callback: function (v) { return v.toLocaleString(); } } },
+          y: { type: 'logarithmic', grid: GRID, ticks: {
+            maxTicksLimit: 10,
+            callback: function (v) {
+              var nice = [400,450,500,550,600,650,700,750,800,850,900,1000];
+              return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
+            }
+          } },
         },
       },
     });
@@ -625,6 +636,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { right: 4 } },
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
