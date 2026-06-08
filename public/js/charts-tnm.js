@@ -534,7 +534,7 @@
       F55S: [559,621,672,687,700,743,767,778,792,802,802],
       F55C: [495,552,null,null,560,null,null,null,null,null,670],
       F7S:  [557,616,691,710,715,764,792,793,841,845,846],
-      F7C:  [490,552,null,602,null,null,null,null,null,null,678],
+      F7C:  [490,552,null,null,602,null,null,null,null,null,678],
     };
 
     function ansiDS(data, color, dashed, lbl) {
@@ -590,7 +590,7 @@
       ['F5.5', 'Shifted',  559,621,672,687,700,743,767,778,792,802,802],
       ['F5.5', 'Centered', 495,552,'—','—',560,'—','—','—','—','—',670],
       ['F7.0', 'Shifted',  557,616,691,710,715,764,792,793,841,845,846],
-      ['F7.0', 'Centered', 490,552,'—',602,'—','—','—','—','—','—',678],
+      ['F7.0', 'Centered', 490,552,'—','—',602,'—','—','—','—','—',678],
     ];
     var tbl = mkTableCard(el, 'ANSI CONTRAST — ALL VALUES', 'Shifted vs centered lens · click a column to sort', ['Ap.', 'Lens'].concat(ZOOMS_A), rows, 'tbl-ansi');
     var colors6 = [C.F2.hex,C.F2.hex,C.F55.hex,C.F55.hex,C.F7.hex,C.F7.hex];
