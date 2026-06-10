@@ -279,6 +279,7 @@ a:hover { color: var(--accent-dk); }
 
 /* Inline table section (wide mode) */
 .cs-table-section { display: none; padding: 0 20px; }
+.cs-data-card .cs-table-section { display: block; }
 .cs-table-label {
   font-size: 12px;
   font-weight: 700;
