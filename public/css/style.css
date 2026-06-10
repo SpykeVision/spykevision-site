@@ -553,6 +553,7 @@ a:hover { color: var(--accent-dk); }
 .car-btn:hover { opacity: 0.9; }
 .car-thumbs {
   display: flex; gap: 6px; overflow-x: auto;
+  justify-content: center;
   padding: 8px 0 4px;
   scrollbar-width: thin; scrollbar-color: var(--border) transparent;
 }
