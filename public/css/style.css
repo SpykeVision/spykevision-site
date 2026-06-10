@@ -245,6 +245,46 @@ a:hover { color: var(--accent-dk); }
 .article-page--wide .data-table tbody tr:hover td { background: #f8f8fb; }
 .article-page--wide .data-table .label-col { color: #1c1c1e; }
 
+/* Wide page: dark theme overrides */
+[data-theme="dark"] .article-page--wide .chart-section,
+[data-theme="dark"] .article-page--wide .cs-data-card {
+  background: #1c1c1e;
+  border-color: #38383a;
+  color: #f2f2f7;
+}
+[data-theme="dark"] .article-page--wide .cs-title strong { color: #f2f2f7; }
+[data-theme="dark"] .article-page--wide .cs-title span   { color: #ebebf599; }
+[data-theme="dark"] .article-page--wide .chart-divider   { border-top-color: #38383a; }
+[data-theme="dark"] .article-page--wide .chart-table-wrap::-webkit-scrollbar-thumb { background: #48484a; }
+[data-theme="dark"] .article-page--wide .data-table { color: #f2f2f7; }
+[data-theme="dark"] .article-page--wide .data-table th {
+  background: #2c2c2e;
+  color: #ebebf5cc;
+  border-bottom: 2px solid #38383a;
+}
+[data-theme="dark"] .article-page--wide .data-table th:hover { background: #3a3a3c; }
+[data-theme="dark"] .article-page--wide .data-table td {
+  color: #f2f2f7;
+  border-bottom: 1px solid #2c2c2e;
+}
+[data-theme="dark"] .article-page--wide .data-table tbody tr:hover td { background: #2c2c2e; }
+[data-theme="dark"] .article-page--wide .data-table .label-col { color: #f2f2f7; }
+[data-theme="dark"] .cs-table-label { color: #ebebf5cc; }
+[data-theme="dark"] .cs-table-label span { color: #ebebf599; }
+[data-theme="dark"] .cs-view-toggle { background: #2c2c2e; }
+[data-theme="dark"] .cs-tab { color: #ebebf599; }
+[data-theme="dark"] .cs-tab--active { background: #3a3a3c; color: #f2f2f7; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+[data-theme="dark"] .cs-exp-btn { background: #2c2c2e; border-color: #38383a; color: #ebebf5cc; }
+[data-theme="dark"] .cs-exp-btn:hover { background: #3a3a3c; }
+[data-theme="dark"] .cs-chip { background: #2c2c2e; border-color: #38383a; color: #ebebf599; }
+[data-theme="dark"] .cs-chip:hover { border-color: #6e6e73; color: #f2f2f7; }
+[data-theme="dark"] .cs-stat-card { background: #2c2c2e; }
+[data-theme="dark"] .cs-stat-val { color: #f2f2f7; }
+[data-theme="dark"] .cs-stat-lbl { color: #ebebf599; }
+[data-theme="dark"] .cs-bar-zoom { color: #ebebf5cc; }
+[data-theme="dark"] .cs-bar-val { color: #f2f2f7; }
+[data-theme="dark"] .cs-bar-track { background: #2c2c2e; }
+
 /* Chart / Table toggle */
 .cs-title {
   display: flex;

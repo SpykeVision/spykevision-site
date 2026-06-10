@@ -35,28 +35,30 @@
     Dyn: [4567,4781,5000,4153,4330,4543,4804,4934,5020,4596,4651,4648],
   };
 
-  /* ── Chart theme (dark default, light when IS_WIDE) ────── */
-  var TC = IS_WIDE ? {
-    text:    '#3a3a3c',
-    text3:   '#6e6e73',
-    ttBg:    '#ffffff',
-    ttBord:  '#e2e2e7',
-    ttTitle: '#1c1c1e',
-  } : {
-    text:    '#ccc',
-    text3:   '#888',
-    ttBg:    '#1e1e1e',
-    ttBord:  '#3a3a3a',
-    ttTitle: '#fff',
-  };
+  /* ── Chart theme ──────────────────────────────────────── */
+  function _isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
+  function _mkTC(dark) {
+    return dark ? {
+      text: '#ccc', text3: '#888',
+      ttBg: '#1e1e1e', ttBord: '#3a3a3a', ttTitle: '#fff',
+    } : {
+      text: '#3a3a3c', text3: '#6e6e73',
+      ttBg: '#ffffff', ttBord: '#e2e2e7', ttTitle: '#1c1c1e',
+    };
+  }
+  function _useDark() { return _isDark() || !IS_WIDE; }
+  var TC = _mkTC(_useDark());
 
   /* ── Chart.js defaults ───────────────────────────────── */
-  // DataLabels used only on bar charts (local registration, not global)
   var DL_PLUGIN = (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [];
-  Chart.defaults.color = IS_WIDE ? '#6e6e73' : '#999';
+  Chart.defaults.color = _useDark() ? '#999' : '#6e6e73';
   Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
   Chart.defaults.font.size = 12;
-  var GRID = { color: IS_WIDE ? '#e5e5ea' : '#2a2a2a' };
+  var GRID = { color: _useDark() ? '#2a2a2a' : '#e5e5ea' };
+
+  /* ── Chart registry for live theme updates ───────────── */
+  var ALL_CHARTS = [];
+  function mkChart(canvas, cfg) { var c = new Chart(canvas, cfg); ALL_CHARTS.push(c); return c; }
 
   // Forces first/last data points flush with chart edges on line charts (offset:false)
   Chart.register({
@@ -355,7 +357,7 @@
     mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
-    new Chart(mkCanvas(mainWrap), {
+    mkChart(mkCanvas(mainWrap), {
       type: 'line',
       data: {
         labels: ZOOMS,
@@ -389,7 +391,7 @@
     row.appendChild(sideWrap);
     mkTitle(sideWrap, 'F2 · ZOOM 2.1×', 'Brightness by mode');
 
-    new Chart(mkCanvas(sideWrap), {
+    mkChart(mkCanvas(sideWrap), {
       type: 'bar',
       plugins: DL_PLUGIN,
       data: {
@@ -439,7 +441,7 @@
     mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
-    new Chart(mkCanvas(mainWrap), {
+    mkChart(mkCanvas(mainWrap), {
       type: 'line',
       data: {
         labels: ZOOMS,
@@ -473,7 +475,7 @@
     row.appendChild(sideWrap);
     mkTitle(sideWrap, 'PEAK CONTRAST', 'Per aperture');
 
-    new Chart(mkCanvas(sideWrap), {
+    mkChart(mkCanvas(sideWrap), {
       type: 'bar',
       plugins: DL_PLUGIN,
       data: {
@@ -522,7 +524,7 @@
     mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
-    new Chart(mkCanvas(mainWrap), {
+    mkChart(mkCanvas(mainWrap), {
       type: 'scatter',
       data: {
         datasets: KEYS.map(function (k) {
@@ -568,7 +570,7 @@
     row.appendChild(sideWrap);
     mkTitle(sideWrap, 'IRIS EFFECTIVENESS', 'CR(F7) ÷ CR(F2) per zoom');
 
-    new Chart(mkCanvas(sideWrap), {
+    mkChart(mkCanvas(sideWrap), {
       type: 'bar',
       plugins: DL_PLUGIN,
       data: {
@@ -638,7 +640,7 @@
     mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
-    new Chart(mkCanvas(mainWrap), {
+    mkChart(mkCanvas(mainWrap), {
       type: 'line',
       data: {
         labels: ZOOMS,
@@ -666,7 +668,7 @@
     row.appendChild(sideWrap);
     mkTitle(sideWrap, 'PEAK QUALITY', 'Max score per aperture');
 
-    new Chart(mkCanvas(sideWrap), {
+    mkChart(mkCanvas(sideWrap), {
       type: 'bar',
       plugins: DL_PLUGIN,
       data: {
@@ -750,7 +752,7 @@
       return ds;
     }
 
-    new Chart(mkCanvas(mainWrap), {
+    mkChart(mkCanvas(mainWrap), {
       type: 'line',
       data: {
         labels: ZOOMS_A,
@@ -791,7 +793,7 @@
     row.appendChild(sideWrapA);
     mkTitle(sideWrapA, 'PEAK ANSI', 'Shifted lens · 1.0×');
 
-    new Chart(mkCanvas(sideWrapA), {
+    mkChart(mkCanvas(sideWrapA), {
       type: 'bar',
       plugins: DL_PLUGIN,
       data: {
@@ -858,7 +860,7 @@
       z20: [4882,4368,4150,3192,2441,1627,557],
     };
 
-    var adlChart = new Chart(mkCanvas(mainWrap), {
+    var adlChart = mkChart(mkCanvas(mainWrap), {
       type: 'line',
       data: {
         labels: ADL_L,
@@ -915,7 +917,7 @@
     row.appendChild(sideWrapD);
     mkTitle(sideWrapD, 'ON/OFF CONTRAST', 'F7.0 shifted · 0% APL');
 
-    new Chart(mkCanvas(sideWrapD), {
+    mkChart(mkCanvas(sideWrapD), {
       type: 'bar',
       plugins: DL_PLUGIN,
       data: {
@@ -977,4 +979,29 @@
   } else {
     init();
   }
+
+  /* Live theme update — re-color all charts when dark/light toggles */
+  new MutationObserver(function () {
+    var dark = _useDark();
+    TC = _mkTC(dark);
+    var gridColor = dark ? '#2a2a2a' : '#e5e5ea';
+    Chart.defaults.color = dark ? '#999' : '#6e6e73';
+    ALL_CHARTS.forEach(function (chart) {
+      Object.keys(chart.options.scales || {}).forEach(function (ax) {
+        var s = chart.options.scales[ax];
+        if (s.grid) s.grid.color = gridColor;
+        if (s.ticks) s.ticks.color = TC.text;
+      });
+      var tt = chart.options.plugins && chart.options.plugins.tooltip;
+      if (tt) {
+        tt.backgroundColor = TC.ttBg;
+        tt.titleColor      = TC.ttTitle;
+        tt.bodyColor       = TC.text;
+        tt.borderColor     = TC.ttBord;
+      }
+      var leg = chart.options.plugins && chart.options.plugins.legend;
+      if (leg && leg.labels) leg.labels.color = TC.text;
+      chart.update('none');
+    });
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();
