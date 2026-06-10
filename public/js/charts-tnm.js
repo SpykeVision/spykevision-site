@@ -1,6 +1,7 @@
 (function () {
   'use strict';
   if (!document.querySelector('.chart-section')) return;
+  var IS_WIDE = !!document.querySelector('.article-page--wide');
 
   /* ── Palette ─────────────────────────────────────────── */
   var C = {
@@ -34,8 +35,14 @@
     Dyn: [4567,4781,5000,4153,4330,4543,4804,4934,5020,4596,4651,4648],
   };
 
-  /* ── Dark chart theme (fixed) ────────────────────────── */
-  var TC = {
+  /* ── Chart theme (dark default, light when IS_WIDE) ────── */
+  var TC = IS_WIDE ? {
+    text:    '#3a3a3c',
+    text3:   '#6e6e73',
+    ttBg:    '#ffffff',
+    ttBord:  '#e2e2e7',
+    ttTitle: '#1c1c1e',
+  } : {
     text:    '#ccc',
     text3:   '#888',
     ttBg:    '#1e1e1e',
@@ -46,10 +53,10 @@
   /* ── Chart.js defaults ───────────────────────────────── */
   // DataLabels used only on bar charts (local registration, not global)
   var DL_PLUGIN = (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : [];
-  Chart.defaults.color = '#999';
+  Chart.defaults.color = IS_WIDE ? '#6e6e73' : '#999';
   Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
   Chart.defaults.font.size = 12;
-  var GRID = { color: '#2a2a2a' };
+  var GRID = { color: IS_WIDE ? '#e5e5ea' : '#2a2a2a' };
 
   // Forces first/last data points flush with chart edges on line charts (offset:false)
   Chart.register({
@@ -159,8 +166,59 @@
     rows.forEach(function (r) { tbody.appendChild(r); });
   }
 
-  // Build a separate card (chart-section) holding only a table, inserted after `afterEl`.
-  function mkTableCard(afterEl, title, sub, head, rows, tableId) {
+  // Build a table. In wide mode: creates a separate sibling data card after `afterEl`
+  // with Values (table) and optionally Bars tabs. Values tab is active by default.
+  // In normal mode: inserts a separate chart-section card after `afterEl`.
+  function mkTableCard(afterEl, title, sub, head, rows, tableId, barOpts) {
+    if (IS_WIDE) {
+      var dataCard = document.createElement('div');
+      dataCard.className = 'chart-section cs-data-card';
+
+      var cardTitle = document.createElement('div');
+      cardTitle.className = 'cs-title';
+      cardTitle.innerHTML = '<strong>' + (title || '') + '</strong>' + (sub ? '<span>' + sub + '</span>' : '');
+      dataCard.appendChild(cardTitle);
+
+      if (barOpts) {
+        var toggle = document.createElement('div');
+        toggle.className = 'cs-view-toggle';
+        toggle.innerHTML = '<button class="cs-tab cs-tab--active" data-view="values">Values</button>'
+                         + '<button class="cs-tab" data-view="bars">Bars</button>';
+        cardTitle.appendChild(toggle);
+      }
+
+      var tableSection = document.createElement('div');
+      tableSection.className = 'cs-table-section';
+      var tbl = mkTable(tableSection, head, rows, tableId);
+      dataCard.appendChild(tableSection);
+
+      var barsSection = null;
+      if (barOpts) {
+        barsSection = mkBarsSection(dataCard, barOpts);
+        barsSection.style.display = 'none';
+      }
+
+      if (afterEl.nextSibling) {
+        afterEl.parentNode.insertBefore(dataCard, afterEl.nextSibling);
+      } else {
+        afterEl.parentNode.appendChild(dataCard);
+      }
+
+      if (barOpts && toggle) {
+        toggle.addEventListener('click', function (e) {
+          var btn = e.target.closest('.cs-tab');
+          if (!btn) return;
+          var view = btn.dataset.view;
+          Array.prototype.forEach.call(toggle.querySelectorAll('.cs-tab'), function (b) {
+            b.classList.toggle('cs-tab--active', b === btn);
+          });
+          tableSection.style.display = (view === 'values') ? '' : 'none';
+          if (barsSection) barsSection.style.display = (view === 'bars') ? 'block' : 'none';
+        });
+      }
+
+      return tbl;
+    }
     var card = document.createElement('div');
     card.className = 'chart-section';
     if (title) mkTitle(card, title, sub);
@@ -171,6 +229,107 @@
       afterEl.parentNode.appendChild(card);
     }
     return tbl;
+  }
+
+  function addViewToggle(card) {
+    if (IS_WIDE) return;
+    var titleEl = card.querySelector('.cs-title');
+    if (!titleEl) return;
+    var toggle = document.createElement('div');
+    toggle.className = 'cs-view-toggle';
+    toggle.innerHTML = '<button class="cs-tab cs-tab--active" data-view="chart">Chart</button>'
+                     + '<button class="cs-tab" data-view="table">Table</button>';
+    titleEl.appendChild(toggle);
+    toggle.addEventListener('click', function (e) {
+      var btn = e.target.closest('.cs-tab');
+      if (!btn) return;
+      var view = btn.dataset.view;
+      Array.prototype.forEach.call(toggle.querySelectorAll('.cs-tab'), function (b) {
+        b.classList.toggle('cs-tab--active', b === btn);
+      });
+      Array.prototype.forEach.call(card.querySelectorAll('.chart-main'), function (el) {
+        el.style.display = (view === 'chart') ? '' : 'none';
+      });
+      Array.prototype.forEach.call(card.querySelectorAll('.cs-table-section'), function (t) {
+        t.style.display = (view === 'table') ? '' : 'none';
+      });
+    });
+  }
+
+  // Horizontal bar view: aperture chips + stat cards + proportional bar rows
+  function mkBarsSection(parent, barOpts) {
+    var section = document.createElement('div');
+    section.className = 'cs-bars-section';
+
+    var chipsWrap = document.createElement('div');
+    chipsWrap.className = 'cs-aperture-chips';
+    barOpts.keys.forEach(function (k) {
+      var btn = document.createElement('button');
+      btn.className = 'cs-chip' + (k === barOpts.keys[0] ? ' cs-chip--active' : '');
+      btn.dataset.key = k;
+      btn.innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
+      chipsWrap.appendChild(btn);
+    });
+    section.appendChild(chipsWrap);
+
+    var statsRow = document.createElement('div');
+    statsRow.className = 'cs-stat-cards';
+    section.appendChild(statsRow);
+
+    var barsWrap = document.createElement('div');
+    barsWrap.className = 'cs-bar-rows';
+    section.appendChild(barsWrap);
+
+    function render(key) {
+      var data = barOpts.data[key];
+      var zooms = barOpts.zooms;
+      var fmt = barOpts.format;
+      var color = C[key].hex;
+      var sweetIdx = barOpts.sweetIdx !== undefined ? barOpts.sweetIdx : 6;
+
+      var maxVal = 0;
+      data.forEach(function (v) { if (v !== null && v > maxVal) maxVal = v; });
+      var peakIdx = data.indexOf(maxVal);
+
+      statsRow.innerHTML = '';
+      [
+        { label: 'Peak',        value: data[peakIdx],          zoom: zooms[peakIdx] },
+        { label: 'Sweet spot',  value: data[sweetIdx],         zoom: zooms[sweetIdx] },
+        { label: 'Short throw', value: data[zooms.length - 1], zoom: zooms[zooms.length - 1] },
+      ].forEach(function (s) {
+        var card = document.createElement('div');
+        card.className = 'cs-stat-card';
+        card.innerHTML = '<div class="cs-stat-val">' + fmt(s.value) + '</div>'
+          + '<div class="cs-stat-lbl">' + s.label + '</div>'
+          + '<div class="cs-stat-zoom">' + s.zoom + '</div>';
+        statsRow.appendChild(card);
+      });
+
+      barsWrap.innerHTML = '';
+      data.forEach(function (val, i) {
+        var pct = (val !== null && maxVal) ? Math.round(val / maxVal * 100) : 0;
+        var row = document.createElement('div');
+        row.className = 'cs-bar-row';
+        row.innerHTML = '<span class="cs-bar-zoom">' + zooms[i] + '</span>'
+          + '<span class="cs-bar-val">' + (val !== null ? fmt(val) : '—') + '</span>'
+          + '<div class="cs-bar-track"><div class="cs-bar-fill" style="width:' + pct + '%;background:' + color + 'cc"></div></div>';
+        barsWrap.appendChild(row);
+      });
+    }
+
+    render(barOpts.keys[0]);
+
+    chipsWrap.addEventListener('click', function (e) {
+      var btn = e.target.closest('.cs-chip');
+      if (!btn || !btn.dataset.key) return;
+      Array.prototype.forEach.call(chipsWrap.querySelectorAll('.cs-chip'), function (b) {
+        b.classList.toggle('cs-chip--active', b === btn);
+      });
+      render(btn.dataset.key);
+    });
+
+    parent.appendChild(section);
+    return section;
   }
 
   function colorFirstCol(tbl, keys) {
@@ -243,7 +402,7 @@
         }],
       },
       options: {
-        responsive: true, maintainAspectRatio: true,
+        responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ' lm'; }),
@@ -259,12 +418,14 @@
     // Table: transposed — rows=zoom, cols=aperture (fits mobile)
     var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
     var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return LM[k][i]; })); });
-    var tbl = mkTableCard(el, 'BRIGHTNESS — FULL RANGE', 'Lumens (lm) · click a column to sort', head, rows, 'tbl-brightness');
+    var tbl = mkTableCard(el, 'BRIGHTNESS — FULL RANGE', 'Lumens (lm) · click a column to sort', head, rows, 'tbl-brightness',
+      IS_WIDE ? { keys: KEYS, data: LM, zooms: ZOOMS, format: function (v) { return v.toLocaleString() + ' lm'; }, sweetIdx: 6 } : null);
     // Color aperture column headers
     var ths = tbl.querySelectorAll('thead th');
     KEYS.forEach(function (k, i) {
       if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
     });
+    addViewToggle(el);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -329,7 +490,7 @@
         }],
       },
       options: {
-        responsive: true, maintainAspectRatio: true,
+        responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
@@ -344,11 +505,13 @@
 
     var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
     var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return CR[k][i]; })); });
-    var tbl = mkTableCard(el, 'NATIVE CONTRAST — FULL RANGE', 'On/Off ratio · click a column to sort', head, rows, 'tbl-contrast');
+    var tbl = mkTableCard(el, 'NATIVE CONTRAST — FULL RANGE', 'On/Off ratio · click a column to sort', head, rows, 'tbl-contrast',
+      IS_WIDE ? { keys: KEYS, data: CR, zooms: ZOOMS, format: function (v) { return v.toLocaleString() + ':1'; }, sweetIdx: 6 } : null);
     var ths = tbl.querySelectorAll('thead th');
     KEYS.forEach(function (k, i) {
       if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
     });
+    addViewToggle(el);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -386,8 +549,8 @@
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: {
             mode: 'nearest', intersect: true,
-            backgroundColor: '#1e1e1e', titleColor: '#fff',
-            bodyColor: '#ccc', borderColor: '#3a3a3a', borderWidth: 1, padding: 12,
+            backgroundColor: TC.ttBg, titleColor: TC.ttTitle,
+            bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1, padding: 12,
             callbacks: {
               label: function (ctx) {
                 return ' ' + ctx.dataset.label + ' @ ' + ZOOMS[ctx.dataIndex] + ': ' +
@@ -424,7 +587,7 @@
         }],
       },
       options: {
-        responsive: true, maintainAspectRatio: true,
+        responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -453,6 +616,7 @@
     KEYS.forEach(function (k, i) {
       if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
     });
+    addViewToggle(el);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -471,11 +635,14 @@
       QUAL[k] = LM[k].map(function (v, i) { return Math.round(v * CR[k][i] / globalMax * 100); });
     });
 
-    // Full-width chart (no side panel)
+    var row = document.createElement('div');
+    row.className = 'chart-row';
+    el.appendChild(row);
+
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
     mainWrap.style.height = '480px';
-    el.appendChild(mainWrap);
+    row.appendChild(mainWrap);
 
     new Chart(mkCanvas(mainWrap), {
       type: 'line',
@@ -495,6 +662,38 @@
         scales: {
           x: { grid: GRID, offset: false, ticks: { align: 'inner' }, afterFit: function (s) { s.paddingLeft = 0; s.paddingRight = 0; } },
           y: { grid: GRID, min: 0, max: 105, ticks: { callback: function (v) { return v + '%'; } } },
+        },
+      },
+    });
+
+    // Side: peak quality score per aperture
+    var sideWrap = document.createElement('div');
+    sideWrap.className = 'chart-side';
+    row.appendChild(sideWrap);
+    mkTitle(sideWrap, 'PEAK QUALITY', 'Max score per aperture');
+
+    new Chart(mkCanvas(sideWrap), {
+      type: 'bar',
+      plugins: DL_PLUGIN,
+      data: {
+        labels: KEYS.map(function (k) { return C[k].label; }),
+        datasets: [{
+          label: 'Peak %',
+          data: KEYS.map(function (k) { return Math.max.apply(null, QUAL[k]); }),
+          backgroundColor: KEYS.map(function (k) { return C[k].hex + 'cc'; }),
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: ttOpts(function (v) { return v + '%'; }),
+          datalabels: Object.assign({}, DL_OPTS, { formatter: function (v) { return v + '%'; } }),
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { display: false },
         },
       },
     });
@@ -520,11 +719,13 @@
     // Full quality score table: transposed
     var headQ = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
     var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return QUAL[k][i] + '%'; })); });
-    var tbl = mkTableCard(el, 'QUALITY METRIC — FULL RANGE', 'Brightness × Contrast normalized · click a column to sort', headQ, rows, 'tbl-quality');
+    var tbl = mkTableCard(el, 'QUALITY METRIC — FULL RANGE', 'Brightness × Contrast normalized · click a column to sort', headQ, rows, 'tbl-quality',
+      IS_WIDE ? { keys: KEYS, data: QUAL, zooms: ZOOMS, format: function (v) { return v + '%'; }, sweetIdx: 6 } : null);
     var ths = tbl.querySelectorAll('thead th');
     KEYS.forEach(function (k, i) {
       if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
     });
+    addViewToggle(el);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -600,6 +801,39 @@
       },
     });
 
+    // Side: peak ANSI per aperture (shifted lens, short throw)
+    var sideWrapA = document.createElement('div');
+    sideWrapA.className = 'chart-side';
+    row.appendChild(sideWrapA);
+    mkTitle(sideWrapA, 'PEAK ANSI', 'Shifted lens · 1.0×');
+
+    new Chart(mkCanvas(sideWrapA), {
+      type: 'bar',
+      plugins: DL_PLUGIN,
+      data: {
+        labels: ['F2', 'F5.5', 'F7'],
+        datasets: [{
+          label: 'ANSI',
+          data: [740, 802, 846],
+          backgroundColor: [C.F2.hex + 'cc', C.F55.hex + 'cc', C.F7.hex + 'cc'],
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { backgroundColor: TC.ttBg, titleColor: TC.ttTitle, bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1,
+            callbacks: { label: function (ctx) { return ' ' + ctx.parsed.y.toLocaleString(); } } },
+          datalabels: Object.assign({}, DL_OPTS, { formatter: function (v) { return v.toLocaleString(); } }),
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { display: false },
+        },
+      },
+    });
+
     var rows = [
       ['F2.0', 'Shifted',  488,547,592,624,634,682,702,706,719,730,740],
       ['F2.0', 'Centered', 451,502,'—','—',548,'—','—','—','—','—',676],
@@ -615,6 +849,7 @@
     colors6.forEach(function (col, i) {
       if (tds[i]) tds[i].innerHTML = '<span class="color-dot" style="background:' + col + '"></span>' + labels6[i];
     });
+    addViewToggle(el);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -671,6 +906,38 @@
       },
     });
 
+    // Side: on/off contrast (0% APL) per zoom
+    var sideWrapD = document.createElement('div');
+    sideWrapD.className = 'chart-side';
+    row.appendChild(sideWrapD);
+    mkTitle(sideWrapD, 'ON/OFF CONTRAST', 'F7.0 shifted · 0% APL');
+
+    new Chart(mkCanvas(sideWrapD), {
+      type: 'bar',
+      plugins: DL_PLUGIN,
+      data: {
+        labels: ['Zoom 1.0×', 'Zoom 1.5×', 'Zoom 2.0×'],
+        datasets: [{
+          label: 'On/Off',
+          data: [ADL.z10[0], ADL.z15[0], ADL.z20[0]],
+          backgroundColor: ['#4FC3F7cc', '#FFA726cc', '#EF5350cc'],
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
+          datalabels: Object.assign({}, DL_OPTS, { formatter: function (v) { return v.toLocaleString() + ':1'; } }),
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { display: false },
+        },
+      },
+    });
+
     var rows = [
       ['1.0×'].concat(ADL.z10),
       ['1.5×'].concat(ADL.z15),
@@ -682,6 +949,7 @@
     ['1.0×','1.5×','2.0×'].forEach(function (z, i) {
       if (tds[i]) tds[i].innerHTML = '<span class="color-dot" style="background:' + zCols[i] + '"></span>' + z;
     });
+    addViewToggle(el);
   }
 
   /* ── Init ─────────────────────────────────────────────── */
