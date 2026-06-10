@@ -490,7 +490,7 @@
         plugins: {
           legend: { display: false },
           tooltip: ttOpts(function (v) { return v.toLocaleString() + ':1'; }),
-          datalabels: Object.assign({}, DL_OPTS, { formatter: function (v) { return v.toLocaleString() + ':1'; } }),
+          datalabels: Object.assign({}, DL_OPTS, { font: { size: 9, weight: '700' }, formatter: function (v) { return v.toLocaleString() + ':1'; } }),
         },
         scales: {
           x: { grid: { display: false } },
@@ -526,16 +526,13 @@
       type: 'scatter',
       data: {
         datasets: KEYS.map(function (k) {
-          // sort points by brightness so the connecting line reads left→right
-          var pts = LM[k].map(function (v, i) { return { x: v, y: CR[k][i] }; })
-                         .sort(function (a, b) { return a.x - b.x; });
           return {
             label: C[k].label,
-            data: pts,
+            data: LM[k].map(function (v, i) { return { x: v, y: CR[k][i] }; }),
             backgroundColor: C[k].hex + 'cc',
             borderColor: C[k].hex,
             pointRadius: 6, pointHoverRadius: 9,
-            showLine: true, borderWidth: 2, tension: 0.25, fill: false,
+            showLine: true, borderWidth: 2, tension: 0.4, fill: false,
           };
         }),
       },
@@ -592,7 +589,7 @@
             bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1,
             callbacks: { label: function (ctx) { return ' ' + ctx.parsed.y + '×'; } },
           },
-          datalabels: Object.assign({}, DL_OPTS, { font: { size: 10, weight: '700' }, formatter: function (v) { return v + '×'; } }),
+          datalabels: Object.assign({}, DL_OPTS, { font: { size: 8, weight: '700' }, formatter: function (v) { return v + '×'; } }),
         },
         scales: {
           x: { grid: { display: false }, ticks: { font: { size: 9 } } },
@@ -601,15 +598,18 @@
       },
     });
 
-    // Table: rows=iris, cols=zoom, cell=lm/CR
-    var head = ['Iris'].concat(ZOOMS);
-    var rows = KEYS.map(function (k) {
-      return [C[k].label].concat(ZOOMS.map(function (z, i) {
+    // Table: rows=zoom, cols=iris — dual values (lm + CR) need wide columns, zoom-as-rows is cleaner
+    var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
+    var rows = ZOOMS.map(function (z, i) {
+      return [z].concat(KEYS.map(function (k) {
         return LM[k][i].toLocaleString() + ' lm<br><span style="color:#888;font-size:11px">' + CR[k][i].toLocaleString() + ':1</span>';
       }));
     });
     var tbl = mkTableCard(el, 'BRIGHTNESS & CONTRAST — FULL RANGE', 'Lumens / contrast ratio · click a column to sort', head, rows, 'tbl-combined');
-    colorFirstCol(tbl, KEYS);
+    var ths = tbl.querySelectorAll('thead th');
+    KEYS.forEach(function (k, i) {
+      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
+    });
     addViewToggle(el);
   }
 
