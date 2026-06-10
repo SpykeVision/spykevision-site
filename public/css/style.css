@@ -276,6 +276,25 @@ a:hover { color: var(--accent-dk); }
   color: #1c1c1e;
   box-shadow: 0 1px 3px rgba(0,0,0,.12);
 }
+.cs-exp-btn {
+  margin-top: 10px;
+  border: 1px solid #e2e2e7;
+  background: #f2f2f7;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6e6e73;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.cs-exp-btn:hover { background: #e8e8ed; }
+.cs-exp-btn.on {
+  background: #1c1c1e;
+  color: #fff;
+  border-color: #1c1c1e;
+}
 
 /* Inline table section (wide mode) */
 .cs-table-section { display: none; padding: 0 20px; }

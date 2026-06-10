@@ -415,16 +415,12 @@
       },
     });
 
-    // Table: transposed — rows=zoom, cols=aperture (fits mobile)
-    var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
-    var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return LM[k][i]; })); });
+    // Table: rows=iris, cols=zoom (compact — 6 rows instead of 12)
+    var head = ['Iris'].concat(ZOOMS);
+    var rows = KEYS.map(function (k) { return [C[k].label].concat(LM[k]); });
     var tbl = mkTableCard(el, 'BRIGHTNESS — FULL RANGE', 'Lumens (lm) · click a column to sort', head, rows, 'tbl-brightness',
       IS_WIDE ? { keys: KEYS, data: LM, zooms: ZOOMS, format: function (v) { return v.toLocaleString() + ' lm'; }, sweetIdx: 6 } : null);
-    // Color aperture column headers
-    var ths = tbl.querySelectorAll('thead th');
-    KEYS.forEach(function (k, i) {
-      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
-    });
+    colorFirstCol(tbl, KEYS);
     addViewToggle(el);
   }
 
@@ -503,14 +499,11 @@
       },
     });
 
-    var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
-    var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return CR[k][i]; })); });
+    var head = ['Iris'].concat(ZOOMS);
+    var rows = KEYS.map(function (k) { return [C[k].label].concat(CR[k]); });
     var tbl = mkTableCard(el, 'NATIVE CONTRAST — FULL RANGE', 'On/Off ratio · click a column to sort', head, rows, 'tbl-contrast',
       IS_WIDE ? { keys: KEYS, data: CR, zooms: ZOOMS, format: function (v) { return v.toLocaleString() + ':1'; }, sweetIdx: 6 } : null);
-    var ths = tbl.querySelectorAll('thead th');
-    KEYS.forEach(function (k, i) {
-      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
-    });
+    colorFirstCol(tbl, KEYS);
     addViewToggle(el);
   }
 
@@ -533,12 +526,16 @@
       type: 'scatter',
       data: {
         datasets: KEYS.map(function (k) {
+          // sort points by brightness so the connecting line reads left→right
+          var pts = LM[k].map(function (v, i) { return { x: v, y: CR[k][i] }; })
+                         .sort(function (a, b) { return a.x - b.x; });
           return {
             label: C[k].label,
-            data: LM[k].map(function (v, i) { return { x: v, y: CR[k][i] }; }),
+            data: pts,
             backgroundColor: C[k].hex + 'cc',
             borderColor: C[k].hex,
-            pointRadius: 7, pointHoverRadius: 9,
+            pointRadius: 6, pointHoverRadius: 9,
+            showLine: true, borderWidth: 2, tension: 0.25, fill: false,
           };
         }),
       },
@@ -604,18 +601,15 @@
       },
     });
 
-    // Table: transposed — rows=zoom, cols=aperture, cell=lm/CR
-    var head = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
-    var rows = ZOOMS.map(function (z, i) {
-      return [z].concat(KEYS.map(function (k) {
+    // Table: rows=iris, cols=zoom, cell=lm/CR
+    var head = ['Iris'].concat(ZOOMS);
+    var rows = KEYS.map(function (k) {
+      return [C[k].label].concat(ZOOMS.map(function (z, i) {
         return LM[k][i].toLocaleString() + ' lm<br><span style="color:#888;font-size:11px">' + CR[k][i].toLocaleString() + ':1</span>';
       }));
     });
     var tbl = mkTableCard(el, 'BRIGHTNESS & CONTRAST — FULL RANGE', 'Lumens / contrast ratio · click a column to sort', head, rows, 'tbl-combined');
-    var ths = tbl.querySelectorAll('thead th');
-    KEYS.forEach(function (k, i) {
-      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
-    });
+    colorFirstCol(tbl, KEYS);
     addViewToggle(el);
   }
 
@@ -714,16 +708,6 @@
     var tds2 = tbl2.querySelectorAll('tbody tr td:first-child');
     best.forEach(function (d, i) {
       if (tds2[i]) tds2[i].innerHTML = '<span class="color-dot" style="background:' + C[d.k].hex + '"></span>' + C[d.k].label;
-    });
-
-    // Full quality score table: transposed
-    var headQ = ['Zoom'].concat(KEYS.map(function (k) { return C[k].label; }));
-    var rows = ZOOMS.map(function (z, i) { return [z].concat(KEYS.map(function (k) { return QUAL[k][i] + '%'; })); });
-    var tbl = mkTableCard(el, 'QUALITY METRIC — FULL RANGE', 'Brightness × Contrast normalized · click a column to sort', headQ, rows, 'tbl-quality',
-      IS_WIDE ? { keys: KEYS, data: QUAL, zooms: ZOOMS, format: function (v) { return v + '%'; }, sweetIdx: 6 } : null);
-    var ths = tbl.querySelectorAll('thead th');
-    KEYS.forEach(function (k, i) {
-      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + C[k].hex + '"></span>' + C[k].label;
     });
     addViewToggle(el);
   }
@@ -874,7 +858,7 @@
       z20: [4882,4368,4150,3192,2441,1627,557],
     };
 
-    new Chart(mkCanvas(mainWrap), {
+    var adlChart = new Chart(mkCanvas(mainWrap), {
       type: 'line',
       data: {
         labels: ADL_L,
@@ -905,6 +889,25 @@
         },
       },
     });
+
+    // Expand button — zoom the dark zone (0–5% APL), like the ADL calculator
+    var adlTitle = el.querySelector('.cs-title');
+    if (adlTitle) {
+      var expBtn = document.createElement('button');
+      expBtn.className = 'cs-exp-btn';
+      expBtn.textContent = '⤢ Expand 1–5%';
+      adlTitle.appendChild(expBtn);
+      var expanded = false;
+      expBtn.addEventListener('click', function () {
+        expanded = !expanded;
+        expBtn.classList.toggle('on', expanded);
+        expBtn.textContent = expanded ? '⤢ Full curve' : '⤢ Expand 1–5%';
+        adlChart.options.scales.x.min = expanded ? '0%' : undefined;
+        adlChart.options.scales.x.max = expanded ? '5%' : undefined;
+        adlChart.options.scales.y.min = expanded ? 2500 : 300;
+        adlChart.update();
+      });
+    }
 
     // Side: on/off contrast (0% APL) per zoom
     var sideWrapD = document.createElement('div');
