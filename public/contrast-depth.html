@@ -247,27 +247,45 @@ let cropBars=true;            // exclude letterbox/pillarbox bars
 let activeRegion=null;        // {x0,y0,x1,y1} or null = whole frame
 let barsFound=false;          // detected any bars in current image?
 
-// Detect black bars (letterbox top/bottom, pillarbox left/right).
-// A line counts as "bar" if ≥98% of its pixels are near-black (max ch ≤ 12).
+// Detect black bars using median of per-column/row first-content-pixel scans.
+// Robust against small logos inside bars (e.g. Dolby Vision VS10 in letterbox).
 function detectActiveRegion(px){
-  const BLK=12, FRAC=0.98;
-  const rowIsBar=y=>{
-    let black=0;const base=y*W*4;
-    for(let x=0;x<W;x++){const o=base+x*4;
-      if(px[o]<=BLK&&px[o+1]<=BLK&&px[o+2]<=BLK)black++;}
-    return black/W>=FRAC;
-  };
-  const colIsBar=x=>{
-    let black=0;
+  const BLK=12, MIN_BAR=4, NSAMP=64;
+  const mid=arr=>arr[Math.floor(arr.length/2)];
+
+  // For each sampled column, find first non-black row from top and bottom
+  const tops=[], bots=[];
+  const xStep=Math.max(1,Math.floor(W/NSAMP));
+  for(let x=0;x<W;x+=xStep){
+    let t=H, b=-1;
     for(let y=0;y<H;y++){const o=(y*W+x)*4;
-      if(px[o]<=BLK&&px[o+1]<=BLK&&px[o+2]<=BLK)black++;}
-    return black/H>=FRAC;
-  };
-  let y0=0,y1=H-1,x0=0,x1=W-1;
-  while(y0<y1&&rowIsBar(y0))y0++;
-  while(y1>y0&&rowIsBar(y1))y1--;
-  while(x0<x1&&colIsBar(x0))x0++;
-  while(x1>x0&&colIsBar(x1))x1--;
+      if(px[o]>BLK||px[o+1]>BLK||px[o+2]>BLK){t=y;break;}}
+    for(let y=H-1;y>=0;y--){const o=(y*W+x)*4;
+      if(px[o]>BLK||px[o+1]>BLK||px[o+2]>BLK){b=y;break;}}
+    tops.push(t); bots.push(b);
+  }
+  tops.sort((a,b)=>a-b); bots.sort((a,b)=>a-b);
+  let y0=mid(tops), y1=mid(bots);
+  if(y0<=MIN_BAR)y0=0;
+  if(y1>=H-1-MIN_BAR)y1=H-1;
+
+  // For each sampled row, find first non-black column from left and right
+  const lefts=[], rights=[];
+  const yStep=Math.max(1,Math.floor(H/NSAMP));
+  for(let y=0;y<H;y+=yStep){
+    let l=W, r=-1;
+    const base=y*W*4;
+    for(let x=0;x<W;x++){const o=base+x*4;
+      if(px[o]>BLK||px[o+1]>BLK||px[o+2]>BLK){l=x;break;}}
+    for(let x=W-1;x>=0;x--){const o=base+x*4;
+      if(px[o]>BLK||px[o+1]>BLK||px[o+2]>BLK){r=x;break;}}
+    lefts.push(l); rights.push(r);
+  }
+  lefts.sort((a,b)=>a-b); rights.sort((a,b)=>a-b);
+  let x0=mid(lefts), x1=mid(rights);
+  if(x0<=MIN_BAR)x0=0;
+  if(x1>=W-1-MIN_BAR)x1=W-1;
+
   const cropped=(y0>0||y1<H-1||x0>0||x1<W-1);
   return {x0,y0,x1,y1,cropped};
 }
@@ -295,8 +313,11 @@ function refreshADL(){
   const reg=(cropBars&&activeRegion&&activeRegion.cropped)?activeRegion:null;
   frameADL=computeADL(srcPixels,getDecTable(),reg);
   const sigADL=computeADL(srcPixels,decLin,reg);
-  document.getElementById('adlVal').textContent=
-    (frameADL*100).toFixed(2)+'%  (signal: '+(sigADL*100).toFixed(2)+'%)';
+  let adlStr=(frameADL*100).toFixed(2)+'%  (signal: '+(sigADL*100).toFixed(2)+'%)';
+  if(reg){
+    adlStr+='  [crop: y='+reg.y0+'–'+reg.y1+', x='+reg.x0+'–'+reg.x1+']';
+  }
+  document.getElementById('adlVal').textContent=adlStr;
   const cb=document.getElementById('cropBars');
   if(cb)cb.style.display=barsFound?'inline-flex':'none';
   drawCompare();
