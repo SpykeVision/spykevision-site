@@ -524,6 +524,18 @@
     mainWrap.style.height = '480px';
     row.appendChild(mainWrap);
 
+    // Compute Pareto frontier (non-dominated: maximize both brightness and contrast)
+    var allPts = [];
+    KEYS.forEach(function (k) {
+      LM[k].forEach(function (v, i) { allPts.push({ x: v, y: CR[k][i] }); });
+    });
+    allPts.sort(function (a, b) { return b.x - a.x; });
+    var paretoFront = [], maxY = -Infinity;
+    allPts.forEach(function (pt) {
+      if (pt.y > maxY) { paretoFront.push(pt); maxY = pt.y; }
+    });
+    paretoFront.sort(function (a, b) { return a.x - b.x; });
+
     mkChart(mkCanvas(mainWrap), {
       type: 'scatter',
       data: {
@@ -534,9 +546,19 @@
             backgroundColor: C[k].hex + 'cc',
             borderColor: C[k].hex,
             pointRadius: 6, pointHoverRadius: 9,
-            showLine: true, borderWidth: 2, tension: 0.4, fill: false,
+            showLine: false, fill: false,
           };
-        }),
+        }).concat([{
+          label: 'Pareto frontier',
+          data: paretoFront,
+          backgroundColor: 'transparent',
+          borderColor: _useDark() ? '#aaaaaa' : '#555555',
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 0, pointHoverRadius: 0,
+          showLine: true, tension: 0, fill: false,
+          order: -1,
+        }]),
       },
       options: {
         responsive: true,
