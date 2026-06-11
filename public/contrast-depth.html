@@ -231,10 +231,9 @@ const dec22=new Float32Array(256);
 for(let i=0;i<256;i++)dec22[i]=Math.pow(i/255,2.2);
 const dec24=new Float32Array(256);
 for(let i=0;i<256;i++)dec24[i]=Math.pow(i/255,2.4);
-// BT.1886 CRT: shifted power law matching Cosalient — L=(V+β)^2.6 / (1+β)^2.6, β=0.0183
+// BT.1886 CRT: γ2.8 pure power law (matches Cosalient Pattern Generator Lite reference)
 const decBT1886=new Float32Array(256);
-(function(){const b=0.0183,a=2.6,n=Math.pow(1+b,a);
- for(let i=0;i<256;i++)decBT1886[i]=Math.pow(i/255+b,a)/n;})();
+for(let i=0;i<256;i++)decBT1886[i]=Math.pow(i/255,2.8);
 
 let srcPixels=null,W=0,H=0;const cache={};
 let frameADL=0; // 0..1, fraction of peak white (BT.709 luma in linear light)
