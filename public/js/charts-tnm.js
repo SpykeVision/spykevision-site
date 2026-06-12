@@ -1143,7 +1143,8 @@
       return [pt.x.toFixed(2) + '%', '✗ blocked', pt.y.toLocaleString() + ':1', nat.toLocaleString() + ':1', mult];
     }));
     tblRows.sort(function (a, b) { return parseFloat(a[0]) - parseFloat(b[0]); });
-    mkTableCard(el, 'DBLE MEASUREMENTS', 'Dynamic contrast · ✓ = DBLE fired · ✗ = blocked by peak white', ['ADL', 'DBLE', 'Contrast', 'Native', 'Mult.'], tblRows, 'tbl-dble');
+    var dbleTbl = mkTableCard(el, 'DBLE MEASUREMENTS', 'Dynamic contrast · ✓ = DBLE fired · ✗ = blocked by peak white', ['ADL', 'DBLE', 'Contrast', 'Native', 'Mult.'], tblRows, 'tbl-dble');
+    if (dbleTbl) dbleTbl.classList.add('compact');
     addViewToggle(el);
   }
 
