@@ -285,6 +285,19 @@ function detectActiveRegion(px){
   if(x0<=MIN_BAR)x0=0;
   if(x1>=W-1-MIN_BAR)x1=W-1;
 
+  // Reject asymmetric detection: real letterbox bars are symmetric.
+  // If only one side has a bar, or one side is >2× the other, it's dark scene content.
+  const topBar=y0, botBar=H-1-y1;
+  if((topBar>0)!==(botBar>0)||topBar>2*botBar||botBar>2*topBar){y0=0;y1=H-1;}
+  const lftBar=x0, rgtBar=W-1-x1;
+  if((lftBar>0)!==(rgtBar>0)||lftBar>2*rgtBar||rgtBar>2*lftBar){x0=0;x1=W-1;}
+
+  // Reject if content area is implausibly small for a real bar crop.
+  // Widest cinemascope (2.76:1) still keeps ~58% of a 16:9 frame's height,
+  // so a content dimension below 50% means we're cutting into a dark scene.
+  if((y1-y0+1)<0.5*H){y0=0;y1=H-1;}
+  if((x1-x0+1)<0.5*W){x0=0;x1=W-1;}
+
   const cropped=(y0>0||y1<H-1||x0>0||x1<W-1);
   return {x0,y0,x1,y1,cropped};
 }
