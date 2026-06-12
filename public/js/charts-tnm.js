@@ -1120,14 +1120,30 @@
       });
     }
 
+    // Log-interpolated native contrast at a given ADL%
+    function nativeAt(adl) {
+      if (adl <= 0) return NATIVE[0].y;
+      for (var i = 0; i < NATIVE.length - 1; i++) {
+        if (adl <= NATIVE[i+1].x) {
+          var t = (adl - NATIVE[i].x) / (NATIVE[i+1].x - NATIVE[i].x);
+          return Math.round(Math.exp(Math.log(NATIVE[i].y) + t * (Math.log(NATIVE[i+1].y) - Math.log(NATIVE[i].y))));
+        }
+      }
+      return NATIVE[NATIVE.length-1].y;
+    }
+
     // Table card
     var tblRows = DBLE_ON.map(function (pt) {
-      return [pt.x.toFixed(2) + '%', '✓ active', pt.y.toLocaleString() + ':1'];
+      var nat = nativeAt(pt.x);
+      var mult = (pt.y / nat).toFixed(2) + '×';
+      return [pt.x.toFixed(2) + '%', '✓ active', pt.y.toLocaleString() + ':1', nat.toLocaleString() + ':1', mult];
     }).concat(DBLE_OFF.map(function (pt) {
-      return [pt.x.toFixed(2) + '%', '✗ blocked', pt.y.toLocaleString() + ':1'];
+      var nat = nativeAt(pt.x);
+      var mult = (pt.y / nat).toFixed(2) + '×';
+      return [pt.x.toFixed(2) + '%', '✗ blocked', pt.y.toLocaleString() + ':1', nat.toLocaleString() + ':1', mult];
     }));
     tblRows.sort(function (a, b) { return parseFloat(a[0]) - parseFloat(b[0]); });
-    mkTableCard(el, 'DBLE MEASUREMENTS', 'Dynamic contrast · ✓ = DBLE fired · ✗ = blocked by peak white', ['ADL', 'DBLE', 'Contrast'], tblRows, 'tbl-dble');
+    mkTableCard(el, 'DBLE MEASUREMENTS', 'Dynamic contrast · ✓ = DBLE fired · ✗ = blocked by peak white', ['ADL', 'DBLE', 'Contrast', 'Native', 'Mult.'], tblRows, 'tbl-dble');
     addViewToggle(el);
   }
 
