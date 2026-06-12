@@ -979,6 +979,158 @@
     addViewToggle(el);
   }
 
+  /* ══════════════════════════════════════════════════════
+     CHART 7 — DBLE Dynamic Contrast
+  ══════════════════════════════════════════════════════ */
+  function buildDBLE(el) {
+    mkTitle(el, 'DBLE DYNAMIC CONTRAST', 'Zoom 1.5× · F7.0 · Shifted lens · native contrast × DBLE power multiplier');
+
+    var row = document.createElement('div');
+    row.className = 'chart-row';
+    el.appendChild(row);
+
+    var mainWrap = document.createElement('div');
+    mainWrap.className = 'chart-main';
+    mainWrap.style.height = '480px';
+    row.appendChild(mainWrap);
+
+    // Native z1.5× ADL contrast curve (reference baseline)
+    var NATIVE = [
+      {x:0, y:6400}, {x:1, y:5928}, {x:2, y:5533}, {x:5, y:4368},
+      {x:10, y:3320}, {x:20, y:2184}, {x:50, y:764},
+    ];
+
+    // Scenes where DBLE fired: y = native_contrast(ADL) × power_multiplier
+    var DBLE_ON = [
+      {x:0.065, y:20450}, {x:0.237, y:20114}, {x:0.481, y:19450},
+      {x:0.64,  y:7089},  {x:1.378, y:11981},
+      {x:3.538, y:7561},  {x:3.764, y:5640},  {x:4.229, y:6977},
+      {x:5.6,   y:9195},  {x:5.992, y:6673},  {x:6.082, y:9626},
+      {x:6.58,  y:8754},  {x:7.144, y:4926},  {x:8.4,   y:7702},
+      {x:9.07,  y:8217},  {x:12.082,y:3606},  {x:17.0,  y:2650},
+      {x:19.221,y:3435},
+    ];
+
+    // Scenes where DBLE did not engage (peak white element blocked dimming)
+    var DBLE_OFF = [
+      {x:0.455, y:6181}, {x:1.249, y:5827}, {x:1.68,  y:5656},
+      {x:1.744, y:5632}, {x:2.931, y:5142}, {x:3.225, y:5024},
+      {x:3.631, y:4866}, {x:4.225, y:4643}, {x:4.254, y:4632},
+      {x:15.346,y:2654}, {x:16.207,y:2560}, {x:22.0,  y:2036},
+    ];
+
+    var dbleChart = mkChart(mkCanvas(mainWrap), {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'Native z1.5×',
+            data: NATIVE,
+            showLine: true,
+            borderColor: _useDark() ? '#555555' : '#aaaaaa',
+            backgroundColor: 'transparent',
+            pointBackgroundColor: _useDark() ? '#555555' : '#aaaaaa',
+            pointRadius: 3, pointHoverRadius: 5,
+            borderWidth: 1.5, borderDash: [5, 4],
+            tension: 0.4, fill: false, order: 3,
+          },
+          {
+            label: 'DBLE active',
+            data: DBLE_ON,
+            showLine: false,
+            backgroundColor: '#66BB6Acc',
+            pointBackgroundColor: '#66BB6A',
+            pointBorderColor: '#66BB6A',
+            pointRadius: 6, pointHoverRadius: 9,
+            borderWidth: 0, order: 1,
+          },
+          {
+            label: 'DBLE blocked (peak white)',
+            data: DBLE_OFF,
+            showLine: false,
+            backgroundColor: 'transparent',
+            pointBackgroundColor: 'transparent',
+            pointBorderColor: '#FF7043',
+            pointBorderWidth: 2,
+            pointRadius: 6, pointHoverRadius: 9,
+            borderWidth: 0, order: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, clip: false,
+        layout: { padding: 0 },
+        plugins: {
+          legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
+          tooltip: {
+            mode: 'nearest', intersect: true,
+            backgroundColor: TC.ttBg, titleColor: TC.ttTitle,
+            bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1, padding: 12,
+            callbacks: {
+              title: function (items) {
+                return items.length ? 'ADL ' + items[0].parsed.x.toFixed(2) + '%' : '';
+              },
+              label: function (ctx) {
+                return ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + ':1';
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            type: 'linear', min: 0, max: 23,
+            grid: GRID,
+            title: { display: true, text: 'ADL (%)', color: TC.text3, font: { size: 12 } },
+            ticks: {
+              color: TC.text3,
+              stepSize: 2,
+              callback: function (v) { return v + '%'; },
+            },
+          },
+          y: {
+            type: 'logarithmic', min: 1500,
+            grid: GRID,
+            ticks: {
+              maxTicksLimit: 10,
+              callback: function (v) {
+                var nice = [2000,3000,4000,5000,6000,7000,8000,10000,12000,15000,20000,25000];
+                return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Expand button — zoom into dark-scene range 0–5% ADL
+    var dbleTitle = el.querySelector('.cs-title');
+    if (dbleTitle) {
+      var expBtn = document.createElement('button');
+      expBtn.className = 'cs-exp-btn';
+      expBtn.textContent = '⤢ Expand 0–5%';
+      dbleTitle.appendChild(expBtn);
+      var expanded = false;
+      expBtn.addEventListener('click', function () {
+        expanded = !expanded;
+        expBtn.classList.toggle('on', expanded);
+        expBtn.textContent = expanded ? '⤢ Full range' : '⤢ Expand 0–5%';
+        dbleChart.options.scales.x.max = expanded ? 5 : 23;
+        dbleChart.options.scales.y.min = expanded ? 3000 : 1500;
+        dbleChart.update();
+      });
+    }
+
+    // Table card
+    var tblRows = DBLE_ON.map(function (pt) {
+      return [pt.x.toFixed(2) + '%', '✓ active', pt.y.toLocaleString() + ':1'];
+    }).concat(DBLE_OFF.map(function (pt) {
+      return [pt.x.toFixed(2) + '%', '✗ blocked', pt.y.toLocaleString() + ':1'];
+    }));
+    tblRows.sort(function (a, b) { return parseFloat(a[0]) - parseFloat(b[0]); });
+    mkTableCard(el, 'DBLE MEASUREMENTS', 'Dynamic contrast · ✓ = DBLE fired · ✗ = blocked by peak white', ['ADL', 'DBLE', 'Contrast'], tblRows, 'tbl-dble');
+    addViewToggle(el);
+  }
+
   /* ── Init ─────────────────────────────────────────────── */
   var MAP = {
     'chart-brightness': buildBrightness,
@@ -987,6 +1139,7 @@
     'chart-quality':    buildQuality,
     'chart-ansi':       buildANSI,
     'chart-adl':        buildADL,
+    'chart-dble':       buildDBLE,
   };
 
   function init() {
