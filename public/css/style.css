@@ -1124,6 +1124,7 @@ figure.ba figcaption {
 }
 .data-table.compact th { padding: 6px 10px; }
 .data-table.compact td { padding: 5px 10px; font-size: 13px; }
+#tbl-dble .label-col { text-align: center; font-weight: 400; color: inherit; }
 .data-table tbody tr:last-child td { border-bottom: none; }
 .data-table tbody tr:hover td { background: #1e1e1e; }
 .data-table .label-col { text-align: left; white-space: nowrap; color: #fff; font-weight: 600; }
