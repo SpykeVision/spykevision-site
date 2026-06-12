@@ -265,6 +265,8 @@ I originally planned a full section on the dynamic dimming system — contrast m
 
 In testing, I could force a 7× multiplier and synthetic numbers like 35,000:1, but those are test-pattern artifacts, not real scene performance. Right now, the dynamic system on my old Sim2 Lumis is far more effective and works across a much wider range of content. The TNM's DBLE is promising but needs more firmware work before it performs well on actual movies.
 
+<div class="chart-section" id="chart-dble"></div>
+
 ---
 
 Part 3 (color, HDR & noise) coming soon.
