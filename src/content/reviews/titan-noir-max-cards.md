@@ -65,10 +65,10 @@ tocGroups:
       - Brightness & Contrast Measurements
       - "Dual Iris: Summary"
       - Power Consumption
+      - DBLE (Dynamic Black Level Enhancement)
   - label: Image Processing
     sections:
       - Image Enhancers
-      - DBLE (Dynamic Black Level Enhancement)
   - label: Noise & Artifacts
     sections:
       - Noise
@@ -388,37 +388,19 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 ## Artifacts
 
-### Rolling buffer
+**Rolling buffer.** The most significant artifact on the TNM is rolling buffer — a direct consequence of how the DLPC8455 writes pixels. Instead of updating the entire frame at once, it scans from top to bottom row by row. On static content this is invisible. On fast-moving high-contrast edges it produces a rolling-shutter-like distortion: the top of a moving edge renders differently from the bottom. This is hardware-level behaviour. It can't be eliminated by settings. Turning off XPR-Shift doesn't help — the artifact persists even without the shift overlay, which is unexpected. Anti-RBE partially reduces the visible effect. A firmware fix is theoretically possible and XGIMI is aware of it. The practical impact is real: this is a step backward in motion quality compared to the previous DLPC generation.
 
-The most significant artifact on the TNM is rolling buffer — a direct consequence of how the DLPC8455 writes pixels. Instead of updating the entire frame at once, it scans from top to bottom row by row. On static content this is invisible. On fast-moving high-contrast edges it produces a rolling-shutter-like distortion: the top of a moving edge renders differently from the bottom.
+**Blocking.** On some motion sequences — particularly in dark or grey scenes — there's a pattern artifact that resembles a moving grid. Visible without squinting if you know what to look for. It's a temporal effect that doesn't capture cleanly in screenshots, but it shows up consistently on certain content.
 
-This is hardware-level behaviour. It can't be eliminated by settings. Turning off XPR-Shift doesn't help — the artifact persists even without the shift overlay, which is unexpected. Anti-RBE partially reduces the visible effect. A firmware fix is theoretically possibleand XGIMI is aware of it.
+**Static contour pattern.** On solid uniform fields such as white, grey, or black — there's a faint spatial pattern present that shouldn't be there. Visible at closer viewing distances, particularly on grey and white. Whether this is a DMD characteristic or a processing artifact, I'm not certain yet.
 
-The practical impact is real: this is a step backward in motion quality compared to the previous DLPC generation. Lower average input lag doesn't compensate for it in practice. Hopefully this is one the firmware team can address.
+**Dithering.** DLP projectors use temporal dithering to represent intermediate brightness values, and the TNM has more visible dithering than I'd like on dark backgrounds — pixel-level flickering in shadow areas. Enabling anti-RBE makes it more pronounced. This is partly a platform characteristic of 0.47-inch DLP chips, but the level here is on the higher end.
 
-### Blocking
+**Hidden sharpening.** Sharpness slider at zero does not mean no sharpening. The TNM applies processing that adds halos around edges, causes shimmering on fine patterns, and blooms around small bright objects even at the minimum setting. In Game Mode the sharpening changes character (closer to a super-resolution filter) but doesn't disappear. This is a well-known limitation on several 0.47-inch DLP platforms. Hopefully XGIMI can expose a true off state in a future update.
 
-On some motion sequences — particularly in dark or grey scenes — there's a pattern artifact that resembles a moving grid. Visible without squinting if you know what to look for. It's a temporal effect that doesn't capture cleanly in screenshots, but it shows up consistently on certain content.
+**Black uniformity.** On a full-black pattern there is a faint vertical blocking element across the entire screen.
 
-### Static contour pattern
-
-On solid uniform fields such as white,grey, or black — there's a faint spatial pattern present that shouldn't be there. Visible at closer viewing distances, particularly on grey and white. Whether this is a DMD characteristic or a processing artifact, I'm not certain yet.
-
-### Dithering
-
-DLP projectors use temporal dithering to represent intermediate brightness values, and the TNM has more visible dithering than I'd like on dark backgrounds — pixel-level flickering in shadow areas. Enabling anti-RBE makes it more pronounced. This is partly a platformcharacteristic of 0.47-inch DLP chips, but the level here is on the higher end.
-
-### Hidden sharpening
-
-Sharpness slider at zero does not mean nosharpening. The TNM applies processing that adds halos around edges, causes shimmering on fine patterns, and blooms around small bright objects even at the minimum setting. In Game Mode the sharpening changes character (closer to asuper-resolution filter) but doesn't disappear. This is a well-known limitationon several 0.47-inch DLP platforms. Hopefully XGIMI can expose a true off statein a future update.
-
-### Black Uniformity
-
-On a full-black pattern there is a faint vertical blocking element across the entire screen.
-
-**The good news:** XGIMI knows about all of these problems and many of them can be removed by firmware update.
-
-The hardware is exceptional. The lens is reference-grade. The remaining question is whether XGIMI's firmware can catch up to the quality of the optics and the rest of the optical path. Part 3 will cover noise, thermals, and color — the things that don't change with an OTA update.
+The good news: XGIMI knows about all of these problems and many of them can be addressed by firmware update. The hardware is exceptional. The lens is reference-grade. The remaining question is whether the firmware can catch up to the quality of the optics.
 
 - - -
 
