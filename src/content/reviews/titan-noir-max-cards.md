@@ -340,6 +340,8 @@ The 1.2.36 beta changes that. A great deal has moved forward here, and this sect
 
 **Real scenes: a different story.** Where DBLE actually engages on real content, the quality is excellent — minimal clipping, no color shift, a clean picture. Color shift does appear in rare moments, but it's easily corrected with a dedicated setting already present in the projector's menu — a real plus that not all implementations can claim. If you treat the current behavior as a baseline "Low" mode, the implementation is good and the feature is ready for a first public retail firmware. What it needs is work on reaction speed and, further out, more aggressive modes that aren't afraid to manipulate gamma at higher luminance. Those would pull far more real contrast from this hardware and let DBLE work across many more scenes.
 
+<figure class="ba"><img-comparison-slider><img slot="first" src="/images/tnm/dble-off.jpg" alt="DBLE Off" /><img slot="second" src="/images/tnm/dble-on.jpg" alt="DBLE On" /></img-comparison-slider><figcaption>DBLE Off vs On — same scene, Firmware 1.2.36</figcaption></figure>
+
 ### What DBLE actually responds to
 
 An important detail that shapes everything below: DBLE does not respond to average scene luminance (ADL). It responds to a **peak luminance threshold** — the brightest pixel or region in the frame. If that peak crosses the threshold, the system disengages, regardless of how dark the rest of the image is. If the peak stays below it, the system can engage even at quite high average brightness.
