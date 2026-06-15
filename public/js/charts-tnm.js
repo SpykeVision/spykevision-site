@@ -462,7 +462,7 @@
             maxTicksLimit: 10,
             callback: function (v) {
               var nice = [500,600,700,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,7000,8000,9000,10000];
-              return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
+              return nice.indexOf(v) >= 0 ? v.toLocaleString() + ':1' : null;
             }
           } },
         },
@@ -502,7 +502,7 @@
     });
 
     var head = ['Iris'].concat(ZOOMS);
-    var rows = KEYS.map(function (k) { return [C[k].label].concat(CR[k]); });
+    var rows = KEYS.map(function (k) { return [C[k].label].concat(CR[k].map(function (v) { return v.toLocaleString() + ':1'; })); });
     var tbl = mkTableCard(el, 'NATIVE CONTRAST — FULL RANGE', 'On/Off ratio · click a column to sort', head, rows, 'tbl-contrast',
       IS_WIDE ? { keys: KEYS, data: CR, zooms: ZOOMS, format: function (v) { return v.toLocaleString() + ':1'; }, sweetIdx: 6 } : null);
     colorFirstCol(tbl, KEYS);
@@ -802,7 +802,7 @@
             maxTicksLimit: 10,
             callback: function (v) {
               var nice = [400,450,500,550,600,650,700,750,800,850,900,1000];
-              return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
+              return nice.indexOf(v) >= 0 ? v.toLocaleString() + ':1' : null;
             }
           } },
         },
@@ -832,8 +832,8 @@
         plugins: {
           legend: { display: false },
           tooltip: { backgroundColor: TC.ttBg, titleColor: TC.ttTitle, bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1,
-            callbacks: { label: function (ctx) { return ' ' + ctx.parsed.y.toLocaleString(); } } },
-          datalabels: Object.assign({}, DL_OPTS, { formatter: function (v) { return v.toLocaleString(); } }),
+            callbacks: { label: function (ctx) { return ' ' + ctx.parsed.y.toLocaleString() + ':1'; } } },
+          datalabels: Object.assign({}, DL_OPTS, { formatter: function (v) { return v.toLocaleString() + ':1'; } }),
         },
         scales: {
           x: { grid: { display: false } },
@@ -843,12 +843,12 @@
     });
 
     var rows = [
-      ['F2.0', 'Shifted',  488,547,592,624,634,682,702,706,719,730,740],
-      ['F2.0', 'Centered', 451,502,'—','—',548,'—','—','—','—','—',676],
-      ['F5.5', 'Shifted',  559,621,672,687,700,743,767,778,792,802,802],
-      ['F5.5', 'Centered', 495,552,'—','—',560,'—','—','—','—','—',670],
-      ['F7.0', 'Shifted',  557,616,691,710,715,764,792,793,841,845,846],
-      ['F7.0', 'Centered', 490,552,'—','—',602,'—','—','—','—','—',678],
+      ['F2.0', 'Shifted',  '488:1','547:1','592:1','624:1','634:1','682:1','702:1','706:1','719:1','730:1','740:1'],
+      ['F2.0', 'Centered', '451:1','502:1','—','—','548:1','—','—','—','—','—','676:1'],
+      ['F5.5', 'Shifted',  '559:1','621:1','672:1','687:1','700:1','743:1','767:1','778:1','792:1','802:1','802:1'],
+      ['F5.5', 'Centered', '495:1','552:1','—','—','560:1','—','—','—','—','—','670:1'],
+      ['F7.0', 'Shifted',  '557:1','616:1','691:1','710:1','715:1','764:1','792:1','793:1','841:1','845:1','846:1'],
+      ['F7.0', 'Centered', '490:1','552:1','—','—','602:1','—','—','—','—','—','678:1'],
     ];
     var tbl = mkTableCard(el, 'ANSI CONTRAST — ALL VALUES', 'Shifted vs centered lens · click a column to sort', ['Ap.', 'Lens'].concat(ZOOMS_A), rows, 'tbl-ansi');
     var colors6 = [C.F2.hex,C.F2.hex,C.F55.hex,C.F55.hex,C.F7.hex,C.F7.hex];
@@ -907,7 +907,7 @@
             maxTicksLimit: 10,
             callback: function (v) {
               var nice = [300,400,500,600,700,800,1000,1200,1500,2000,2500,3000,4000,5000,6000,7000,8000,9000,10000];
-              return nice.indexOf(v) >= 0 ? v.toLocaleString() : null;
+              return nice.indexOf(v) >= 0 ? v.toLocaleString() + ':1' : null;
             }
           } },
         },
@@ -966,9 +966,9 @@
     });
 
     var rows = [
-      ['1.0×'].concat(ADL.z10),
-      ['1.5×'].concat(ADL.z15),
-      ['2.0×'].concat(ADL.z20),
+      ['1.0×'].concat(ADL.z10.map(function (v) { return v.toLocaleString() + ':1'; })),
+      ['1.5×'].concat(ADL.z15.map(function (v) { return v.toLocaleString() + ':1'; })),
+      ['2.0×'].concat(ADL.z20.map(function (v) { return v.toLocaleString() + ':1'; })),
     ];
     var tbl = mkTableCard(el, 'ADL CONTRAST — F7.0 SHIFTED', 'Contrast vs content brightness (APL) · 0% = on/off · click a column to sort', ['Zoom'].concat(ADL_L), rows, 'tbl-adl');
     var zCols = ['#4FC3F7','#FFA726','#EF5350'];
