@@ -340,7 +340,7 @@ The 1.2.36 beta changes that. A great deal has moved forward here, and this sect
 
 **Real scenes: a different story.** Where DBLE actually engages on real content, the quality is excellent — minimal clipping, no color shift, a clean picture. Color shift does appear in rare moments, but it's easily corrected with a dedicated setting already present in the projector's menu — a real plus that not all implementations can claim. If you treat the current behavior as a baseline "Low" mode, the implementation is good and the feature is ready for a first public retail firmware. What it needs is work on reaction speed and, further out, more aggressive modes that aren't afraid to manipulate gamma at higher luminance. Those would pull far more real contrast from this hardware and let DBLE work across many more scenes.
 
-<figure class="ba"><img-comparison-slider><img slot="first" src="/images/tnm/dble-off.jpg" alt="DBLE Off" /><img slot="second" src="/images/tnm/dble-on.jpg" alt="DBLE On" /></img-comparison-slider><figcaption>DBLE Off vs On — same scene, Firmware 1.2.36</figcaption></figure>
+<div class="ba-compare" data-before="/images/tnm/dble-off.jpg" data-after="/images/tnm/dble-on.jpg" data-label-before="DBLE Off" data-label-after="DBLE On" data-caption="DBLE Off vs On — Firmware 1.2.36"></div>
 
 ### What DBLE actually responds to
 
