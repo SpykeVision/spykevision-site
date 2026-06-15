@@ -1022,7 +1022,7 @@
       {x:2.931,  y:5142, desc:'Overhead view of a circular chamber lined with hundreds of glowing seat-back screens. Individually small, but the field of bright points collectively pushes peak luminance above threshold.'},
       {x:3.325,  y:5024, desc:'Same staircase location — the single bright arched window still dominates the histogram even though most of the frame is near-black.'},
       {x:3.631,  y:4866, desc:'War ruins at night with a large fire filling the right half of the frame. The orange glow of the flames raises peak luminance high enough to keep DBLE inactive.'},
-      {x:4.225,  y:4643, desc:'Blade Runner 2049 spinner cockpit — glowing blue instrument panels and HUD displays shine brightly against the dark cabin interior, triggering the peak-white block.'},
+      {x:4.225,  y:4643, desc:'Sci-fi vehicle cockpit — glowing blue instrument panels and HUD displays shine brightly against the dark cabin interior, triggering the peak-white block.'},
       {x:4.254,  y:4632, desc:'War scene with soldiers near two large bright windows. The twin window highlights collectively push peak luminance above the DBLE engagement threshold.'},
       {x:0.640,  y:6093, desc:'Dark interior with three window panes looking out onto a warmly lit corridor. The orange glow from the lit exterior concentrates peak luminance in a small but intense area — classic window-highlight block, same mechanism as the staircase shots.'},
       {x:15.346, y:2654, desc:'Aircraft emerging from dense fog — the entire overcast sky fills the background with uniform bright grey. High base luminance leaves no headroom for dynamic dimming.'},
@@ -1050,10 +1050,10 @@
     // Power near-threshold (w ≥ 170W) — DBLE blocked. y = native contrast (no dimming applied)
     var DBLE_OFF_PWR = [
       {x:0.158, desc:'Red stage spotlights fill the frame with a hard crimson glow. Peak luminance hits the laser threshold and prevents dimmer engagement despite the low average ADL.'},
-      {x:0.242, desc:'Bioluminescent jungle at night (Avatar-style) — diffuse blue glowing flora spread across the frame. The cumulative glow pushes peak luminance above the DBLE threshold even without any single bright point.'},
-      {x:0.246, desc:'Astronaut in a glancing sun strike (Gravity) — a single bright helmet specular against deep black. Even one intense reflective point is enough to keep the dimmer off.'},
+      {x:0.242, desc:'Bioluminescent jungle at night — diffuse blue glowing flora spread across the frame. The cumulative glow pushes peak luminance above the DBLE threshold even without any single bright point.'},
+      {x:0.246, desc:'Astronaut in a glancing sun strike — a single bright helmet specular against deep black. Even one intense reflective point is enough to keep the dimmer off.'},
       {x:0.259, desc:'White title cards on a black field. The high-contrast lettering raises peak luminance above threshold and blocks DBLE despite the near-black average ADL.'},
-      {x:0.262, desc:'Large sci-fi spacecraft (Alien/Sulaco-style) silhouetted against deep black space — dark hull with faint engine glow. Despite sub-1% average ADL, the bright engine exhaust holds laser output near maximum and prevents full dimmer engagement.'},
+      {x:0.262, desc:'Large sci-fi spacecraft silhouetted against deep black space — dark hull with faint engine glow. Despite sub-1% average ADL, the bright engine exhaust holds laser output near maximum and prevents full dimmer engagement.'},
       {x:0.455, desc:'A single shaft of sunlight cuts through an otherwise dark industrial space. The bright patch is tiny but its peak luminance exceeds the laser threshold.'},
       {x:0.617, desc:'Planet near-eclipse — a thin, intensely bright atmospheric arc runs along the bottom of the disc. The hard luminance peak of this corona ring raises peak white above DBLE\'s engagement threshold, identical to the eclipse blocking mechanism at r0172.'},
       {x:0.700, desc:'Close-up of an astronaut helmet with two bright LEDs mounted on the side. The helmet lights block DBLE even though everything else in the frame is dark.'},
@@ -1063,10 +1063,10 @@
     // DBLE fired, power measured — y = nativeAt(x) × (190W / P_dble_on)
     var DBLE_ON_EST = [
       {x:0.010, w:80.0,  desc:'Dark sci-fi scene with a single small glowing teal object (helmet or creature) centered in the frame. One dim light source against complete blackness.'},
-      {x:0.014, w:81.0,  desc:'Avatar bioluminescent forest floor at night — cyan vein patterns glow softly on dark terrain. Diffuse, very low-level organic glow with no bright point sources.'},
-      {x:0.026, w:80.5,  desc:'Astronaut floating in deep space (Gravity-style). Soft helmet illumination against a star field — just enough light to outline the figure against the black.'},
+      {x:0.014, w:81.0,  desc:'Bioluminescent forest floor at night — cyan vein patterns glow softly on dark terrain. Diffuse, very low-level organic glow with no bright point sources.'},
+      {x:0.026, w:80.5,  desc:'Astronaut floating in deep space. Soft helmet illumination against a star field — just enough light to outline the figure against the black.'},
 
-      {x:0.385, w:115.2, desc:'Avatar night flight — two banshee-riders gliding through a misty blue-lit atmosphere. Low ambient light from bioluminescence and mist, no hard peak whites.'},
+      {x:0.385, w:115.2, desc:'Night flight over bioluminescent terrain — two riders gliding through a misty blue-lit atmosphere. Low ambient light from bioluminescence and mist, no hard peak whites.'},
       {x:0.440, w:80.8,  desc:'Spacecraft silhouette against a starfield with a faint nebula wisp. Deep black frame broken only by the ship\'s dark outline and distant star field.'},
     ].map(function(p){ return {x:p.x, y:Math.round(nativeAt(p.x) * 190 / p.w), img:adlImg(p.x), desc:p.desc}; });
 
