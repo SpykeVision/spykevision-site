@@ -732,7 +732,7 @@ a:hover { color: var(--accent-dk); }
 }
 .conclusion h3 { margin: 0 0 14px; font-size: 25px; letter-spacing: -.02em; line-height: 1.2; }
 .conclusion > p { color: var(--text-2); font-size: 16px; line-height: 1.65; margin: 0 0 24px; }
-.conclusion-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.conclusion-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
 .btn-donate, .btn-official {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 13px 28px; border-radius: 999px; font-size: 15px; font-weight: 700;

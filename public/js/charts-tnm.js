@@ -1000,24 +1000,75 @@
       {x:10, y:3320}, {x:20, y:2184}, {x:50, y:764},
     ];
 
+    function adlImg(x) {
+      return 'r' + String(Math.round(x * 1000)).padStart(4, '0') + '.jpg';
+    }
+
     // Scenes where DBLE fired: y = native_contrast(ADL) × power_multiplier
     var DBLE_ON = [
       {x:0.065, y:20450}, {x:0.237, y:20114}, {x:0.481, y:19450},
-      {x:0.64,  y:7089},  {x:1.378, y:11981},
-      {x:3.538, y:7561},  {x:3.764, y:5640},  {x:4.229, y:6977},
-      {x:5.6,   y:9195},  {x:5.992, y:6673},  {x:6.082, y:9626},
-      {x:6.58,  y:8754},  {x:7.144, y:4926},  {x:8.4,   y:7702},
-      {x:9.07,  y:8217},  {x:12.082,y:3606},  {x:17.0,  y:2650},
+      {x:3.538, y:7561},  {x:3.764, y:5640},  {x:4.239, y:6977},
+      {x:5.598, y:9195},  {x:5.992, y:6673},  {x:6.082, y:9626},
+      {x:6.583, y:8754},  {x:7.144, y:4926},  {x:8.4,   y:7702},
+      {x:9.071, y:8217},  {x:12.082,y:3606},  {x:17.092,y:2650},
       {x:19.221,y:3435},
-    ];
+    ].map(function(p){ return {x:p.x, y:p.y, img:adlImg(p.x)}; });
 
     // Scenes where DBLE did not engage (peak white element blocked dimming)
     var DBLE_OFF = [
-      {x:0.455, y:6181}, {x:1.249, y:5827}, {x:1.68,  y:5656},
-      {x:1.744, y:5632}, {x:2.931, y:5142}, {x:3.225, y:5024},
-      {x:3.631, y:4866}, {x:4.225, y:4643}, {x:4.254, y:4632},
-      {x:15.346,y:2654}, {x:16.207,y:2560}, {x:22.0,  y:2036},
-    ];
+      {x:1.249,  y:5827, desc:'Soldier in gas mask on a dark staircase. A large arched window at the top-right floods the frame with daylight — one bright rectangle is enough to hold dimming off.'},
+      {x:1.686,  y:5656, desc:'War ruins seen through dark window frames, with an intense orange sky glowing outside. The bright exterior visible through the openings blocks the dimmer.'},
+      {x:1.744,  y:5632, desc:'Interior staircase with a large arched window on the left. The window dominates peak luminance despite the surrounding darkness — DBLE stays disengaged.'},
+      {x:2.931,  y:5142, desc:'Overhead view of a circular chamber lined with hundreds of glowing seat-back screens. Individually small, but the field of bright points collectively pushes peak luminance above threshold.'},
+      {x:3.325,  y:5024, desc:'Same staircase location — the single bright arched window still dominates the histogram even though most of the frame is near-black.'},
+      {x:3.631,  y:4866, desc:'War ruins at night with a large fire filling the right half of the frame. The orange glow of the flames raises peak luminance high enough to keep DBLE inactive.'},
+      {x:4.225,  y:4643, desc:'Blade Runner 2049 spinner cockpit — glowing blue instrument panels and HUD displays shine brightly against the dark cabin interior, triggering the peak-white block.'},
+      {x:4.254,  y:4632, desc:'War scene with soldiers near two large bright windows. The twin window highlights collectively push peak luminance above the DBLE engagement threshold.'},
+      {x:0.640,  y:6093, desc:'Dark interior with three window panes looking out onto a warmly lit corridor. The orange glow from the lit exterior concentrates peak luminance in a small but intense area — classic window-highlight block, same mechanism as the staircase shots.'},
+      {x:15.346, y:2654, desc:'Aircraft emerging from dense fog — the entire overcast sky fills the background with uniform bright grey. High base luminance leaves no headroom for dynamic dimming.'},
+      {x:16.207, y:2560, desc:'Industrial facility shot under flat overcast daylight. A bright white sky and pale greenhouse dome dominate the frame — the scene is simply too bright overall for DBLE to engage.'},
+      {x:22.0,   y:2036, desc:'Translucent greenhouse roof panels under bright overcast sky fill most of the frame with even white light. With 22% average ADL the projector is already near full power and has nothing to dim.'},
+    ].map(function(p){ return {x:p.x, y:p.y, img:adlImg(p.x), desc:p.desc}; });
+
+    function nativeAt(adl) {
+      if (adl <= 0) return NATIVE[0].y;
+      for (var i = 0; i < NATIVE.length - 1; i++) {
+        if (adl <= NATIVE[i+1].x) {
+          var t = (adl - NATIVE[i].x) / (NATIVE[i+1].x - NATIVE[i].x);
+          return Math.round(Math.exp(Math.log(NATIVE[i].y) + t * (Math.log(NATIVE[i+1].y) - Math.log(NATIVE[i].y))));
+        }
+      }
+      return NATIVE[NATIVE.length-1].y;
+    }
+
+    // DBLE fired (power measured < 190W) — green active, no description. y = nativeAt(x) × (190W / P_dble_on)
+    var DBLE_ON_PWR = [
+      {x:0.025, w:80.0}, {x:0.044, w:85.7},  {x:0.131, w:95.8},
+      {x:0.172, w:117.0},{x:0.323, w:163.8}, {x:0.377, w:164.0},
+    ].map(function(p){ return {x:p.x, y:Math.round(nativeAt(p.x) * 190 / p.w), img:adlImg(p.x)}; });
+
+    // Power near-threshold (w ≥ 170W) — DBLE blocked. y = native contrast (no dimming applied)
+    var DBLE_OFF_PWR = [
+      {x:0.158, desc:'Red stage spotlights fill the frame with a hard crimson glow. Peak luminance hits the laser threshold and prevents dimmer engagement despite the low average ADL.'},
+      {x:0.242, desc:'Bioluminescent jungle at night (Avatar-style) — diffuse blue glowing flora spread across the frame. The cumulative glow pushes peak luminance above the DBLE threshold even without any single bright point.'},
+      {x:0.246, desc:'Astronaut in a glancing sun strike (Gravity) — a single bright helmet specular against deep black. Even one intense reflective point is enough to keep the dimmer off.'},
+      {x:0.259, desc:'White title cards on a black field. The high-contrast lettering raises peak luminance above threshold and blocks DBLE despite the near-black average ADL.'},
+      {x:0.262, desc:'Large sci-fi spacecraft (Alien/Sulaco-style) silhouetted against deep black space — dark hull with faint engine glow. Despite sub-1% average ADL, the bright engine exhaust holds laser output near maximum and prevents full dimmer engagement.'},
+      {x:0.455, desc:'A single shaft of sunlight cuts through an otherwise dark industrial space. The bright patch is tiny but its peak luminance exceeds the laser threshold.'},
+      {x:0.617, desc:'Planet near-eclipse — a thin, intensely bright atmospheric arc runs along the bottom of the disc. The hard luminance peak of this corona ring raises peak white above DBLE\'s engagement threshold, identical to the eclipse blocking mechanism at r0172.'},
+      {x:0.700, desc:'Close-up of an astronaut helmet with two bright LEDs mounted on the side. The helmet lights block DBLE even though everything else in the frame is dark.'},
+      {x:0.900, desc:'Astronaut close-up with two bright helmet-mounted LEDs against a pitch-black background. The point-source helmet lights far exceed the DBLE peak-white threshold — same blocking mechanism as r0700 at ADL 0.7%, despite sub-1% average frame brightness.'},
+    ].map(function(p){ return {x:p.x, y:nativeAt(p.x), img:adlImg(p.x), desc:p.desc}; });
+
+    // DBLE fired, power measured — y = nativeAt(x) × (190W / P_dble_on)
+    var DBLE_ON_EST = [
+      {x:0.010, w:80.0,  desc:'Dark sci-fi scene with a single small glowing teal object (helmet or creature) centered in the frame. One dim light source against complete blackness.'},
+      {x:0.014, w:81.0,  desc:'Avatar bioluminescent forest floor at night — cyan vein patterns glow softly on dark terrain. Diffuse, very low-level organic glow with no bright point sources.'},
+      {x:0.026, w:80.5,  desc:'Astronaut floating in deep space (Gravity-style). Soft helmet illumination against a star field — just enough light to outline the figure against the black.'},
+
+      {x:0.385, w:115.2, desc:'Avatar night flight — two banshee-riders gliding through a misty blue-lit atmosphere. Low ambient light from bioluminescence and mist, no hard peak whites.'},
+      {x:0.440, w:80.8,  desc:'Spacecraft silhouette against a starfield with a faint nebula wisp. Deep black frame broken only by the ship\'s dark outline and distant star field.'},
+    ].map(function(p){ return {x:p.x, y:Math.round(nativeAt(p.x) * 190 / p.w), img:adlImg(p.x), desc:p.desc}; });
 
     var dbleChart = mkChart(mkCanvas(mainWrap), {
       type: 'scatter',
@@ -1030,13 +1081,13 @@
             borderColor: _useDark() ? '#555555' : '#aaaaaa',
             backgroundColor: 'transparent',
             pointBackgroundColor: _useDark() ? '#555555' : '#aaaaaa',
-            pointRadius: 3, pointHoverRadius: 5,
+            pointRadius: 0, pointHoverRadius: 5,
             borderWidth: 1.5, borderDash: [5, 4],
             tension: 0.4, fill: false, order: 3,
           },
           {
             label: 'DBLE active',
-            data: DBLE_ON,
+            data: DBLE_ON.concat(DBLE_ON_EST).concat(DBLE_ON_PWR),
             showLine: false,
             backgroundColor: '#66BB6Acc',
             pointBackgroundColor: '#66BB6A',
@@ -1046,7 +1097,7 @@
           },
           {
             label: 'DBLE blocked (peak white)',
-            data: DBLE_OFF,
+            data: DBLE_OFF.concat(DBLE_OFF_PWR),
             showLine: false,
             backgroundColor: 'transparent',
             pointBackgroundColor: 'transparent',
@@ -1063,16 +1114,63 @@
         plugins: {
           legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
           tooltip: {
+            enabled: false,
             mode: 'nearest', intersect: true,
-            backgroundColor: TC.ttBg, titleColor: TC.ttTitle,
-            bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1, padding: 12,
-            callbacks: {
-              title: function (items) {
-                return items.length ? 'ADL ' + items[0].parsed.x.toFixed(2) + '%' : '';
-              },
-              label: function (ctx) {
-                return ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + ':1';
-              },
+            external: function(context) {
+              var ttEl = document.getElementById('dble-curve-tt');
+              if (!ttEl) {
+                ttEl = document.createElement('div');
+                ttEl.id = 'dble-curve-tt';
+                ttEl.style.cssText = [
+                  'position:fixed','pointer-events:none','z-index:9999',
+                  'border-radius:8px','overflow:hidden','font-size:13px',
+                  'line-height:1.4','max-width:360px','transition:opacity 0.1s',
+                  'background:' + TC.ttBg,'border:1px solid ' + TC.ttBord,
+                  'color:' + TC.text,
+                ].join(';');
+                document.body.appendChild(ttEl);
+              }
+              var tooltip = context.tooltip;
+              if (tooltip.opacity === 0) { ttEl.style.opacity = '0'; return; }
+              var items = tooltip.dataPoints;
+              if (!items || !items.length) return;
+              var item = items[0];
+              var raw = item.raw || {};
+              var imgSrc = raw.img ? '/img/dble/' + raw.img : null;
+              var adl = item.parsed.x.toFixed(3);
+              var y = item.parsed.y;
+              var nat = nativeAt(item.parsed.x);
+              var html = '';
+              if (imgSrc) {
+                html += '<img src="' + imgSrc + '" style="width:360px;display:block;" onerror="this.style.display=\'none\'">';
+              }
+              html += '<div style="padding:10px 12px;">';
+              html += '<div style="font-weight:600;color:' + TC.ttTitle + ';margin-bottom:6px;">ADL ' + adl + '%</div>';
+              if (item.datasetIndex === 1) {
+                html += '<div style="color:#66BB6A;">DBLE active — ' + y.toLocaleString() + ':1</div>';
+                html += '<div style="color:#888;margin-top:3px;">Native — ' + nat.toLocaleString() + ':1</div>';
+                if (raw.desc) {
+                  html += '<div style="opacity:0.6;font-size:11px;margin-top:6px;">' + raw.desc + '</div>';
+                }
+              } else if (item.datasetIndex === 2) {
+                html += '<div style="color:#FF7043;">DBLE blocked — ' + y.toLocaleString() + ':1</div>';
+                if (raw.desc) {
+                  html += '<div style="opacity:0.6;font-size:11px;margin-top:6px;">' + raw.desc + '</div>';
+                }
+              } else {
+                html += '<div>Native — ' + y.toLocaleString() + ':1</div>';
+              }
+              html += '</div>';
+              ttEl.innerHTML = html;
+              ttEl.style.opacity = '1';
+              var rect = context.chart.canvas.getBoundingClientRect();
+              var tx = rect.left + tooltip.caretX;
+              var ty = rect.top + tooltip.caretY;
+              var ttW = imgSrc ? 360 : 260;
+              if (tx + ttW + 10 > window.innerWidth) tx -= ttW + 20; else tx += 12;
+              if (ty + 120 + 10 > window.innerHeight) ty -= 120 + 20; else ty += 12;
+              ttEl.style.left = tx + 'px';
+              ttEl.style.top = ty + 'px';
             },
           },
         },
@@ -1120,31 +1218,242 @@
       });
     }
 
-    // Log-interpolated native contrast at a given ADL%
-    function nativeAt(adl) {
-      if (adl <= 0) return NATIVE[0].y;
-      for (var i = 0; i < NATIVE.length - 1; i++) {
-        if (adl <= NATIVE[i+1].x) {
-          var t = (adl - NATIVE[i].x) / (NATIVE[i+1].x - NATIVE[i].x);
-          return Math.round(Math.exp(Math.log(NATIVE[i].y) + t * (Math.log(NATIVE[i+1].y) - Math.log(NATIVE[i].y))));
-        }
-      }
-      return NATIVE[NATIVE.length-1].y;
+    // Table card — 4 cols, collapsible, hover scene preview
+    var dblePts = DBLE_ON.concat(DBLE_ON_EST).concat(DBLE_ON_PWR).map(function (p) {
+      return { x: p.x, y: p.y, img: p.img, desc: p.desc || '', active: true };
+    }).concat(DBLE_OFF.concat(DBLE_OFF_PWR).map(function (p) {
+      return { x: p.x, y: p.y, img: p.img, desc: p.desc || '', active: false };
+    }));
+    dblePts.sort(function (a, b) { return a.x - b.x; });
+    buildDbleTable(el, dblePts, nativeAt);
+    addViewToggle(el);
+  }
+
+  // Shared scene-preview tooltip for DBLE table rows (mirrors the chart tooltip).
+  function dbleRowTip() {
+    var t = document.getElementById('dble-row-tt');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'dble-row-tt';
+      t.style.cssText = [
+        'position:fixed', 'pointer-events:none', 'z-index:9999',
+        'border-radius:8px', 'overflow:hidden', 'font-size:13px',
+        'line-height:1.4', 'max-width:360px', 'transition:opacity .1s',
+        'background:' + TC.ttBg, 'border:1px solid ' + TC.ttBord,
+        'color:' + TC.text, 'opacity:0',
+      ].join(';');
+      document.body.appendChild(t);
+    }
+    return t;
+  }
+
+  function buildDbleTable(afterEl, pts, nativeAt) {
+    var DEFAULT_SHOW = 12;
+
+    var card, host;
+    if (IS_WIDE) {
+      card = document.createElement('div');
+      card.className = 'chart-section cs-data-card';
+      var ct = document.createElement('div');
+      ct.className = 'cs-title';
+      ct.innerHTML = '<strong>DBLE MEASUREMENTS</strong><span>Dynamic contrast · ✓ fired · ✗ blocked by peak white · hover a row for the scene</span>';
+      card.appendChild(ct);
+      host = document.createElement('div');
+      host.className = 'cs-table-section';
+      card.appendChild(host);
+    } else {
+      card = document.createElement('div');
+      card.className = 'chart-section';
+      mkTitle(card, 'DBLE MEASUREMENTS', 'Dynamic contrast · ✓ fired · ✗ blocked · hover a row for the scene');
+      host = card;
     }
 
-    // Table card
-    var tblRows = DBLE_ON.map(function (pt) {
-      var nat = nativeAt(pt.x);
-      var mult = (pt.y / nat).toFixed(2) + '×';
-      return [pt.x.toFixed(2) + '%', '✓ active', pt.y.toLocaleString() + ':1', nat.toLocaleString() + ':1', mult];
-    }).concat(DBLE_OFF.map(function (pt) {
-      var nat = nativeAt(pt.x);
-      var mult = (pt.y / nat).toFixed(2) + '×';
-      return [pt.x.toFixed(2) + '%', '✗ blocked', pt.y.toLocaleString() + ':1', nat.toLocaleString() + ':1', mult];
-    }));
-    tblRows.sort(function (a, b) { return parseFloat(a[0]) - parseFloat(b[0]); });
-    var dbleTbl = mkTableCard(el, 'DBLE MEASUREMENTS', 'Dynamic contrast · ✓ = DBLE fired · ✗ = blocked by peak white', ['ADL', 'DBLE', 'Contrast', 'Native', 'Mult.'], tblRows, 'tbl-dble');
-    if (dbleTbl) dbleTbl.classList.add('compact');
+    var wrap = document.createElement('div');
+    wrap.className = 'chart-table-wrap';
+    var tbl = document.createElement('table');
+    tbl.className = 'data-table compact';
+    tbl.id = 'tbl-dble';
+
+    var thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>ADL</th><th>Native</th><th>DBLE contrast</th><th>Mult.</th></tr>';
+    tbl.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+    pts.forEach(function (p, i) {
+      var nat = nativeAt(p.x);
+      var mult = (p.y / nat).toFixed(2) + '×';
+      var badge = p.active
+        ? '<span style="color:#66BB6A;font-weight:700;">✓</span>'
+        : '<span style="color:#FF7043;font-weight:700;">✗</span>';
+      var tr = document.createElement('tr');
+      if (i >= DEFAULT_SHOW) { tr.className = 'dble-extra'; tr.style.display = 'none'; }
+      tr.innerHTML =
+        '<td class="label-col">' + p.x.toFixed(3) + '%</td>' +
+        '<td>' + nat.toLocaleString() + ':1</td>' +
+        '<td>' + badge + ' ' + p.y.toLocaleString() + ':1</td>' +
+        '<td>' + mult + '</td>';
+
+      if (p.img) {
+        tr.style.cursor = 'help';
+        tr.addEventListener('mouseenter', function () {
+          var t = dbleRowTip();
+          var html = '<img src="/img/dble/' + p.img + '" style="width:360px;display:block;" onerror="this.style.display=\'none\'">';
+          html += '<div style="padding:10px 12px;">';
+          html += '<div style="font-weight:600;color:' + TC.ttTitle + ';margin-bottom:6px;">ADL ' + p.x.toFixed(3) + '%</div>';
+          html += p.active
+            ? '<div style="color:#66BB6A;">DBLE active — ' + p.y.toLocaleString() + ':1</div>'
+            : '<div style="color:#FF7043;">DBLE blocked — ' + p.y.toLocaleString() + ':1</div>';
+          html += '<div style="color:#888;margin-top:3px;">Native — ' + nat.toLocaleString() + ':1</div>';
+          if (p.desc) html += '<div style="opacity:0.6;font-size:11px;margin-top:6px;">' + p.desc + '</div>';
+          html += '</div>';
+          t.innerHTML = html;
+          t.style.opacity = '1';
+        });
+        tr.addEventListener('mousemove', function (e) {
+          var t = dbleRowTip();
+          var tx = e.clientX, ty = e.clientY;
+          if (tx + 380 > window.innerWidth) tx -= 380; else tx += 16;
+          if (ty + 300 > window.innerHeight) ty -= 300; else ty += 12;
+          t.style.left = tx + 'px';
+          t.style.top = ty + 'px';
+        });
+        tr.addEventListener('mouseleave', function () { dbleRowTip().style.opacity = '0'; });
+      }
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+    wrap.appendChild(tbl);
+    host.appendChild(wrap);
+
+    if (pts.length > DEFAULT_SHOW) {
+      var btnWrap = document.createElement('div');
+      btnWrap.style.cssText = 'text-align:center;padding:14px 0 4px;';
+      var btn = document.createElement('button');
+      btn.className = 'cs-exp-btn';
+      btn.textContent = 'Show all ' + pts.length + ' scenes';
+      var shown = false;
+      btn.addEventListener('click', function () {
+        shown = !shown;
+        Array.prototype.forEach.call(tbl.querySelectorAll('.dble-extra'), function (r) {
+          r.style.display = shown ? '' : 'none';
+        });
+        btn.textContent = shown ? 'Show fewer' : 'Show all ' + pts.length + ' scenes';
+        btn.classList.toggle('on', shown);
+      });
+      btnWrap.appendChild(btn);
+      host.appendChild(btnWrap);
+    }
+
+    if (afterEl.nextSibling) afterEl.parentNode.insertBefore(card, afterEl.nextSibling);
+    else afterEl.parentNode.appendChild(card);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     CHART — Power Consumption
+  ══════════════════════════════════════════════════════ */
+  function buildPower(el) {
+    mkTitle(el, 'POWER CONSUMPTION', 'Measured at wall · ISF Night / D65 unless noted');
+
+    var row = document.createElement('div');
+    row.className = 'chart-row';
+    el.appendChild(row);
+
+    // Main: power by laser level (F2.0, ISF Night)
+    var mainWrap = document.createElement('div');
+    mainWrap.className = 'chart-main';
+    mainWrap.style.height = '440px';
+    row.appendChild(mainWrap);
+
+    var PWR_LABELS = ['Laser 1','Laser 2','Laser 3','Laser 4','Laser 5','Laser 6','Laser 7','Laser 8','Laser 9','Laser 10','Laser 10+','Performance'];
+    var PWR_DATA   = [87.8, 99.0, 109.5, 121.3, 134.0, 147.4, 161.7, 177.3, 194.8, 214.2, 261.0, 343.0];
+    var PWR_COLORS = PWR_DATA.map(function(v) {
+      if (v >= 300) return '#EF5350cc';
+      if (v >= 240) return '#FF7043cc';
+      return '#4FC3F7cc';
+    });
+
+    mkChart(mkCanvas(mainWrap), {
+      type: 'bar',
+      plugins: DL_PLUGIN,
+      data: {
+        labels: PWR_LABELS,
+        datasets: [{ label: 'Power', data: PWR_DATA, backgroundColor: PWR_COLORS, borderRadius: 4 }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: ttOpts(function(v) { return v + ' W'; }),
+          datalabels: Object.assign({}, DL_OPTS, {
+            formatter: function(v) { return v + ' W'; },
+            anchor: 'end', align: 'end',
+            color: 'var(--text-2,#3a3a3c)', font: { size: 9, weight: '700' },
+          }),
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: GRID, min: 0, max: 420, ticks: { callback: function(v) { return v + ' W'; } } },
+        },
+      },
+    });
+
+    // Side: power by iris at Laser 10, ISF Night
+    var sideWrap = document.createElement('div');
+    sideWrap.className = 'chart-side';
+    row.appendChild(sideWrap);
+    mkTitle(sideWrap, 'LASER 10 · ISF NIGHT', 'Power by iris · F2–F7 & Dynamic');
+
+    mkChart(mkCanvas(sideWrap), {
+      type: 'bar',
+      plugins: DL_PLUGIN,
+      data: {
+        labels: ['F2', 'F3', 'F4', 'F5', 'F7', 'Dynamic'],
+        datasets: [{
+          label: 'Power',
+          data: [213.8, 218.4, 218.3, 212.1, 202.3, 221.4],
+          backgroundColor: [C.F2.hex+'cc', C.F3.hex+'cc', C.F4.hex+'cc', C.F55.hex+'cc', C.F7.hex+'cc', C.Dyn.hex+'cc'],
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: ttOpts(function(v) { return v + ' W'; }),
+          datalabels: Object.assign({}, DL_OPTS, {
+            formatter: function(v) { return v + ' W'; },
+            anchor: 'end', align: 'end',
+            color: 'var(--text-2,#3a3a3c)', font: { size: 9, weight: '700' },
+          }),
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { display: false, min: 185, max: 250 },
+        },
+      },
+    });
+
+    // Table — 2 columns, self-descriptive labels
+    mkTableCard(el, 'POWER — ALL MODES', 'Measured at wall · F2 · ISF Night unless noted · click to sort',
+      ['Mode', 'Power (W)'],
+      [
+        ['Laser 1',                        '87.8'],
+        ['Laser 2',                        '99.0'],
+        ['Laser 3',                        '109.5'],
+        ['Laser 4',                        '121.3'],
+        ['Laser 5',                        '134.0'],
+        ['Laser 6',                        '147.4'],
+        ['Laser 7',                        '161.7'],
+        ['Laser 8',                        '177.3'],
+        ['Laser 9',                        '194.8'],
+        ['Laser 10 (reference)',            '214.2'],
+        ['Laser 10+ (overdrive)',           '261.0'],
+        ['Performance mode',               '343.0'],
+        ['3D mode',                        '165.0'],
+        ['Full black, DBLE on (Laser 10)',  '59.0'],
+        ['Dark scenes, DBLE on (Laser 10)', '81.0'],
+        ['Full black, DBLE on (Laser 10+)', '69.0'],
+      ], 'tbl-power', null);
     addViewToggle(el);
   }
 
@@ -1157,6 +1466,7 @@
     'chart-ansi':       buildANSI,
     'chart-adl':        buildADL,
     'chart-dble':       buildDBLE,
+    'chart-power':      buildPower,
   };
 
   function init() {
