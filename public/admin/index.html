@@ -247,21 +247,36 @@
       },
     });
 
-    // Before / after comparison slider — two images.
+    // Before / after comparison — slider + hover toggle card (same style as Image Enhancers).
     CMS.registerEditorComponent({
       id: 'beforeafter',
-      label: 'Before / After slider',
+      label: 'Before / After comparison',
       fields: [
         { name: 'before', label: 'Before image', widget: 'image' },
         { name: 'after', label: 'After image', widget: 'image' },
-        { name: 'caption', label: 'Caption', widget: 'string', required: false },
+        { name: 'labelBefore', label: 'Label (before)', widget: 'string', default: 'Before', required: false },
+        { name: 'labelAfter',  label: 'Label (after)',  widget: 'string', default: 'After',  required: false },
+        { name: 'caption', label: 'Caption (header text)', widget: 'string', required: false },
       ],
-      pattern: /^<figure class="ba"[\s\S]*?slot="first" src="(.*?)"[\s\S]*?slot="second" src="(.*?)"[\s\S]*?(?:<figcaption>([\s\S]*?)<\/figcaption>)?<\/figure>$/,
-      fromBlock: (match) => ({ before: match[1], after: match[2], caption: match[3] || '' }),
-      toBlock: ({ before, after, caption }) =>
-        '<figure class="ba"><img-comparison-slider><img slot="first" src="' + (before || '') + '" alt="before" /><img slot="second" src="' + (after || '') + '" alt="after" /></img-comparison-slider>' +
-        (caption ? '<figcaption>' + caption + '</figcaption>' : '') + '</figure>',
-      toPreview: ({ caption }) => 'Before/After slider' + (caption ? ': ' + caption : ''),
+      pattern: /^<div class="ba-compare" data-before="([^"]*)" data-after="([^"]*)"(?:\s+data-label-before="([^"]*)")?(?:\s+data-label-after="([^"]*)")?(?:\s+data-caption="([^"]*)")?><\/div>$/,
+      fromBlock: (match) => ({
+        before: match[1] || '', after: match[2] || '',
+        labelBefore: match[3] || 'Before', labelAfter: match[4] || 'After',
+        caption: match[5] || '',
+      }),
+      toBlock: ({ before, after, labelBefore, labelAfter, caption }) => {
+        var lb = labelBefore || 'Before';
+        var la = labelAfter  || 'After';
+        var cap = caption || (lb + ' vs ' + la);
+        return '<div class="ba-compare"' +
+          ' data-before="' + (before || '') + '"' +
+          ' data-after="'  + (after  || '') + '"' +
+          ' data-label-before="' + lb  + '"' +
+          ' data-label-after="'  + la  + '"' +
+          ' data-caption="'      + cap + '"></div>';
+      },
+      toPreview: ({ caption, labelBefore, labelAfter }) =>
+        '⟷ ' + (caption || ((labelBefore || 'Before') + ' vs ' + (labelAfter || 'After'))),
     });
   </script>
 </body>
