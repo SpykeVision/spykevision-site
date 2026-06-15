@@ -1,6 +1,7 @@
 ---
 import Base from './Base.astro';
 import Comments from '../components/Comments.astro';
+import Donate from '../components/Donate.astro';
 const { review, headings } = Astro.props;
 const fmtDate = new Date(review.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
 const toc = (headings || []).filter((h) => h.depth === 2);
@@ -119,5 +120,6 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
     </div>
   </main>
 
+  {!review.draft && <Donate />}
   {!review.draft && <Comments title={review.title} />}
 </Base>
