@@ -1239,7 +1239,8 @@ figure.ba figcaption {
 
 
 /* ── Image-enhancer comparison widget ─────────────────────────────────────── */
-.enh-compare {
+.enh-compare,
+.ba-compare {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
