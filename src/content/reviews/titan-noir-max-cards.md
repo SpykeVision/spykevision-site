@@ -1,4 +1,8 @@
 ---
+buyLink: https://eu.xgimi.com/pages/titan-noir-max
+readTime: 45 min read
+draft: false
+badge: NEW
 title: XGIMI Titan Noir Max — In-Depth Review
 eyebrow: In-Depth Review
 category: 4K Laser • Flagship
@@ -6,12 +10,8 @@ summary: Unboxing, build quality, accessories, lens optics, and full brightness
   & contrast measurements for the XGIMI Titan Noir Max.
 cover: /images/tnm/p1-01.jpeg
 date: 2026-06-01
-readTime: 45 min read
 extra: Firmware 1.2.36
 score: 9.2
-badge: NEW
-buyLink: https://eu.xgimi.com/pages/titan-noir-max
-draft: false
 pros:
   - True 0.98–2.1x optical zoom, no add-on lens needed
   - Dual-iris system enables class-leading native contrast (up to 8,650:1)
@@ -189,6 +189,8 @@ My sample has some uniformity issues out of the box. The left edge leans pink, a
 
 But uniformity is heavily dependent on zoom position, lens shift, iris setting, and even warm-up. The worst uniformity on my unit is at the extreme max zoom end (2.1× zoom). At around 1.3× zoom with a small amount of horizontal lens shift, the uniformity cleans up dramatically and becomes nearly perfect.
 
+![](/uploads/img_2525.jpg)
+
 Practical takeaway: if you have some flexibility in projector placement, experiment. Move it around, try different zoom and shift combinations. You might be able to dial out most of the tint without waiting for a software fix.
 
 ## Laser Speckle
@@ -260,7 +262,7 @@ I also measured ANSI contrast using the standard checkerboard pattern, varying z
 
 <div class="chart-section" id="chart-ansi"></div>
 
-As the graph shows, ANSI contrast improves with shorter zoom and with the iris closed — classic behavior. **Lens shift is the decisive variable**: a shifted lens reduces internal stray light in a way that centered placement cannot.
+As the graph shows, ANSI contrast improves with min zoom and with the iris closed — classic behavior. **Lens shift is the decisive variable**: a shifted lens reduces internal stray light in a way that centered placement cannot.
 
 With lens shift applied, the numbers climb further. Short throw: 490–560:1. Around 1.4× zoom, ANSI climbs to the 680–720:1 range with shift. My sample peaked at **846:1 ANSI** — below the 1000:1 figure that has circulated in early reports, but still extremely competitive in this class.
 
@@ -330,6 +332,8 @@ Each scene below starts from **enhancers OFF**. Use the buttons to pick which en
 
 On the original public firmware builds (1.0.56 and 1.0.99), DBLE was effectively non-functional for real content. Any bright pixel in the frame — even a cursor on an otherwise black screen — would disengage the system entirely. In practice, DBLE was a test-pattern feature: impressive full-black numbers, but the projector fell back to native contrast the moment actual content appeared.
 
+<figure class="video-local"><video controls playsinline><source src="/videos/img_2629.mov" type="video/mp4"></video><figcaption>DBLE on 1.0.99 was pretty useless</figcaption></figure>
+
 Firmware 1.2.36 beta changes this significantly. This section evaluates that build.
 
 On a full-black field, DBLE runs the laser down to its physical limit. At Laser 10, wall power drops from ~214W to 58–60W. At Laser 10+, it drops from 261W to 69W. The resulting on/off contrast exceeds 100,000:1 and the subjective effect is near-FFTB — the laser is barely emitting, and the image goes to a deep, clean black with no color shift. This is the hardware showing what it can actually do when the firmware lets it.
@@ -390,15 +394,27 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 **Rolling buffer.** The most significant artifact on the TNM is rolling buffer — a direct consequence of how the DLPC8455 writes pixels. Instead of updating the entire frame at once, it scans from top to bottom row by row. On static content this is invisible. On fast-moving high-contrast edges it produces a rolling-shutter-like distortion: the top of a moving edge renders differently from the bottom. This is hardware-level behaviour. It can't be eliminated by settings. Turning off XPR-Shift doesn't help — the artifact persists even without the shift overlay, which is unexpected. Anti-RBE partially reduces the visible effect. A firmware fix is theoretically possible and XGIMI is aware of it. The practical impact is real: this is a step backward in motion quality compared to the previous DLPC generation.
 
+<figure class="video-local"><video controls playsinline><source src="/videos/img_2890.mov" type="video/mp4"></video><figcaption>Vertical rolling buffer effect (anti-RBE Off)</figcaption></figure>
+
+**Pixel Wobbling (Pixel Shimmer).** A localised flicker of individual pixels on static frames, most visible in certain areas of the image rather than across the whole screen. It is not global "breathing" but a fine, point‑to‑point instability, likely caused by the rolling‑buffer line‑by‑line refresh and subtle timing jitter in the DLPC8455 controller. The artefact appears where pixel transitions are most demanding and can be seen up close on sharp edges or fine patterns.
+
+<figure class="video-local"><video controls playsinline><source src="/videos/img_2531.mov" type="video/mp4"></video></figure>
+
 **Blocking.** On some motion sequences — particularly in dark or grey scenes — there's a pattern artifact that resembles a moving grid. Visible without squinting if you know what to look for. It's a temporal effect that doesn't capture cleanly in screenshots, but it shows up consistently on certain content.
 
 **Static contour pattern.** On solid uniform fields such as white, grey, or black — there's a faint spatial pattern present that shouldn't be there. Visible at closer viewing distances, particularly on grey and white. Whether this is a DMD characteristic or a processing artifact, I'm not certain yet.
+
+![](/uploads/img_2551.jpg)
 
 **Dithering.** DLP projectors use temporal dithering to represent intermediate brightness values, and the TNM has more visible dithering than I'd like on dark backgrounds — pixel-level flickering in shadow areas. Enabling anti-RBE makes it more pronounced. This is partly a platform characteristic of 0.47-inch DLP chips, but the level here is on the higher end.
 
 **Hidden sharpening.** Sharpness slider at zero does not mean no sharpening. The TNM applies processing that adds halos around edges, causes shimmering on fine patterns, and blooms around small bright objects even at the minimum setting. In Game Mode the sharpening changes character (closer to a super-resolution filter) but doesn't disappear. This is a well-known limitation on several 0.47-inch DLP platforms. Hopefully XGIMI can expose a true off state in a future update.
 
+![](/uploads/img_2881.jpg)
+
 **Black uniformity.** On a full-black pattern there is a faint vertical blocking element across the entire screen.
+
+![](/uploads/img_2952.jpg)
 
 The good news: XGIMI knows about all of these problems and many of them can be addressed by firmware update. The hardware is exceptional. The lens is reference-grade. The remaining question is whether the firmware can catch up to the quality of the optics.
 
@@ -437,8 +453,6 @@ One area where the TNM genuinely impresses is its acoustic performance around th
 Using a UMIK-1 microphone, frequency measurements clearly show that engaging Standard or Enhanced mode merely slightly alters the low-frequency acoustic profile of the power supply, primarily in the 100–300 Hz range. It does not generate any new, piercing high-frequency peaks.
 
 The high-frequency components visible on the graph — particularly around 5–6 kHz and 12–16 kHz — are consistently present across all modes, including when anti-RBE is explicitly turned off. This strongly indicates that these higher-pitched sounds are attributable to the XPR-Shift mechanism itself, not anti-RBE processing. This is a significant engineering achievement: effective RBE suppression without an intrusive acoustic penalty.
-
-\[INSERT ANTI-RBE ACOUSTIC FREQUENCY SPECTRUM GRAPH]
 
 ## Gaming Performance and Motion
 
@@ -496,17 +510,17 @@ The built-in MEMC motion interpolation itself is present but unremarkable. It be
 
 **The Good**
 
-- **Uncompromised Luminance:** The single biggest factor is brightness. With active shutter glasses cutting perceived luminance by more than half, most lamp-based projectors quickly become too dim for comfortable 3D at screen sizes beyond 100 inches. The TNM has enough laser output to push through that penalty without strain. At roughly 120–150 inches on a moderate-gain screen, the image remains punchy, and there is none of the fatiguing dimness that forces you to squint into dark scenes. That alone makes it more watchable than nearly any lamp-driven alternative.
-- **Flawless Linkage & Ghosting Isolation:** The reliability of the DLP-Link signal on this chassis sets a new benchmark for modern DLPs. Once your active glasses lock on, the handshake remains bulletproof, eliminating the annoying synchronization drops, signal searching, and eye-straining flicker that usually ruin a movie mid-way through. Furthermore, channel separation is remarkably pristine.
-- **Intact Chromatic Fidelity:** Typically, entering a consumer projector's 3D mode triggers a disastrous shift in color and gamma tracking. Refreshingly, the TNM avoids this pitfall; color temperatures remain balanced, skin tones preserve their natural warmth, and the lower end of the gamma curve doesn't clip important shadow detail. It feels like a fully realized feature rather than a rushed, checklist-style software addition.
-- **True Native 1080p Resolution:** This machine outputs a complete 1080p canvas to each eye. There are no spatial interpolation tricks or scaling compromises at play here, because the XPR pixel-shifter physically parks itself when a 3D signal is detected, revealing the clean, raw pixel structure of the underlying native 1080p DMD chip. That said, SDE on this 0.47" chip is still much higher than on the old 0.95" units.
+* **Uncompromised Luminance:** The single biggest factor is brightness. With active shutter glasses cutting perceived luminance by more than half, most lamp-based projectors quickly become too dim for comfortable 3D at screen sizes beyond 100 inches. The TNM has enough laser output to push through that penalty without strain. At roughly 120–150 inches on a moderate-gain screen, the image remains punchy, and there is none of the fatiguing dimness that forces you to squint into dark scenes. That alone makes it more watchable than nearly any lamp-driven alternative.
+* **Flawless Linkage & Ghosting Isolation:** The reliability of the DLP-Link signal on this chassis sets a new benchmark for modern DLPs. Once your active glasses lock on, the handshake remains bulletproof, eliminating the annoying synchronization drops, signal searching, and eye-straining flicker that usually ruin a movie mid-way through. Furthermore, channel separation is remarkably pristine.
+* **Intact Chromatic Fidelity:** Typically, entering a consumer projector's 3D mode triggers a disastrous shift in color and gamma tracking. Refreshingly, the TNM avoids this pitfall; color temperatures remain balanced, skin tones preserve their natural warmth, and the lower end of the gamma curve doesn't clip important shadow detail. It feels like a fully realized feature rather than a rushed, checklist-style software addition.
+* **True Native 1080p Resolution:** This machine outputs a complete 1080p canvas to each eye. There are no spatial interpolation tricks or scaling compromises at play here, because the XPR pixel-shifter physically parks itself when a 3D signal is detected, revealing the clean, raw pixel structure of the underlying native 1080p DMD chip. That said, SDE on this 0.47" chip is still much higher than on the old 0.95" units.
 
 **Where It Falls Short**
 
-- **Judder & Pulldown Flaws:** Where this system stumbles — and it's a glaring blemish given the strength of the optics — is in its motion processing. The TNM fails to execute a native 5:5 cadence for 24p stereoscopic files. Instead, it subjects cinematic content to a crude 3:2 pulldown routine to reach 60 Hz before pushing it to the eyes, resulting in glaring judder. This stuttering is far more fatiguing in a 3D space, since your brain is already processing spatial depth.
-- **Lack of Triple-Flash Cadence:** The display drives its 3D presentation at a 120 Hz refresh cycle (Dual Flash) rather than the premium 144 Hz (Triple Flash) standard used by high-end legacy cinema gear. That 144 Hz threshold on units like the Lumis was a massive differentiator, virtually wiping out peripheral flicker and allowing for hours of viewing without fatigue. While 120 Hz gets the job done, it can't quite replicate the glassy smoothness of a true 144 Hz cycle.
-- **Missing Dedicated RF Expansion:** If we are compiling a wishlist for future revisions, adding an external RF emitter port should be a priority. As solid as the DLP-Link implementation is on this machine, the technology remains inherently vulnerable to localized line-of-sight dropouts or environmental lighting interference. Incorporating a dedicated radio-frequency option would elevate a highly competent feature into a flawless, enthusiast-grade solution.
-- **Interpolation Gaps & Interface Hurdles:** Frame interpolation (MEMC) is entirely greyed out once stereoscopic rendering begins. Calculating motion vectors across dual video streams is admittedly resource-intensive, but given the custom FPGA silicon tucked inside this chassis, leaving it out feels like underutilized hardware capacity. Furthermore, the operational workflow has its share of friction: the display completely strips away automated 3D flag recognition, requiring you to dive into menus to select layout formats manually every single time. Additionally, your essential picture adjustments and laser illumination controls are completely padlocked while in this mode.
+* **Judder & Pulldown Flaws:** Where this system stumbles — and it's a glaring blemish given the strength of the optics — is in its motion processing. The TNM fails to execute a native 5:5 cadence for 24p stereoscopic files. Instead, it subjects cinematic content to a crude 3:2 pulldown routine to reach 60 Hz before pushing it to the eyes, resulting in glaring judder. This stuttering is far more fatiguing in a 3D space, since your brain is already processing spatial depth.
+* **Lack of Triple-Flash Cadence:** The display drives its 3D presentation at a 120 Hz refresh cycle (Dual Flash) rather than the premium 144 Hz (Triple Flash) standard used by high-end legacy cinema gear. That 144 Hz threshold on units like the Lumis was a massive differentiator, virtually wiping out peripheral flicker and allowing for hours of viewing without fatigue. While 120 Hz gets the job done, it can't quite replicate the glassy smoothness of a true 144 Hz cycle.
+* **Missing Dedicated RF Expansion:** If we are compiling a wishlist for future revisions, adding an external RF emitter port should be a priority. As solid as the DLP-Link implementation is on this machine, the technology remains inherently vulnerable to localized line-of-sight dropouts or environmental lighting interference. Incorporating a dedicated radio-frequency option would elevate a highly competent feature into a flawless, enthusiast-grade solution.
+* **Interpolation Gaps & Interface Hurdles:** Frame interpolation (MEMC) is entirely greyed out once stereoscopic rendering begins. Calculating motion vectors across dual video streams is admittedly resource-intensive, but given the custom FPGA silicon tucked inside this chassis, leaving it out feels like underutilized hardware capacity. Furthermore, the operational workflow has its share of friction: the display completely strips away automated 3D flag recognition, requiring you to dive into menus to select layout formats manually every single time. Additionally, your essential picture adjustments and laser illumination controls are completely padlocked while in this mode.
 
 **The Verdict on 3D**
 
