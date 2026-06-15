@@ -9,6 +9,7 @@ date: 2026-06-01
 readTime: 45 min read
 extra: Firmware 1.2.36
 score: 9.2
+badge: NEW
 draft: false
 pros:
   - True 0.98–2.1x optical zoom, no add-on lens needed

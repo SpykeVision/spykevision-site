@@ -3,11 +3,6 @@ const USDT_ADDRESS = 'TUgTn5FUd4RUJWTLcu5YfZbcTQXjJPiCih';
 const BOOSTY_URL   = 'https://boosty.to/spykevision';
 ---
 
-<div class="donate-wrap">
-  <p class="donate-hint">Independent review — no sponsored content, no affiliate links.</p>
-  <button class="btn donate-btn" id="donateOpen">Support SpykeVision</button>
-</div>
-
 <div class="donate-backdrop" id="donateBackdrop" aria-hidden="true"></div>
 
 <dialog class="donate-modal" id="donateModal" aria-label="Support options">
@@ -151,7 +146,6 @@ const BOOSTY_URL   = 'https://boosty.to/spykevision';
 
 <script>
 (function () {
-  var open  = document.getElementById('donateOpen');
   var close = document.getElementById('donateClose');
   var modal = document.getElementById('donateModal');
   var backdrop = document.getElementById('donateBackdrop');
@@ -161,7 +155,9 @@ const BOOSTY_URL   = 'https://boosty.to/spykevision';
   function openModal() { modal.classList.add('open'); backdrop.classList.add('open'); document.body.style.overflow = 'hidden'; }
   function closeModal() { modal.classList.remove('open'); backdrop.classList.remove('open'); document.body.style.overflow = ''; }
 
-  open.addEventListener('click', openModal);
+  document.querySelectorAll('[data-donate-open]').forEach(function (el) {
+    el.addEventListener('click', openModal);
+  });
   close.addEventListener('click', closeModal);
   backdrop.addEventListener('click', closeModal);
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });

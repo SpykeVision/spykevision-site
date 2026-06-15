@@ -93,15 +93,18 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
       )}
 
       {(review.verdictTitle || review.verdictText) && (
-        <div class="verdict verdict--noscore">
-          <p class="verdict-label">CONCLUSION</p>
+        <div class="conclusion">
+          <p class="conclusion-label">Conclusion</p>
           {review.verdictTitle && <h3>{review.verdictTitle}</h3>}
           {review.verdictText && <p>{review.verdictText}</p>}
-          {review.buyLink && (
-            <a href={review.buyLink} target="_blank" rel="noopener" class="btn btn-buy">
-              Official page / Buy →
-            </a>
-          )}
+          <div class="conclusion-actions">
+            <button class="btn btn-donate" data-donate-open>Donate</button>
+            {review.buyLink && (
+              <a href={review.buyLink} target="_blank" rel="noopener" class="btn btn-official">
+                Official page →
+              </a>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -13,6 +13,7 @@ const reviews = defineCollection({
     readTime: z.string().optional(),         // e.g. "18 min read"
     extra: z.string().optional(),            // e.g. "Firmware 1.0.99"
     score: z.number().optional(),            // overall score for card badge
+    badge: z.string().optional(),            // e.g. "NEW" — shown on card instead of score
     draft: z.boolean().default(false),
     // Structured verdict (rendered by the layout)
     pros: z.array(z.string()).default([]),
@@ -25,6 +26,7 @@ const reviews = defineCollection({
       label: z.string(),
       sections: z.array(z.string()),
     })).optional(),
+    wide: z.boolean().optional(),
   }),
 });
 

@@ -44,7 +44,7 @@ const comingSoon = [
             <a href={`/reviews/${r.slug}/`} class="card" data-draft={r.data.draft ? 'true' : null}>
               <div class="card-media">
                 <img src={r.data.cover} alt={r.data.title} />
-                {r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>}
+                {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
               </div>
               <div class="card-body">
                 {r.data.draft && <span class="draft-badge">Draft</span>}

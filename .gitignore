@@ -3,3 +3,9 @@ dist/
 .astro/
 .env
 .env.*
+
+# Local Netlify folder
+.netlify
+
+# ClaudeClaw runtime / secrets — never commit
+.claude/
