@@ -181,7 +181,7 @@ Lens sharpness is excellent — among the best I've seen in this category. No si
 
 <div class="note"><strong>Critical issue:</strong> forced sharpening is active even with the sharpness slider at 0. It adds halos around fine details, causes shimmering on some test patterns, and introduces visible blooming around small bright objects. A reference display shouldn't apply hidden processing. Hopefully XGIMI can fix this in a future update.</div>
 
-<div class="gallery"><figure><img src="/images/tnm/p2-14.jpeg" alt="Game mode OFF"><figcaption>Game mode OFF</figcaption></figure><figure><img src="/images/tnm/p2-15.jpeg" alt="Game mode ON"><figcaption>Game mode ON</figcaption></figure><figure><img src="/images/tnm/p2-16.jpeg" alt="QBF pattern, Game mode ON"><figcaption>QBF pattern, Game mode ON</figcaption></figure><figure><img src="/images/tnm/p2-17.jpeg" alt=""></figure></div>
+<div class="gallery"><figure><img src="/images/tnm/p2-14.jpeg" alt="Game mode OFF"><figcaption>Game mode OFF</figcaption></figure><figure><img src="/images/tnm/p2-15.jpeg" alt="Game mode ON"><figcaption>Game mode ON</figcaption></figure></div>
 
 ## White Field Uniformity
 
@@ -516,6 +516,8 @@ It is also worth noting that the projector accepts a 4K/120 Hz input signal, but
 
 It also supports VRR and AMD FreeSync Premium in 1080p mode, which is genuinely good for competitive gamers, along with widescreen 21:9 scope gaming.
 
+One more capability worth calling out: Game Mode is the **only** mode on the TNM that outputs full **4:4:4 chroma**. All other picture profiles use chroma subsampling. For gaming — where UI text, fine HUD elements, and aliased edges benefit from full chroma resolution — this is a meaningful advantage and an extra reason to stay in Game Mode when gaming.
+
 **The Main Drawbacks: Locked Profiles and Hidden Filters**
 
 The biggest frustration with Game Mode right now is the complete lack of image calibration freedom. The moment you activate it, your standard picture settings are locked down. Instead, you are given a restrictive choice of uncalibrated, genre-based presets (FPS, RTS, RPG, etc.).
@@ -527,6 +529,8 @@ None of these modes are anywhere near reference color accuracy. They aggressivel
 **The Rolling Buffer:** As mentioned previously, this hardware-level limitation shows up during gameplay when a bright object moves rapidly across a dark background. Peculiarly, even with XPR-Shift disabled and resolution lowered to 1080p, the rolling buffer effect persists, which is quite odd and theoretically correctable in a future firmware update.
 
 **Super Resolution Sharpening:** Hidden sharpening is notably reduced in Game Mode — in fact, it is almost entirely absent compared to the Standard and ISF modes. This is a genuine positive. However, a different sharpening filter appears to be active, behaving similarly to Super Resolution. False contours and edge enhancement can be seen on sharpness test patterns, and the effect is sometimes visible in game HUD elements and fine text.
+
+<div class="gallery"><figure><img src="/images/tnm/p2-16.jpeg" alt="QBF pattern, Game mode ON"><figcaption>QBF pattern, Game mode ON</figcaption></figure><figure><img src="/images/tnm/p2-17.jpeg" alt="QBF pattern detail"><figcaption>QBF pattern detail</figcaption></figure></div>
 
 **DBLE (Dynamic Black) Inheritance:** DBLE currently inherits its state from the previous picture mode. If DBLE was enabled before entering Game Mode, it remains enabled, and vice versa. There is no dedicated toggle for DBLE within Game Mode itself. A proper on/off switch for the dynamic system in Game Mode would be a welcome addition in a future firmware update.
 
