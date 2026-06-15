@@ -65,10 +65,10 @@ tocGroups:
       - Brightness & Contrast Measurements
       - "Dual Iris: Summary"
       - Power Consumption
-      - DBLE (Dynamic Black Level Enhancement)
   - label: Image Processing
     sections:
       - Image Enhancers
+      - DBLE (Dynamic Black Level Enhancement)
   - label: Noise & Artifacts
     sections:
       - Noise
@@ -412,7 +412,7 @@ On real content in viewing-appropriate modes, the laser can dim on average aroun
 
 With the iris held static, the effective formula is:
 
-**multiplier = laser dimming + highlight compensation via gamma**
+**multiplier = laser dimming × highlight compensation via gamma**
 
 This is measurable. On a 0.065% ADL scene, enabling DBLE raised the absolute brightness of highlights above the baseline — not reduced it, raised it. The lux meter read above what dimming alone would predict, confirming the gamma contribution at low APL. The practical ceiling in clean territory is around 5× in standard modes and 7× at Laser 10+; push past that and you trade tone accuracy for a bigger number — potentially 9–13× with moderate clipping.
 
