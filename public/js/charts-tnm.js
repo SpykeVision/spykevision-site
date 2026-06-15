@@ -613,7 +613,7 @@
             bodyColor: TC.text, borderColor: TC.ttBord, borderWidth: 1,
             callbacks: { label: function (ctx) { return ' ' + ctx.parsed.y + '×'; } },
           },
-          datalabels: Object.assign({}, DL_OPTS, { font: { size: 8, weight: '700' }, formatter: function (v) { return v + '×'; } }),
+          datalabels: Object.assign({}, DL_OPTS, { anchor: 'end', align: 'end', color: 'var(--text-2,#555)', font: { size: 8, weight: '700' }, formatter: function (v) { return v + '×'; } }),
         },
         scales: {
           x: { grid: { display: false }, ticks: { font: { size: 9 } } },
