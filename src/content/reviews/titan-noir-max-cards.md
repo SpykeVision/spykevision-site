@@ -9,6 +9,7 @@ category: 4K Laser • Flagship
 summary: Unboxing, build quality, accessories, lens optics, and full brightness
   & contrast measurements for the XGIMI Titan Noir Max.
 cover: /images/tnm/hero-tnm.jpeg
+coverCard: /images/tnm/p1-hero.jpg
 date: 2026-06-01
 extra: Firmware 1.2.36
 score: 9.2

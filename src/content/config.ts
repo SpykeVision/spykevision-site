@@ -9,6 +9,7 @@ const reviews = defineCollection({
     category: z.string().optional(),         // e.g. "4K Laser • Flagship"
     summary: z.string(),                     // card blurb + meta description
     cover: z.string(),                       // /uploads/... or /images/...
+    coverCard: z.string().optional(),        // homepage card thumbnail (overrides cover)
     date: z.coerce.date(),
     readTime: z.string().optional(),         // e.g. "18 min read"
     extra: z.string().optional(),            // e.g. "Firmware 1.0.99"
