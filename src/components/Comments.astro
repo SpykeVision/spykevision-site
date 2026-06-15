@@ -33,27 +33,28 @@ const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
             try {
               const doc = iframe.contentDocument;
               if (!doc) return;
-              // Inject CSS immediately (applies even before React renders)
+              // Inject CSS (label asterisks + remove h-24 height cap)
               const style = doc.createElement('style');
               style.textContent = `
-                textarea { min-height: 120px !important; }
                 label::after { content: ' *'; color: #e53e3e; font-size: 12px; }
+                textarea.h-24 { height: auto !important; min-height: 150px !important; }
               `;
               doc.head.appendChild(style);
-              // Watch for React to render form elements
-              const inner = new MutationObserver(() => {
+              const patch = () => {
                 doc.querySelectorAll('label').forEach(l => {
                   if (l.textContent.includes('optional')) l.textContent = 'Email';
                 });
                 const ta = doc.querySelector('textarea');
-                if (ta && !ta.dataset.sized) {
-                  ta.dataset.sized = '1';
+                if (ta) {
+                  ta.classList.remove('h-24');
+                  ta.style.height = '150px';
                   ta.rows = 6;
-                  ta.style.setProperty('height', 'auto', 'important');
-                  ta.style.setProperty('min-height', '120px', 'important');
-                  inner.disconnect();
                 }
-              });
+              };
+              // Svelte renders synchronously before load — patch immediately
+              patch();
+              // Also watch in case of re-render
+              const inner = new MutationObserver(patch);
               inner.observe(doc.body, { childList: true, subtree: true });
             } catch (e) {}
           });
