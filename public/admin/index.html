@@ -4,13 +4,30 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SpykeVision — Content Manager</title>
-  <!-- Netlify Identity widget: handles login for the owner -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <!-- Netlify Identity: only on prod (not needed on localhost with local_backend) -->
+  <script>
+    if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+      document.write('<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"><\/script>');
+    }
+  </script>
 </head>
 <body>
   <!-- Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   <script>
+    // Preview pane styling: constrain width and scale media to a readable size.
+    CMS.registerPreviewStyle(
+      'body{max-width:760px;margin:0 auto;padding:24px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6;color:#1a1a1a;}' +
+      'img{max-width:100%;height:auto;display:block;margin:18px auto;border-radius:8px;}' +
+      'figure{margin:24px 0;}figure figcaption{text-align:center;font-size:.82em;color:#777;margin-top:8px;}' +
+      'h1{font-size:28px;}h2{font-size:22px;margin-top:32px;}' +
+      'table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;}' +
+      'table td{border:1px solid #e2e2e7;padding:8px 12px;}' +
+      'video{max-width:100%;height:auto;border-radius:8px;display:block;margin:18px auto;background:#000;}' +
+      '.note{background:#f5f5f7;border-left:3px solid #0a84ff;padding:12px 16px;border-radius:8px;margin:20px 0;font-size:14px;}',
+      { raw: true }
+    );
+
     // Custom editor components: insert special blocks into the markdown body.
 
     // YouTube embed — paste a video ID or full URL.
@@ -46,23 +63,168 @@
       toPreview: ({ src, caption }) => 'R2 Video: ' + (src || '') + (caption ? ' — ' + caption : ''),
     });
 
-    // Local video upload — mp4/webm served from /uploads/.
+    // NOTE: "Local video upload" was removed on purpose. Local .mov/.mp4 files
+    // dumped into the media_folder (public/uploads) bloat the repo and make the
+    // CMS media library crawl. Always upload videos via /admin/upload/ (R2 / CDN)
+    // and insert them with the "Video (R2 / CDN)" component above.
+
+    // Spoiler / collapsible — hide content (examples, spoilers) behind a click.
     CMS.registerEditorComponent({
-      id: 'localvideo',
-      label: 'Local video (upload)',
+      id: 'spoiler',
+      label: 'Spoiler (collapsible)',
       fields: [
-        { name: 'src', label: 'Video file (mp4 / webm)', widget: 'file' },
-        { name: 'poster', label: 'Poster image (optional)', widget: 'image', required: false },
+        { name: 'summary', label: 'Summary (clickable label)', widget: 'string', default: 'Show example' },
+        { name: 'body', label: 'Hidden content (HTML allowed — paste a figure/video block here)', widget: 'text' },
+      ],
+      pattern: /^<details class="spoiler"><summary>([\s\S]*?)<\/summary>\n\n([\s\S]*?)\n\n<\/details>$/,
+      fromBlock: (match) => ({ summary: match[1] || 'Show example', body: match[2] || '' }),
+      toBlock: ({ summary, body }) =>
+        '<details class="spoiler"><summary>' + (summary || 'Show example') + '</summary>\n\n' +
+        (body || '') + '\n\n</details>',
+      toPreview: ({ summary }) => '▶ Spoiler: ' + (summary || 'Show example'),
+    });
+
+    // Spec / data table (2 columns, no header).
+    CMS.registerEditorComponent({
+      id: 'spectable',
+      label: 'Spec / data table',
+      fields: [
+        {
+          name: 'rows',
+          label: 'Rows',
+          widget: 'list',
+          fields: [
+            { name: 'label', label: 'Label (left column)', widget: 'string' },
+            { name: 'value', label: 'Value (right column)', widget: 'string' },
+          ],
+        },
+      ],
+      pattern: /^<table class="spec-table">([\s\S]*?)<\/table>$/,
+      fromBlock: function (match) {
+        var inner = match[1] || '';
+        var rows = [];
+        var rowRe = /<tr><td>([\s\S]*?)<\/td><td>([\s\S]*?)<\/td><\/tr>/g;
+        var m;
+        while ((m = rowRe.exec(inner)) !== null) {
+          rows.push({ label: m[1], value: m[2] });
+        }
+        return { rows: rows };
+      },
+      toBlock: function (data) {
+        var rows = (data.rows || []).map(function (r) {
+          return '<tr><td>' + (r.label || '') + '</td><td>' + (r.value || '') + '</td></tr>';
+        }).join('\n');
+        return '<table class="spec-table">\n' + rows + '\n</table>';
+      },
+      toPreview: function (data) {
+        var rows = (data.rows || []).map(function (r) {
+          return '<tr><td style="padding:6px 12px;border:1px solid #e2e2e7;">' + (r.label || '') +
+            '</td><td style="padding:6px 12px;border:1px solid #e2e2e7;">' + (r.value || '') + '</td></tr>';
+        }).join('');
+        return '<table style="width:100%;border-collapse:collapse;font-size:14px;margin:16px 0;">' + rows + '</table>';
+      },
+    });
+
+    // Single image with caption (standalone <figure>).
+    CMS.registerEditorComponent({
+      id: 'figure',
+      label: 'Image with caption',
+      fields: [
+        { name: 'src', label: 'Image', widget: 'image' },
+        { name: 'alt', label: 'Alt text', widget: 'string', required: false },
         { name: 'caption', label: 'Caption', widget: 'string', required: false },
       ],
-      pattern: /^<figure class="video-local"[\s\S]*?<source src="(.*?)"[\s\S]*?(?:poster="(.*?)")?[\s\S]*?(?:<figcaption>([\s\S]*?)<\/figcaption>)?<\/figure>$/,
-      fromBlock: (match) => ({ src: match[1], poster: match[2] || '', caption: match[3] || '' }),
-      toBlock: ({ src, poster, caption }) =>
-        '<figure class="video-local"><video controls playsinline' +
-        (poster ? ' poster="' + poster + '"' : '') +
-        '><source src="' + (src || '') + '" type="video/' + ((src || '').endsWith('.webm') ? 'webm' : 'mp4') + '"></video>' +
-        (caption ? '<figcaption>' + caption + '</figcaption>' : '') + '</figure>',
-      toPreview: ({ src, caption }) => 'Video: ' + (src || '') + (caption ? ' — ' + caption : ''),
+      pattern: /^<figure><img src="([^"]*)"(?:\s+alt="([^"]*)")?[^>]*>(?:<figcaption>([\s\S]*?)<\/figcaption>)?<\/figure>$/,
+      fromBlock: function (match) {
+        return { src: match[1] || '', alt: match[2] || '', caption: match[3] || '' };
+      },
+      toBlock: function (data) {
+        return '<figure><img src="' + (data.src || '') + '" alt="' + (data.alt || '') + '">' +
+          (data.caption ? '<figcaption>' + data.caption + '</figcaption>' : '') + '</figure>';
+      },
+      toPreview: function (data) {
+        return '<figure style="margin:24px 0;text-align:center;">' +
+          '<img src="' + (data.src || '') + '" style="max-width:100%;border-radius:8px;">' +
+          (data.caption ? '<figcaption style="font-size:13px;color:#888;margin-top:8px;">' + data.caption + '</figcaption>' : '') +
+          '</figure>';
+      },
+    });
+
+    // Note / callout block.
+    CMS.registerEditorComponent({
+      id: 'note',
+      label: 'Note / callout',
+      fields: [
+        { name: 'label', label: 'Label (bold heading)', widget: 'string', required: false },
+        { name: 'body', label: 'Body text (HTML allowed for bold)', widget: 'text' },
+      ],
+      pattern: /^<div class="note">(?:<strong>([\s\S]*?)<\/strong>\s*)?([\s\S]*?)<\/div>$/,
+      fromBlock: function (match) {
+        return { label: match[1] || '', body: match[2] || '' };
+      },
+      toBlock: function (data) {
+        var label = (data.label || '').trim();
+        var body = (data.body || '').trim();
+        return '<div class="note">' + (label ? '<strong>' + label + '</strong> ' : '') + body + '</div>';
+      },
+      toPreview: function (data) {
+        var label = (data.label || '').trim();
+        var body = (data.body || '').trim();
+        return '<div style="background:#e8f0fe;border-left:3px solid #0a84ff;padding:12px 16px;border-radius:8px;margin:16px 0;font-size:14px;">' +
+          (label ? '<strong>' + label + '</strong> ' : '') + body + '</div>';
+      },
+    });
+
+    // Photo gallery — renders as a visual card instead of raw HTML.
+    CMS.registerEditorComponent({
+      id: 'gallery',
+      label: 'Photo gallery',
+      fields: [
+        {
+          name: 'cols',
+          label: 'Columns',
+          widget: 'select',
+          options: [{ label: '2 columns', value: '2' }, { label: '3 columns', value: '3' }],
+          default: '2',
+        },
+        {
+          name: 'images',
+          label: 'Images',
+          widget: 'list',
+          fields: [
+            { name: 'src', label: 'Image', widget: 'image' },
+            { name: 'alt', label: 'Caption / Alt text', widget: 'string', required: false },
+          ],
+        },
+      ],
+      pattern: /^<div class="gallery( cols-3)?">([\s\S]*?)<\/div>$/,
+      fromBlock: function (match) {
+        var isCols3 = !!match[1];
+        var inner = match[2] || '';
+        var images = [];
+        var figRe = /<figure><img src="([^"]*)"[^>]*>(?:<figcaption>([^<]*)<\/figcaption>)?<\/figure>/g;
+        var m;
+        while ((m = figRe.exec(inner)) !== null) {
+          images.push({ src: m[1], alt: m[2] || '' });
+        }
+        return { cols: isCols3 ? '3' : '2', images: images };
+      },
+      toBlock: function (data) {
+        var cls = data.cols === '3' ? 'gallery cols-3' : 'gallery';
+        var figs = (data.images || []).map(function (img) {
+          return '<figure><img src="' + img.src + '" alt="' + (img.alt || '') + '">' +
+            (img.alt ? '<figcaption>' + img.alt + '</figcaption>' : '') + '</figure>';
+        }).join('');
+        return '<div class="' + cls + '">' + figs + '</div>';
+      },
+      toPreview: function (data) {
+        var thumbs = (data.images || []).slice(0, 6).map(function (img) {
+          return '<img src="' + img.src + '" style="width:72px;height:54px;object-fit:cover;border-radius:4px;">';
+        }).join('');
+        return '<div style="background:#f5f5f7;border-radius:8px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">' +
+          '<span style="font-size:12px;color:#888;width:100%;margin-bottom:4px;">Gallery · ' + data.cols + ' cols · ' + (data.images || []).length + ' photos</span>' +
+          thumbs + '</div>';
+      },
     });
 
     // Before / after comparison slider — two images.

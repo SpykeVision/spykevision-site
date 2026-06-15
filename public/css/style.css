@@ -1044,6 +1044,45 @@ figure.video-r2 video {
   max-height: 70vh;
 }
 
+/* ── Spoiler / collapsible ─────────────────────────────── */
+.prose details.spoiler {
+  margin: 22px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.prose details.spoiler > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 16px;
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.prose details.spoiler > summary::-webkit-details-marker { display: none; }
+.prose details.spoiler > summary::before {
+  content: '▶';
+  font-size: 0.75em;
+  transition: transform 0.2s ease;
+}
+.prose details.spoiler[open] > summary::before { transform: rotate(90deg); }
+.prose details.spoiler[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+.prose details.spoiler > summary:hover { color: var(--accent-dk); }
+.prose details.spoiler > *:not(summary) {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+.prose details.spoiler > figure:last-child { margin-bottom: 16px; }
+.prose details.spoiler figure.video-local,
+.prose details.spoiler figure.video-r2 { margin: 16px; }
+
 /* ── Before / After slider ─────────────────────────────── */
 figure.ba {
   margin: 28px 0;

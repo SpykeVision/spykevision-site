@@ -394,27 +394,47 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 **Rolling buffer.** The most significant artifact on the TNM is rolling buffer — a direct consequence of how the DLPC8455 writes pixels. Instead of updating the entire frame at once, it scans from top to bottom row by row. On static content this is invisible. On fast-moving high-contrast edges it produces a rolling-shutter-like distortion: the top of a moving edge renders differently from the bottom. This is hardware-level behaviour. It can't be eliminated by settings. Turning off XPR-Shift doesn't help — the artifact persists even without the shift overlay, which is unexpected. Anti-RBE partially reduces the visible effect. A firmware fix is theoretically possible and XGIMI is aware of it. The practical impact is real: this is a step backward in motion quality compared to the previous DLPC generation.
 
+<details class="spoiler"><summary>Show example</summary>
+
 <figure class="video-local"><video controls playsinline><source src="/videos/img_2890.mov" type="video/mp4"></video><figcaption>Vertical rolling buffer effect (anti-RBE Off)</figcaption></figure>
+
+</details>
 
 **Pixel Wobbling (Pixel Shimmer).** A localised flicker of individual pixels on static frames, most visible in certain areas of the image rather than across the whole screen. It is not global "breathing" but a fine, point‑to‑point instability, likely caused by the rolling‑buffer line‑by‑line refresh and subtle timing jitter in the DLPC8455 controller. The artefact appears where pixel transitions are most demanding and can be seen up close on sharp edges or fine patterns.
 
+<details class="spoiler"><summary>Show example</summary>
+
 <figure class="video-local"><video controls playsinline><source src="/videos/img_2531.mov" type="video/mp4"></video></figure>
+
+</details>
 
 **Blocking.** On some motion sequences — particularly in dark or grey scenes — there's a pattern artifact that resembles a moving grid. Visible without squinting if you know what to look for. It's a temporal effect that doesn't capture cleanly in screenshots, but it shows up consistently on certain content.
 
 **Static contour pattern.** On solid uniform fields such as white, grey, or black — there's a faint spatial pattern present that shouldn't be there. Visible at closer viewing distances, particularly on grey and white. Whether this is a DMD characteristic or a processing artifact, I'm not certain yet.
 
-![](/uploads/img_2551.jpg)
+<details class="spoiler"><summary>Show example</summary>
+
+<figure><img src="/uploads/img_2551.jpg" alt="Static contour pattern on a uniform field"></figure>
+
+</details>
 
 **Dithering.** DLP projectors use temporal dithering to represent intermediate brightness values, and the TNM has more visible dithering than I'd like on dark backgrounds — pixel-level flickering in shadow areas. Enabling anti-RBE makes it more pronounced. This is partly a platform characteristic of 0.47-inch DLP chips, but the level here is on the higher end.
 
 **Hidden sharpening.** Sharpness slider at zero does not mean no sharpening. The TNM applies processing that adds halos around edges, causes shimmering on fine patterns, and blooms around small bright objects even at the minimum setting. In Game Mode the sharpening changes character (closer to a super-resolution filter) but doesn't disappear. This is a well-known limitation on several 0.47-inch DLP platforms. Hopefully XGIMI can expose a true off state in a future update.
 
-![](/uploads/img_2881.jpg)
+<details class="spoiler"><summary>Show example</summary>
+
+<figure><img src="/uploads/img_2881.jpg" alt="Hidden sharpening — halos around edges"></figure>
+
+</details>
 
 **Black uniformity.** On a full-black pattern there is a faint vertical blocking element across the entire screen.
 
-![](/uploads/img_2952.jpg)
+<details class="spoiler"><summary>Show example</summary>
+
+<figure><img src="/uploads/img_2952.jpg" alt="Black uniformity — faint vertical blocking"></figure>
+
+</details>
 
 The good news: XGIMI knows about all of these problems and many of them can be addressed by firmware update. The hardware is exceptional. The lens is reference-grade. The remaining question is whether the firmware can catch up to the quality of the optics.
 
