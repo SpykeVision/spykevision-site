@@ -22,23 +22,38 @@ const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
     ></div>
     <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
     <script>
-      // Patch Cusdis labels: remove "(optional)" from Email, resize textarea
+      // Cusdis renders inside a srcdoc iframe (same-origin) — inject styles directly
       const thread = document.getElementById('cusdis_thread');
       if (thread) {
         const obs = new MutationObserver(() => {
-          const labels = thread.querySelectorAll('label');
-          labels.forEach(l => {
-            if (l.textContent.includes('optional')) {
-              l.textContent = 'Email';
-            }
+          const iframe = thread.querySelector('iframe');
+          if (!iframe || iframe.dataset.patched) return;
+          iframe.dataset.patched = '1';
+          iframe.addEventListener('load', () => {
+            try {
+              const doc = iframe.contentDocument;
+              if (!doc) return;
+              // Inject CSS immediately (applies even before React renders)
+              const style = doc.createElement('style');
+              style.textContent = `
+                textarea { min-height: 120px !important; }
+                label::after { content: ' *'; color: #e53e3e; font-size: 12px; }
+              `;
+              doc.head.appendChild(style);
+              // Watch for React to render labels, then fix Email text
+              const inner = new MutationObserver(() => {
+                doc.querySelectorAll('label').forEach(l => {
+                  if (l.textContent.includes('optional')) {
+                    l.textContent = 'Email';
+                    inner.disconnect();
+                  }
+                });
+              });
+              inner.observe(doc.body, { childList: true, subtree: true });
+            } catch (e) {}
           });
-          const ta = thread.querySelector('textarea');
-          if (ta && !ta.dataset.patched) {
-            ta.rows = 6;
-            ta.dataset.patched = '1';
-          }
         });
-        obs.observe(thread, { childList: true, subtree: true });
+        obs.observe(thread, { childList: true });
       }
     </script>
   </section>
