@@ -8,7 +8,7 @@ eyebrow: In-Depth Review
 category: 4K Laser • Flagship
 summary: Unboxing, build quality, accessories, lens optics, and full brightness
   & contrast measurements for the XGIMI Titan Noir Max.
-cover: /images/tnm/p1-01.jpeg
+cover: /images/tnm/hero-tnm.jpeg
 date: 2026-06-01
 extra: Firmware 1.2.36
 score: 9.2
@@ -89,7 +89,9 @@ The projector arrived in a double-layered cardboard box with a custom foam inser
 
 ## The Carry Case
 
-Inside the box sits a black leather-style carry case with a soft-touch fabric exterior, metal latches, and a solid handle. This is a **Max-only inclusion** — the Pro and base models ship in standard foam packaging. It's part of what separates the flagship in the lineup.
+Inside the box sits a black leather-style carry case with a soft-touch fabric exterior, metal latches, and a solid handle. 
+
+<div class="note">Carry case is a Max-only inclusion — the Pro and base models ship in standard foam packaging. It's part of what separates the flagship in the lineup.</div>
 
 The interior is precision-cut rigid foam. The projector sits in a custom-molded recess, and there's a separate compartment on the bottom for accessories. If you ever need to transport the TNM, this case will survive pretty much anything. "It'll get to the Moon" is not an exaggeration.
 
@@ -109,7 +111,7 @@ The TNM uses four tubular metal legs with rubber pads, and this is probably my f
 
 ## Airflow & Controls — Read This
 
-Here's where you need to read carefully. On a shelf you **have** to use the feet, as the TNM vents hot air downward. Without them, the projector simply can't breathe properly. This significantly increases the total installed height. The same scheme was used on the original Titan, and XGIMI carried it over to the Titan Noir.
+Here's where you need to read carefully. On a shelf you have to use the feet, as the TNM vents hot air downward. Without them, the projector simply can't breathe properly. This significantly increases the total installed height. The same scheme was used on the original Titan, and XGIMI carried it over to the Titan Noir.
 
 <div class="note"><strong>Ceiling mounting:</strong> the exhaust will point upward. If you strap the power brick directly to the projector (it's external and massive), it will get cooked from below by the TNM's hot air output. Mount the power supply <strong>separately</strong>, at a distance — otherwise you're shortening the lifespan of both devices.</div>
 
@@ -135,25 +137,33 @@ I couldn't resist throwing a quick image onto a bare wall at roughly 250 inches.
 
 The brightness is real. This kind of light output at brightness 10+ genuinely opens up practical use cases: backyard movie nights, outdoor viewing at dusk, or commercial/event installations (bars, lofts, event spaces). For non-critical ambient viewing, you could run a massive screen without issues.
 
-The size + brightness + quietness combination here is hard to overstate. And notably, it achieves this without water cooling like the Dangbei S7 uses — purely air-cooled. Insane.
+The size + brightness + quietness combination here is hard to overstate. And notably, it achieves this without water cooling like the Dangbei S7 uses — purely air-cooled. **Insane**.
 
 - - -
 
 ## The Lens
 
-Part 2 is finally done. Put a ton of hours into this one. Today I'm covering the lens, XPR‑Shift behaviour, sharpness, white uniformity, and all the brightness and contrast measurements. I had planned to cover DBLE in this part as well, but after testing it across two firmware versions, I realized it deserves its own discussion — or rather, it isn't ready for serious evaluation yet. More on that at the end.
-
 If you're buying this version of the projector for the lens alone, you might not be wrong. Let's dive in.
 
-The TNM uses a high-end 15-element all-glass **X-Master Red Ring Lens PRO** with the signature **red ring** (exclusive to the Pro and Max variants — the base model gets a simpler lens in terms of glass quality). The key upgrade is the throw ratio: **0.98 to 2.0×** (extended to **2.1×** with firmware 1.0.99). This is a genuine full-range zoom. For once, you don't need to buy a separate long-throw lens or rule out this projector because your room is longer than a closet. Finally, manufacturers remembered that home theater enthusiasts with normal rooms exist.
+The TNM uses a high-end 15-element all-glass **X-Master Red Ring Lens PRO** with the signature **red ring.** The key upgrade is the throw ratio: **0.98 to 2.0×** (extended to **2.1×** with firmware 1.0.99). This is a genuine full-range zoom. For once, you don't need to buy a separate long-throw lens or rule out this projector because your room is longer than a closet. Finally, manufacturers remembered that home theater enthusiasts with normal rooms exist.
 
-Lens shift is also available on both horizontal and vertical axes, which makes installation dramatically more flexible. The front element is covered by a protective glass plate with the IMAX Enhanced logo in gold (the Pro version gets a silver logo). Below the lens there are sensors for automatic focus, ambient light detection for auto-brightness, and a human presence sensor that dims the laser if someone walks in front of the beam. All of these can be turned off in the menu.
+<div class="note">X-Master Red Ring Lens PRO is exclusive for the Pro and Max variants — the base model gets a simpler lens in terms of glass quality</div>
+
+**Lens shift** is also available on both horizontal and vertical axes, which makes installation dramatically more flexible. The front element is covered by a protective glass plate with the IMAX Enhanced logo in gold (the Pro version gets a silver logo). Below the lens there are sensors for automatic focus, ambient light detection for auto-brightness, and a human presence sensor that dims the laser if someone walks in front of the beam. All of these can be turned off in the menu.
 
 XGIMI claims the optical block is sealed against dust. If true, the contrast numbers should stay stable over time, with no slow degradation from dust creeping onto the panels — a known killer on older DLP and LCOS designs.
 
 One more important hardware note: the TNM uses a **dual iris setup**. This isn't marketing fluff. The Dangbei S7 already proved how effective this can be for contrast, and it's great to see the approach adopted here. There are some important interactions between the two irises, zoom position, and lens shift that I'll cover in the measurements section.
 
 <div class="gallery cols-3"><figure><img src="/images/tnm/p2-02.jpeg" alt="Center"><figcaption>Center</figcaption></figure><figure><img src="/images/tnm/p2-03.jpeg" alt="Left side"><figcaption>Left side</figcaption></figure><figure><img src="/images/tnm/p2-04.jpeg" alt="Right side"><figcaption>Right side</figcaption></figure></div>
+
+**Lens Memory**
+
+The long‑awaited lens memory function **arrived with beta firmware 1.2.36**. For owners of CinemaScope screens and anamorphic lenses, this is a genuinely useful addition that makes switching between aspect ratios a practical, one‑button operation rather than a tedious manual recalibration. Even users with standard 16:9 screens will find value here: effectively eliminating black bars  without cropping the picture.
+
+The implementation currently has two limitations worth noting. Focus position is not saved as part of the lens memory profile. After switching to a stored lens position, the projector triggers its autofocus routine, which requires manual correction more often than not. The autofocus result is not always reliable, so you will likely find yourself fine‑tuning focus by hand after every memory recall. The other issue is positional accuracy. The lens does not return to the exact same spot with pixel‑level precision; there is a small but visible drift between recalls. For a function that is all about repeatability, this needs tightening up.
+
+Both of these are firmware‑correctable, and given how actively XGIMI has been iterating on the software, I expect refinements in future updates. Once the focus recall and positional accuracy are locked in, lens memory will be a genuinely polished feature. For now, it is functional and useful, just not as precise as it needs to be.
 
 ## Distortion & Lens Shift
 
@@ -173,7 +183,7 @@ The maximum zoom has been extended from 2.0× to 2.1× on the latest firmware. B
 
 ## XPR-Shift & Screen-Door Effect
 
-Despite the newer SST chip and revised controller, the XPR-Shift mechanism still operates at only **240 Hz** — the same cadence as older projectors like the Valerion Max. The screen-door effect is consequently at the same level. If anything it's marginally more noticeable here, because the TNM is significantly brighter and the lens resolves more detail. Hopefully XGIMI can push the shift frequency higher in a future firmware.
+Despite the newer SST chip and revised controller, the XPR-Shift mechanism still operates at **only 240 Hz** — the same cadence as older projectors like the Valerion Max. The screen-door effect is consequently at the same level. If anything it's marginally more noticeable here, because the TNM is significantly brighter and the lens resolves more detail. Hopefully XGIMI can push the shift frequency higher in a future firmware.
 
 ## Sharpness & Optical Resolution
 
@@ -189,7 +199,7 @@ My sample has some uniformity issues out of the box. The left edge leans pink, a
 
 But uniformity is heavily dependent on zoom position, lens shift, iris setting, and even warm-up. The worst uniformity on my unit is at the extreme max zoom end (2.1× zoom). At around 1.3× zoom with a small amount of horizontal lens shift, the uniformity cleans up dramatically and becomes nearly perfect.
 
-![](/uploads/img_2525.jpg)
+<figure><img src="/uploads/img_2525.jpg" alt=""><figcaption>Almost perfect uniformity at my zoom/iris combination</figcaption></figure>
 
 Practical takeaway: if you have some flexibility in projector placement, experiment. Move it around, try different zoom and shift combinations. You might be able to dial out most of the tint without waiting for a software fix.
 
@@ -205,27 +215,35 @@ If you want to eliminate speckle entirely, the right screen choice is the most r
 
 This is what we're all here for.
 
-All measurements were taken with a calibrated lux meter (NIST-certified), mounted on a tripod. To minimize stray reflections, I used a velvet tube — velvet both inside and outside. The sensor was always fully illuminated, and the angle was chosen so no shadows fell inside the tube. Black level never dropped below 2 lux even in the darkest, most aggressive modes, and was usually well above that. Unless stated otherwise, the projector was set to ISF Night / D65. All readings were taken within 90 seconds of pattern display to avoid laser throttle effects.
+All measurements were taken with a calibrated lux meter (NIST-certified), mounted on a tripod. To minimize stray reflections, I used a velvet tube — velvet both inside and outside. The sensor was always fully illuminated, and the angle was chosen so no shadows fell inside the tube. Black level never dropped below 2 lux even in the darkest, most aggressive modes, and was usually well above that. Unless stated otherwise, the projector was set to ISF Night / D65 or Movie. All readings were taken within 90 seconds of pattern display to avoid laser throttle effects.
+
+<div class="gallery"><figure><img src="/uploads/img_2627.jpg" alt=""></figure><figure><img src="/uploads/img_2637.jpg" alt=""></figure></div>
 
 ### Laser Throttling
 
 On a sustained full-white field, the TNM starts reducing brightness after about 2 minutes. It continues to decay until roughly the 15-minute mark, then stabilizes. I measured a drop from 400 lux to 350 lux — about 12.5%. This is invisible with real content, but it means the 90-second measurement protocol is essential for consistent data.
 
-<div class="gallery"><figure><img src="/images/tnm/p2-18.jpeg" alt=""></figure><figure><img src="/images/tnm/p2-19.png" alt="Output over time on a sustained white field — stabilizes at ~12.5% below peak."><figcaption>Output over time on a sustained white field — stabilizes at ~12.5% below peak.</figcaption></figure></div>
-
 ### Brightness by Zoom & Iris
 
-Brightness was measured using a 9-point pattern, averaging the results for each zoom/iris combination. The TNM offers multiple brightness modes that trade output for color accuracy.
+Brightness was measured using a 9‑point pattern, averaging the results for each zoom/iris combination. As for brightness uniformity: the upper right corner was always slightly dimmer than the rest of the screen, but not critically so. The left side was almost always uniform.
 
-**Performance Mode** pushes output beyond the official spec. It's an overdrive benchmark setting. Laser 10+ pushes the laser to maximum while trying to keep color balance within tolerable limits. **Laser 10** is the maximum at the standard calibrated mode.
+The TNM offers multiple brightness modes that trade output for color accuracy. Here's how they behave in practice.
 
-All brightness measurements were taken with the lens centered. Using lens shift can reduce brightness by 5–25% depending on the degree of shift applied.
+**Performance Mode** is essentially an overdrive benchmark setting. It pushes output beyond the official spec, but the image turns heavily green and color accuracy collapses completely. The fan noise becomes intrusive — clearly not intended for actual viewing. It exists to win the lumen race on paper. The upside? The fact that the power supply and cooling were engineered to survive this mode means normal operation at Laser 10 is completely unstressed. That likely explains the near-silent operation even at maximum sustainable brightness.
+
+**Laser 10+** pushes the laser to maximum while trying to keep the color balance within tolerable limits. Brightness is almost the same as the base TITAN at this laser level. I wouldn't call it accurate — colors shift noticeably, and the gamut drops below Rec.709. But it has practical uses: backyard movie nights, presentations, bars, ambient viewing. If accuracy doesn't matter and you need every last lumen, it's usable.
+
+**Laser 10** is the maximum brightness at the standard mode. Th brightness is adjustable, though not at every iris setting.
+
+<div class="note">Important: all brightness measurements were taken with the lens centered. Using lens shift can reduce brightness by 3–10%.</div>
+
+I measured brightness at every whole‑number zoom step and every iris setting. Here's what the data shows.
 
 <div class="chart-section" id="chart-brightness"></div>
 
-The 2.1× zoom position stands out. As the iris closes at this zoom, one of the irises appears to engage in a way that cuts output more aggressively than at other zoom positions — which is why F5.5 and F7.0 at 2.1× produce such low lux readings and correspondingly extreme contrast numbers.
+The 2.1× zoom position stands out. As the iris closes at this zoom, one of the irises appears to engage in a way that cuts output more aggressively than at other zoom positions — which is why F5.5 and F7.0 at 2.1× produce such low lux readings and correspondingly extreme contrast numbers. Other zoom positions show a more uniform, gradual brightness reduction as expected.
 
-There's also an interesting spike in brightness between 1.2× and 1.3× zoom — the sweet spot of the lens where the optics are most efficient.
+There's also an interesting spike in brightness between 1.2× and 1.3× zoom. What this spike indicates will be discussed in the contrast measurement section.
 
 **Key summary:**
 
@@ -244,11 +262,11 @@ I measured native contrast at every whole-number zoom step and every iris positi
 
 The 2.1× zoom is the outlier. F5.5 and F7.0 at this position were the darkest settings — and the ones with the highest contrast. But I can't recommend using 2.1× zoom in practice. On my unit this position gives the worst white uniformity of any setting. The impressive black level comes at the cost of visible pink-green shifts across the frame on white content.
 
-Generally, contrast rises with zoom length up to a point. There's a notable spike around 1.2–1.3× zoom where both brightness *and* contrast reach a local maximum — the sweet spot of the optical design.
+<div class="gallery"><figure><img src="/uploads/img_2602.jpg" alt="Uniformity at 2.1× zoom"><figcaption>Uniformity at 2.1× zoom</figcaption></figure><figure><img src="/uploads/img_2603.jpg" alt="Green borderline at the bottom"><figcaption>Green borderline at the bottom</figcaption></figure></div>
+
+Generally, contrast rises with zoom length up to a point. Remember that spike in brightness between 1.2× and 1.3× at certain iris settings? The same spot shows a sharp drop in contrast. My guess: at that throw ratio, one of the irises in the dual system fully opens to maintain brightness at longer zoom, and that kills contrast in the process.
 
 F7.0 behaves non-linearly in an interesting way. It starts with record-high contrast at short zoom, then dips in the mid-range, then peaks again at 2.1×. This is the dual-iris interaction in action.
-
-<div class="gallery"><figure><img src="/images/tnm/p2-22.jpeg" alt="Uniformity at 2.1× zoom"><figcaption>Uniformity at 2.1× zoom</figcaption></figure><figure><img src="/images/tnm/p2-23.jpeg" alt="Green borderline at the bottom"><figcaption>Green borderline at the bottom</figcaption></figure></div>
 
 <div class="chart-section" id="chart-combined"></div>
 
@@ -275,6 +293,16 @@ Finally, I measured the full contrast curve across ADL (average display level). 
 Interestingly, at 2.0× zoom with full lens shift, contrast actually dropped relative to the centered-lens measurement at the same zoom. The shifted ray path interacts with the iris geometry differently at longer zoom positions. More evidence that the 1.3–1.5× range is the true sweet spot.
 
 As zoom increases, contrast rises as expected. The best results are at the far tele end — where ANSI peaks and ADL contrast benefits most from the tighter iris.
+
+**Dynamic Iris**
+
+The TNM’s dynamic iris operates independently of **DBLE**. This is a deliberate design choice and a welcome one: you can engage the dynamic iris without laser dimming, or use DBLE on its own, or combine both. This separation gives the user meaningful control and stands in contrast to integrated systems like **SAE** on the **Nexigo**, where the two mechanisms are tied together with no per‑component adjustment.
+
+At present, the dynamic iris works in a range roughly equivalent to F4.0–F5.0 when compared to the manual iris settings. However, it is notably brighter across most content than either of those static modes at a comparable on/off contrast. The reason is that the iris does not sit at a fixed position; it opens and closes continuously in response to scene brightness. The trade‑off is that the dynamic iris never opens fully — the first iris, positioned after the laser, appears to remain partially closed at all times, while the second iris in the lens handles the real‑time movement. This means you cannot achieve the projector’s maximum possible brightness with the dynamic iris active. It is a conscious limitation that prioritises contrast over raw output.
+
+The more important consequence concerns intra‑scene contrast. When the lens iris opens during a bright scene, the intra-scene contrast drops — and it drops quickly. At around 1–2% ADL, the contrast falls nearly to the level of the static F2.0 mode. So while the dynamic iris delivers on/off figures comparable to F4.0–F5.0 in dark scenes, the real mixed‑brightness contrast is noticeably lower than what a truly static F4.0 or F5.5 would provide. This is not unique to the TNM — it is inherent almost to any dynamic iris that adjusts on a per‑frame basis, but it is worth understanding if you are trying to extract the maximum intra‑scene performance.
+
+Looking ahead, a **darker version of the dynamic iris would be a valuable addition**. A mode that operates in the F5.5–F7.0 range would target owners of small to medium screens who prioritise contrast above all else. In such a configuration, the loss of intra‑scene contrast when the iris opens would be far less pronounced, while the brightness gain compared to running static F7.0 would still be significant. It would make the dynamic iris genuinely useful for the contrast‑focused audience. Given the hardware is already capable of that range in manual mode, the ask is purely a firmware adjustment and one that would substantially broaden the TNM’s appeal.
 
 - - -
 
@@ -420,7 +448,7 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 <details class="spoiler"><summary>Show example</summary>
 
-<figure class="video-local"><video controls playsinline><source src="/videos/img_2890.mov" type="video/mp4"></video><figcaption>Vertical rolling buffer effect (anti-RBE Off)</figcaption></figure>
+<figure class="video-local"><video controls playsinline><source src="/videos/img_2890.mov" type="video/mp4"></video><figcaption>Vertical rolling buffer effect (anti-RBE Off). The camera sensor exaggerates the effect noticeably; in person it's considerably less intrusive.</figcaption></figure>
 
 </details>
 
@@ -444,6 +472,14 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 **Dithering.** DLP projectors use temporal dithering to represent intermediate brightness values, and the TNM has more visible dithering than I'd like on dark backgrounds — pixel-level flickering in shadow areas. Enabling anti-RBE makes it more pronounced. This is partly a platform characteristic of 0.47-inch DLP chips, but the level here is on the higher end.
 
+**Grayscale Non‑Uniformity.** On gray uniformity patterns, faint vertical stripes of green, blue, and red are visible across the screen. They are subtle and only show up on test patterns, not in actual content. 
+
+<details class="spoiler"><summary>Show example</summary>
+
+![](/uploads/img_2887.jpg)
+
+</details>
+
 **Hidden sharpening.** Sharpness slider at zero does not mean no sharpening. The TNM applies processing that adds halos around edges, causes shimmering on fine patterns, and blooms around small bright objects even at the minimum setting. In Game Mode the sharpening changes character (closer to a super-resolution filter) but doesn't disappear. This is a well-known limitation on several 0.47-inch DLP platforms. Hopefully XGIMI can expose a true off state in a future update.
 
 <details class="spoiler"><summary>Show example</summary>
@@ -452,7 +488,7 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 </details>
 
-**Black uniformity.** On a full-black pattern there is a faint vertical blocking element across the entire screen.
+**Black uniformity.** On a full-black pattern there is a 16 vertical blocking element across the entire screen.
 
 <details class="spoiler"><summary>Show example</summary>
 
@@ -460,7 +496,9 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 </details>
 
-The good news: XGIMI knows about all of these problems and many of them can be addressed by firmware update. The hardware is exceptional. The lens is reference-grade. The remaining question is whether the firmware can catch up to the quality of the optics.
+**Posterization in HDR (DTM).** When Dynamic Tone Mapping is active, some HDR content exhibits visible posterization — smooth gradients, particularly in skies or dimly lit backgrounds, break into distinct bands of colour instead of transitioning smoothly. The effect closely resembles what is seen during HDR‑to‑SDR conversion on players with Dolby Vision VS10. It is content‑dependent and more noticeable with DTM engaged than with static HDR10, likely linked to the tone‑mapping algorithm’s limited bit‑depth processing and aggressive contrast compression. In practice, it appears only on certain challenging scenes and is not a constant distraction, but it is a noticeable artefact when it occurs. A more refined DTM curve or user‑adjustable strength could mitigate it in future firmware.
+
+**The good news:** XGIMI knows about all of these problems and many of them can be addressed by firmware update. The hardware is exceptional. The lens is reference-grade. The remaining question is whether the firmware can catch up to the quality of the optics.
 
 - - -
 
@@ -497,6 +535,14 @@ One area where the TNM genuinely impresses is its acoustic performance around th
 Using a UMIK-1 microphone, frequency measurements clearly show that engaging Standard or Enhanced mode merely slightly alters the low-frequency acoustic profile of the power supply, primarily in the 100–300 Hz range. It does not generate any new, piercing high-frequency peaks.
 
 The high-frequency components visible on the graph — particularly around 5–6 kHz and 12–16 kHz — are consistently present across all modes, including when anti-RBE is explicitly turned off. This strongly indicates that these higher-pitched sounds are attributable to the XPR-Shift mechanism itself, not anti-RBE processing. This is a significant engineering achievement: effective RBE suppression without an intrusive acoustic penalty.
+
+**Dynamic Tone Mapping (DTM)**
+
+The TNM’s onboard dynamic tone mapping is, in its current form, a genuinely effective tool for HDR content — once it has been properly dialed in. Out of the box it provides two user adjustments: screen size and screen gain. Each of these shifts a different part of the HDR luminance curve. 
+
+The default values, unfortunately, are not optimal, even when the correct diagonal and gain figures for a given screen are entered. Spending fifteen minutes experimenting with these two parameters transforms the picture. A carefully tuned DTM curve brings real punch to specular highlights, keeps shadow detail visible without grey‑out, and preserves strong colour saturation in mixed‑brightness scenes. The difference between a default‑settings DTM and a manually adjusted one is substantial, and the projector rewards the effort.
+
+Looking ahead, the presence of the X‑Vision FPGA creates significant headroom for improvement. A custom tone‑mapping engine running on dedicated programmable logic could, in principle, offer per‑scene or even per‑frame analysis far beyond what the MediaTek SoC provides. Whether XGIMI pursues this path is an open question, but the hardware is already in place. For now, DTM on the TNM is a very capable implementation that needs a bit of user effort to unlock its full potential.
 
 ## Gaming Performance and Motion
 
