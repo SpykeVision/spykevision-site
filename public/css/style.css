@@ -508,18 +508,26 @@ a:hover { color: var(--accent-dk); }
 .article-layout { display: block; }
 .toc {
   background: var(--surface); border-radius: var(--radius-sm);
-  box-shadow: var(--shadow); padding: 18px 20px; margin: 0 0 28px;
+  box-shadow: var(--shadow); padding: 20px 24px; margin: 0 0 28px;
 }
-.toc h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-3); margin-bottom: 12px; }
-.toc ul { list-style: none; display: grid; gap: 6px; margin-bottom: 4px; }
-.toc a { color: var(--text-2); font-size: 15px; font-weight: 500; }
+.toc h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-3); margin-bottom: 14px; }
+.toc ul { list-style: none; display: grid; gap: 5px; margin-bottom: 4px; }
+.toc a { color: var(--text-2); font-size: 14px; font-weight: 500; line-height: 1.35; }
 .toc a:hover { color: var(--accent); }
+/* Multi-column layout so the long TOC stays compact on wide articles */
+.toc-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 4px 32px; align-items: start;
+}
+.toc-group { break-inside: avoid; margin-bottom: 12px; }
 .toc-group-label {
   font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
-  color: var(--text-3); margin: 14px 0 6px; padding-bottom: 5px;
+  color: var(--accent); margin: 0 0 7px; padding-bottom: 5px;
   border-bottom: 1px solid var(--border);
 }
-.toc-group-label:first-of-type { margin-top: 0; }
+/* Floating sidebar TOC stays single-column regardless of grid markup */
+.toc-float .toc-grid { display: block; }
+.toc-float .toc-group { margin-bottom: 10px; }
 
 /* Floating section nav — desktop only, appears after scrolling past hero */
 .toc-float {
