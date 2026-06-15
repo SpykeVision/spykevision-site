@@ -516,7 +516,11 @@ It is also worth noting that the projector accepts a 4K/120 Hz input signal, but
 
 It also supports VRR and AMD FreeSync Premium in 1080p mode, which is genuinely good for competitive gamers, along with widescreen 21:9 scope gaming.
 
-One more capability worth calling out: Game Mode is the **only** mode on the TNM that outputs full **4:4:4 chroma**. All other picture profiles use chroma subsampling. For gaming — where UI text, fine HUD elements, and aliased edges benefit from full chroma resolution — this is a meaningful advantage and an extra reason to stay in Game Mode when gaming.
+**Chroma: 4:4:4 in Game Mode only**
+
+Game Mode is the **only** mode on the TNM that outputs full 4:4:4 chroma. All other picture profiles use chroma subsampling. The difference is most visible in fine text, UI elements, and sharp colour transitions — exactly the kind of content that fills a game interface. On a QBF sharpness pattern, the result speaks for itself.
+
+<div class="gallery"><figure><img src="/images/tnm/p2-16.jpeg" alt="QBF pattern, Game mode ON"><figcaption>QBF pattern, Game mode ON</figcaption></figure><figure><img src="/images/tnm/p2-17.jpeg" alt="QBF pattern detail"><figcaption>QBF pattern detail</figcaption></figure></div>
 
 **The Main Drawbacks: Locked Profiles and Hidden Filters**
 
@@ -529,8 +533,6 @@ None of these modes are anywhere near reference color accuracy. They aggressivel
 **The Rolling Buffer:** As mentioned previously, this hardware-level limitation shows up during gameplay when a bright object moves rapidly across a dark background. Peculiarly, even with XPR-Shift disabled and resolution lowered to 1080p, the rolling buffer effect persists, which is quite odd and theoretically correctable in a future firmware update.
 
 **Super Resolution Sharpening:** Hidden sharpening is notably reduced in Game Mode — in fact, it is almost entirely absent compared to the Standard and ISF modes. This is a genuine positive. However, a different sharpening filter appears to be active, behaving similarly to Super Resolution. False contours and edge enhancement can be seen on sharpness test patterns, and the effect is sometimes visible in game HUD elements and fine text.
-
-<div class="gallery"><figure><img src="/images/tnm/p2-16.jpeg" alt="QBF pattern, Game mode ON"><figcaption>QBF pattern, Game mode ON</figcaption></figure><figure><img src="/images/tnm/p2-17.jpeg" alt="QBF pattern detail"><figcaption>QBF pattern detail</figcaption></figure></div>
 
 **DBLE (Dynamic Black) Inheritance:** DBLE currently inherits its state from the previous picture mode. If DBLE was enabled before entering Game Mode, it remains enabled, and vice versa. There is no dedicated toggle for DBLE within Game Mode itself. A proper on/off switch for the dynamic system in Game Mode would be a welcome addition in a future firmware update.
 
