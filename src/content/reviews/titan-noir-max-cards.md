@@ -79,7 +79,23 @@ tocGroups:
       - Gaming Performance and Motion
       - "3D Performance: Brilliant Depth, Unfinished Cadence"
 ---
-Let's get this started. Today is all about packaging, build quality, accessories, the remote, and initial physical impressions. No measurements just yet.
+The Titan Noir Max arrives at an unusual moment for DLP projectors. The category has been accelerating: brighter lasers, faster controllers, and a wave of manufacturers finally taking contrast seriously. What separates the TNM from the crowd is not any single specification — it’s the sum of design choices that, on paper, shouldn’t coexist in a projector at this price.
+
+![](/uploads/копия-titan_noir_series_price.jpg)
+
+Start with the core. The 0.47‑inch DMD chip is built on TI’s SST platform, a rework of the micromirror array that optimises pixel density and heat dissipation specifically for laser illumination. It’s driven by the DLPC8455 controller — currently the most capable in TI’s single‑chip lineup, which enables sub‑1ms latency and introduces a rolling‑buffer architecture that fundamentally changes motion behaviour. The Titan Noir series itself spans three models — base, Pro, and Max — sharing the same chassis and lens but scaling the laser engine from 30 to 50 RGB triple‑laser diodes depending on the tier.
+
+Then there is the feature that genuinely has no equivalent in competing consumer projectors: a dedicated FPGA co‑processor. The X‑Vision chip is not an off‑the‑shelf video processor; it’s a programmable logic array that can, in principle, be taught almost anything — custom tone mapping, per‑frame iris and laser control, proprietary sharpening algorithms, frame‑level gamma manipulation. Whether any of this potential materialises depends entirely on XGIMI’s software ambitions and execution, but the fact that the hardware is already inside every TNM is remarkable.
+
+![](/uploads/снимок-экрана-2026-06-16-в-00.06.27_2026-06-15_20_25_04.723534.webp)
+
+The optical path is equally ambitious. A 15‑element all‑glass lens with multi‑layer anti‑reflective coatings, a 0.98–2.0:1 throw range (the widest in its class), and lens shift that — while half the brochure figure — still outpaces every direct rival. Lens memory, still a rarity on DLP projectors, is included. Contrast is managed by a dual‑iris system: one static iris after the laser, a second dynamic iris in the lens, with XGIMI’s DBLE (Dynamic Black Level Enhancement) handling the coordination between iris movement and laser dimming.
+
+![](/uploads/ces_2026_tech_logo_2026-06-15_20_29_59.845879.png)
+
+The HDR suite covers HDR10, HDR10+, Dolby Vision, and IMAX Enhanced, backed by a claimed 7 000 ISO lumens at the top of the Max range. Gaming support includes VRR, ALLM, and a 1080p/240 Hz mode with a 1 ms input lag figure. 4K/120 is accepted on input but output at 4K/60 — a limitation of the current DLP controller generation, shared by every projector in this class.
+
+This is, on paper, an unusually complete projector. The review that follows is an attempt to understand how much of that engineering translates into actual performance — and where the firmware still needs to catch up.
 
 ## The Outer Box
 
@@ -121,7 +137,7 @@ And here's something critical. There are **no navigation buttons on the projecto
 
 The accessories box contains the power brick, manual and warranty card, a cable, and the remote. The 360W power brick is substantial — one of the largest I've seen on a modern DLP. For ceiling mounting, this is a real problem: hiding this beast won't be easy, and it runs quite hot itself. Cable from PSU to projector: 1.22 m. Cable from wall to PSU: 1.39 m.
 
-<div class="gallery"><figure><img src="/images/tnm/p1-16.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-17.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-18.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-19.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-20.jpeg" alt=""></figure></div>
+<div class="gallery"><figure><img src="/uploads/img_8748.jpg" alt=""></figure><figure><img src="/uploads/img_8747.jpg" alt=""></figure><figure><img src="/images/tnm/p1-18.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-19.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-20.jpeg" alt=""></figure></div>
 
 ## The Remote
 
@@ -145,6 +161,8 @@ The size + brightness + quietness combination here is hard to overstate. And not
 
 If you're buying this version of the projector for the lens alone, you might not be wrong. Let's dive in.
 
+![](/uploads/снимок-экрана-2026-06-16-в-00.16.07_2026-06-15_20_22_17.314976.webp)
+
 The TNM uses a high-end 15-element all-glass **X-Master Red Ring Lens PRO** with the signature **red ring.** The key upgrade is the throw ratio: **0.98 to 2.0×** (extended to **2.1×** with firmware 1.0.99). This is a genuine full-range zoom. For once, you don't need to buy a separate long-throw lens or rule out this projector because your room is longer than a closet. Finally, manufacturers remembered that home theater enthusiasts with normal rooms exist.
 
 <div class="note">X-Master Red Ring Lens PRO is exclusive for the Pro and Max variants — the base model gets a simpler lens in terms of glass quality</div>
@@ -159,7 +177,9 @@ One more important hardware note: the TNM uses a **dual iris setup**. This isn't
 
 **Lens Memory**
 
-The long‑awaited lens memory function **arrived with beta firmware 1.2.36**. For owners of CinemaScope screens and anamorphic lenses, this is a genuinely useful addition that makes switching between aspect ratios a practical, one‑button operation rather than a tedious manual recalibration. Even users with standard 16:9 screens will find value here: effectively eliminating black bars  without cropping the picture.
+The long‑awaited lens memory function **arrived with beta firmware 1.2.36**. For owners of CinemaScope screens and anamorphic lenses, this is a genuinely useful addition that makes switching between aspect ratios a practical, one‑button operation rather than a tedious manual recalibration. Even users with standard 16:9 screens will find value here: effectively eliminating black bars without cropping the picture.
+
+![](/uploads/pic4-tnm-review-by_it_2026-06-15_20_29_37.743234.webp)
 
 The implementation currently has two limitations worth noting. Focus position is not saved as part of the lens memory profile. After switching to a stored lens position, the projector triggers its autofocus routine, which requires manual correction more often than not. The autofocus result is not always reliable, so you will likely find yourself fine‑tuning focus by hand after every memory recall. The other issue is positional accuracy. The lens does not return to the exact same spot with pixel‑level precision; there is a small but visible drift between recalls. For a function that is all about repeatability, this needs tightening up.
 
@@ -189,9 +209,9 @@ Despite the newer SST chip and revised controller, the XPR-Shift mechanism still
 
 Lens sharpness is excellent — among the best I've seen in this category. No significant chromatic aberrations either; the image is very clean in that regard. On a line-intersection test pattern it resolves nearly the full 4K raster. Not quite pixel-perfect, but very close. In Game Mode, the QBF pattern looks razor-sharp. However, the 240 Hz XPR cycle means that with fast eye movement, you can briefly catch a drop in perceived resolution. I'm hoping the frequency can be increased via firmware, but that may be a hardware limitation.
 
-<div class="note"><strong>Critical issue:</strong> forced sharpening is active even with the sharpness slider at 0. It adds halos around fine details, causes shimmering on some test patterns, and introduces visible blooming around small bright objects. A reference display shouldn't apply hidden processing. Hopefully XGIMI can fix this in a future update.</div>
-
 <div class="gallery"><figure><img src="/images/tnm/p2-14.jpeg" alt="Game mode OFF"><figcaption>Game mode OFF</figcaption></figure><figure><img src="/images/tnm/p2-15.jpeg" alt="Game mode ON"><figcaption>Game mode ON</figcaption></figure></div>
+
+<div class="note"><strong>Critical issue:</strong> forced sharpening is active even with the sharpness slider at 0. It adds halos around fine details, causes shimmering on some test patterns, and introduces visible blooming around small bright objects. A reference display shouldn't apply hidden processing. Hopefully XGIMI can fix this in a future update.</div>
 
 ## White Field Uniformity
 
@@ -201,7 +221,7 @@ But uniformity is heavily dependent on zoom position, lens shift, iris setting, 
 
 <figure><img src="/uploads/img_2525.jpg" alt=""><figcaption>Almost perfect uniformity at my zoom/iris combination</figcaption></figure>
 
-Practical takeaway: if you have some flexibility in projector placement, experiment. Move it around, try different zoom and shift combinations. You might be able to dial out most of the tint without waiting for a software fix.
+<div class="note"><strong>Practical takeaway:</strong> if you have some flexibility in projector placement, experiment. Move it around, try different zoom and shift combinations. You might be able to dial out most of the tint without waiting for a software fix.</div>
 
 ## Laser Speckle
 
@@ -233,7 +253,7 @@ The TNM offers multiple brightness modes that trade output for color accuracy. H
 
 **Laser 10+** pushes the laser to maximum while trying to keep the color balance within tolerable limits. Brightness is almost the same as the base TITAN at this laser level. I wouldn't call it accurate — colors shift noticeably, and the gamut drops below Rec.709. But it has practical uses: backyard movie nights, presentations, bars, ambient viewing. If accuracy doesn't matter and you need every last lumen, it's usable.
 
-**Laser 10** is the maximum brightness at the standard mode. Th brightness is adjustable, though not at every iris setting.
+**Laser 10** is the maximum brightness at the standard mode. The brightness is adjustable, though not at every iris setting.
 
 <div class="note">Important: all brightness measurements were taken with the lens centered. Using lens shift can reduce brightness by 3–10%.</div>
 
@@ -307,6 +327,8 @@ Looking ahead, a **darker version of the dynamic iris would be a valuable additi
 - - -
 
 ## Dual Iris: Summary
+
+![](/uploads/снимок-экрана-2026-06-16-в-00.10.49_2026-06-15_20_24_26.748129.webp)
 
 The dual-iris interaction is the most complex I've measured in this category. There is no single "best" setting — only a best setting for your specific throw distance, screen size, and content.
 
@@ -504,6 +526,8 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 ## Anti-RBE
 
+![](/uploads/снимок-экрана-2026-06-16-в-00.08.25_2026-06-15_20_26_43.854977.webp)
+
 RBE (Rainbow Effect) is an inherent characteristic of single-chip DLP projectors. When the laser colour sequence transitions, some viewers can detect brief flashes of red-blue-green fringing on high-contrast edges. Anti-RBE systems suppress this by shortening the visible portion of each colour transition.
 
 I've been thoroughly testing the anti-RBE implementations across three generations of firmware: the original 1.0.56, followed by 1.0.99, and now the current beta 1.2.36. Each has presented a distinct experience.
@@ -545,6 +569,8 @@ The default values, unfortunately, are not optimal, even when the correct diagon
 Looking ahead, the presence of the X‑Vision FPGA creates significant headroom for improvement. A custom tone‑mapping engine running on dedicated programmable logic could, in principle, offer per‑scene or even per‑frame analysis far beyond what the MediaTek SoC provides. Whether XGIMI pursues this path is an open question, but the hardware is already in place. For now, DTM on the TNM is a very capable implementation that needs a bit of user effort to unlock its full potential.
 
 ## Gaming Performance and Motion
+
+![](/uploads/pic5-tnm-review-by_it_2026-06-15_20_28_42.543672.webp)
 
 For enthusiasts and competitive gamers, the XGIMI Titan Noir Max presents a compelling, albeit currently imperfect, proposition. While the core hardware offers a phenomenal foundation, firmware refinements are still needed to unlock its full potential.
 
