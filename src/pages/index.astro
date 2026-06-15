@@ -40,8 +40,8 @@ const comingSoon = [
       <section class="section" id="reviews">
         <div class="section-head"><h2>Latest reviews</h2><a href="/reviews/">All reviews →</a></div>
         <div class="grid">
-          {reviews.slice(0, 6).map((r) => (
-            <a href={`/reviews/${r.slug}/`} class="card" data-draft={r.data.draft ? 'true' : null}>
+          {reviews.slice(0, 6).map((r, i) => (
+            <a href={`/reviews/${r.slug}/`} class={`card${i === 0 ? ' featured' : ''}`} data-draft={r.data.draft ? 'true' : null}>
               <div class="card-media">
                 <img src={r.data.coverCard || r.data.cover} alt={r.data.title} />
                 {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
