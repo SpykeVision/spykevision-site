@@ -330,43 +330,65 @@ Each scene below starts from **enhancers OFF**. Use the buttons to pick which en
 
 ## DBLE (Dynamic Black Level Enhancement)
 
-On the original public firmware builds (1.0.56 and 1.0.99), DBLE was effectively non-functional for real content. Any bright pixel in the frame — even a cursor on an otherwise black screen — would disengage the system entirely. In practice, DBLE was a test-pattern feature: impressive full-black numbers, but the projector fell back to native contrast the moment actual content appeared.
+On the original public firmware builds (1.0.56 and 1.0.99), DBLE was effectively non-functional for real content. It did almost nothing to the image, and the slightest bright object in the frame — even a cursor on an otherwise black screen — would disengage it entirely. In practice it was a test-pattern feature: impressive full-black numbers, native contrast the moment actual content appeared.
 
 <figure class="video-local"><video controls playsinline><source src="/videos/img_2629.mov" type="video/mp4"></video><figcaption>DBLE on 1.0.99 was pretty useless</figcaption></figure>
 
-Firmware 1.2.36 beta changes this significantly. This section evaluates that build.
+The 1.2.36 beta changes that. A great deal has moved forward here, and this section evaluates that newer, far more capable version of DBLE.
 
-On a full-black field, DBLE runs the laser down to its physical limit. At Laser 10, wall power drops from ~214W to 58–60W. At Laser 10+, it drops from 261W to 69W. The resulting on/off contrast exceeds 100,000:1 and the subjective effect is near-FFTB — the laser is barely emitting, and the image goes to a deep, clean black with no color shift. This is the hardware showing what it can actually do when the firmware lets it.
+**Full black: phenomenal.** On a fully black field the result is spectacular. The projector dumps the laser to its physical limit to stop emitting almost entirely — on/off contrast climbs past 100,000:1, with a subjective effect very close to a full-field-to-black (FFTB) dynamic. The laser is barely lit, the image falls to a deep, clean black with no color shift. This is the hardware showing what it can do when the firmware lets it.
 
-Where DBLE engages on real content, the quality is good. The image stays clean, colors don't shift, and there's minimal clipping. Dark scenes where the system activates draw 78–84W at the wall — already meaningfully below the ~200W of native operation, though well above the 59W floor. The current behavior reads like a well-tuned "Low" mode: conservative, safe, and artifact-free. For a first functional beta, that's a reasonable baseline.
+**Real scenes: a different story.** Where DBLE actually engages on real content, the quality is excellent — minimal clipping, no color shift, a clean picture. Color shift does appear in rare moments, but it's easily corrected with a dedicated setting already present in the projector's menu — a real plus that not all implementations can claim. If you treat the current behavior as a baseline "Low" mode, the implementation is good and the feature is ready for a first public retail firmware. What it needs is work on reaction speed and, further out, more aggressive modes that aren't afraid to manipulate gamma at higher luminance. Those would pull far more real contrast from this hardware and let DBLE work across many more scenes.
 
-**How the multiplier works.** The contrast gain comes from two mechanisms working together:
+### What DBLE actually responds to
 
-**multiplier = D × G**
+An important detail that shapes everything below: DBLE does not respond to average scene luminance (ADL). It responds to a **peak luminance threshold** — the brightest pixel or region in the frame. If that peak crosses the threshold, the system disengages, regardless of how dark the rest of the image is. If the peak stays below it, the system can engage even at quite high average brightness.
 
-**D** is the laser dimming factor — how much darker the black gets when the laser ramps down. On real dark content it measures about 2.6× at standard modes, confirmed directly by a lux meter (see below). On a full-black field the laser drops far further, toward its physical floor. Wall power tells the story: at Laser 10 it falls from 214W to 58–60W, at Laser 10+ from 261W to 69W. Roughly 34W of that is fixed overhead — electronics, SoC, and fans that draw the same regardless of the laser — so once you strip it out, the laser's own electrical draw collapses by about 7× at Laser 10 and 6.5× at Laser 10+. Optically the drop is even steeper than the power ratio implies: near the lasing threshold, light output falls faster than current, which is why full-black on/off contrast exceeds 100,000:1.
+This matters in practice. A very dark scene with a single bright lamp in frame — DBLE off. A moderately bright, uniformly lit scene with no highlights — DBLE on. The system's natural territory is not "dark scenes" in the intuitive sense; it is **content with a compressed, uniform brightness range and no specular peaks**.
 
-**G** is a dynamic gamma boost. Calibrated content leaves headroom between the displayed white point and the laser's physical peak. DBLE uses that headroom to push highlights above their DBLE-off level, widening the gap between black and white by lifting the bright end rather than only lowering the dark end.
+### Where it shines
 
-This is measurable. On a 0.065% ADL scene, enabling DBLE raised the absolute brightness of highlights above the baseline — not reduced it, raised it. A lux meter read 3.2× on a scene where D alone predicts 2.6×, implying G ≈ 1.23 at that APL. The practical ceiling in clean territory is around 5× at standard modes and 7× at Laser 10+. Push further and you trade tone accuracy for a larger number — potentially 9–13× with moderate clipping.
+The textbook case is *Blade Runner 2049*. The film's visual character is deliberately narrow in dynamic range — scenes are tonally compressed, passed through a distinctive grade that suppresses both highlights and shadows into a kind of uniform, filtered palette. There are no hard specular peaks, no practical light sources blazing into the camera. DBLE works on this material constantly, including in scenes that read as moderately bright, because the peak luminance threshold almost never trips. The result is striking: on certain sequences — wide shots of the Las Vegas ruins at dusk, interior scenes with diffuse amber light — DBLE lifts the displayed contrast to roughly twice what one of the most contrast-capable projectors on the market, the JVC NZ500, delivers on the same content. That is the upside of the gamma-boost mechanism when material suits it.
 
-Perceptually, the 5–7× range punches well above its measured value. The visual system evaluates contrast locally and adapts to scene luminance. A properly behaved 5–7× dynamic system is perceptually comparable to a flat display with 20–35k:1 native contrast — local adaptation in the dark zones amplifies the effect in ways that raw lux ratios don't reflect.
+Content that blocks the system is anything with specular highlights, hard practical light sources, or a wide dynamic range. A sunlit outdoor scene, a thriller with practicals in the frame, a sci-fi shot with a bright engine exhaust against black space — the threshold trips constantly and DBLE contributes little, even when most of the image is very dark.
 
-**What holds it back.** There is one fundamental design problem, and two tuning issues that compound it.
+### How the multiplier works
 
-The fundamental problem is a binary engagement model. DBLE is either fully active or completely off — there is no graceful rolloff as scenes get brighter. Once the scene crosses a luminance threshold, the system disengages entirely rather than reducing the dimming factor gradually. A night street with lit windows: DBLE off. A dark game level with a glowing door in the distance: DBLE off. Instead of dimming by 1.5× and letting the bright areas clip slightly, the system dims by zero.
+The contrast gain comes from two mechanisms working together: laser dimming and a dynamic gamma boost.
 
-On top of that: the engagement threshold is set too conservatively, so scenes that look dark to the eye still fail to qualify. And when DBLE does engage, the ramp is slow — which successfully prevents pumping and flicker, but also means brief dark scenes come and go before the laser fully responds.
+On real content in viewing-appropriate modes, the laser can dim on average around **3.5×**. But the contrast multiplier can run *higher* than that, because gamma is doing work alongside it. DBLE uses the headroom that calibrated content leaves between the displayed white point and the laser's physical ceiling to push highlights *above* their DBLE-off level — lifting the bright end rather than only lowering the dark end. The gap between black and white widens from both sides.
 
-A concrete example: in a dark game corridor, the player moves between a dim passage and a slightly brighter area with a light source. DBLE doesn't engage on the corridor because the light source disqualifies the whole frame. The player watches near-native contrast — dark grey, not black — throughout the sequence.
+With the iris held static, the effective formula is:
 
-**What the next step looks like.** Replace the binary cutoff with a continuous curve. At low scene luminance, dim aggressively. As luminance rises, reduce the dimming factor progressively instead of dropping to zero. This keeps the system contributing in mixed-brightness content at a lower multiplier — better than nothing, and far better than the current all-or-nothing behavior.
+**multiplier = laser dimming + highlight compensation via gamma**
 
-Layer Low/Medium/High modes on top: Medium and High would engage at higher luminance thresholds and accept more highlight clipping in exchange for meaningful contrast gain across a wider range of content. The hardware is comfortably capable of this. It's a firmware decision.
+This is measurable. On a 0.065% ADL scene, enabling DBLE raised the absolute brightness of highlights above the baseline — not reduced it, raised it. The lux meter read above what dimming alone would predict, confirming the gamma contribution at low APL. The practical ceiling in clean territory is around 5× in standard modes and 7× at Laser 10+; push past that and you trade tone accuracy for a bigger number — potentially 9–13× with moderate clipping.
 
-**Summary.** Firmware 1.2.36 turns DBLE from a non-functional placeholder into a working dynamic system. Full-black performance is genuinely impressive. Real content is clean but conservative. The limiting factor is the hard cutoff architecture, not the hardware — replacing it with a smooth engagement curve, and offering more than one aggressiveness level, would turn this into a real competitive advantage. The capability is there.
+The key consequence: more aggressive gamma manipulation can yield a higher multiplier on real scenes at the same laser dimming level. That headroom is exactly what future Medium/High modes should exploit — accept some highlight clipping, manipulate gamma harder, and the projector returns far more real contrast across far more content.
+
+Perceptually, the 5–7× range punches above its measured value. The eye evaluates contrast locally and adapts to scene luminance, so a well-behaved 5–7× dynamic system reads considerably better than raw lux ratios suggest.
+
+### Measurement methodology
+
+The effectiveness analysis was conducted by separately measuring laser dimming and highlight brightness using a lux meter, across a defined set of film scenes spanning a wide range of ADL values. Performance was assessed as a function of scene ADL — how active DBLE was, how much it dimmed, and what the resulting contrast multiplier looked like across the range. Particular attention was paid to content below 5% ADL, as this is the perceptually most sensitive zone for black level — even small improvements here have an outsized effect on the perceived image.
 
 <div class="chart-section" id="chart-dble"></div>
+
+### Speed
+
+Reaction speed is one of the core problems. The mechanism enters and exits dimming slowly. That sluggishness has a real upside — it suppresses flicker and pumping — but the cost is that it filters out a large number of scenes where DBLE could otherwise be working.
+
+It isn't slow everywhere. The transition from a dark scene into a very bright one is almost instant and well-executed, with almost no clipping in those moments. The problem is the other direction: transitions into mid-brightness scenes are smooth but laggy, and the ramp into dark scenes is slow enough that brief dark moments come and go before the laser has fully responded.
+
+Here is how that plays out in a real image. Say you're playing a dark game, constantly swinging the camera between a black corridor and a dark room with one small bright object in it. DBLE simply won't darken the corridor fast enough — so you sit in native contrast, watching dark grey instead of black, for much of the sequence. The bright object in the adjacent view disqualifies the frame via the luminance threshold, and the slow ramp finishes the job.
+
+### What holds it back, and what's next
+
+The limiting factor is architecture, not hardware: a binary, conservative engagement model with a slow ramp. Cross the luminance threshold and the system drops to zero dimming instead of rolling off gradually; sit in a dark scene and the ramp takes too long to arrive.
+
+The fix is a firmware decision. Replace the hard cutoff with a continuous curve — dim aggressively at low luminance peaks, then reduce the dimming factor progressively as peak brightness rises instead of dropping to zero. Tighten the reaction speed so dark scenes engage promptly without reintroducing pumping. Layer Low/Medium/High modes on top, with higher modes accepting a little more highlight clipping in exchange for meaningful contrast across a wider range of content.
+
+**Summary.** Firmware 1.2.36 turns DBLE from a non-functional placeholder into a genuinely working dynamic system. Full-black performance is phenomenal. Where it engages on real content — especially tonally compressed, uniform material — the result is outstanding, with minimal artifacts and a color-shift correction that's one menu toggle away. As a first retail-ready baseline it's a strong "Low" mode. The work that remains is speed and a smoother, more aggressive engagement model — and the hardware is comfortably capable of all of it.
 
 - - -
 
