@@ -791,6 +791,7 @@ a:hover { color: var(--accent-dk); }
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 8px; color: var(--text);
 }
+#cusdis_thread textarea { min-height: 120px; }
 #cusdis_thread input:focus, #cusdis_thread textarea:focus {
   outline: none; border-color: var(--accent);
 }
