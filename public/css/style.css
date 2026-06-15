@@ -517,10 +517,10 @@ a:hover { color: var(--accent-dk); }
 /* Floating section nav — desktop only, appears after scrolling past hero */
 .toc-float {
   position: fixed;
-  top: 24px;
+  top: 96px;
   left: calc(50vw - 712px);
   width: 160px;
-  max-height: min(520px, calc(100vh - 80px));
+  max-height: min(520px, calc(100vh - 130px));
   overflow-y: auto;
   background: var(--surface);
   border: 1px solid var(--border);

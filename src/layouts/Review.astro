@@ -92,22 +92,9 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
         </div>
       )}
 
-      {review.ratings.length > 0 && (
-        <div class="ratings">
-          {review.ratings.map((r) => (
-            <div class="rating-row">
-              <span class="label">{r.label}</span>
-              <span class="rating-bar"><i style={`width:${r.score * 10}%`}></i></span>
-              <span class="val">{r.score.toFixed(1)}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {review.score != null && (
-        <div class="verdict">
-          <p class="verdict-label">VERDICT</p>
-          <div class="big-score">{review.score.toFixed(1)}<span>/10</span></div>
+      {(review.verdictTitle || review.verdictText) && (
+        <div class="verdict verdict--noscore">
+          <p class="verdict-label">CONCLUSION</p>
           {review.verdictTitle && <h3>{review.verdictTitle}</h3>}
           {review.verdictText && <p>{review.verdictText}</p>}
           {review.buyLink && (
