@@ -47,7 +47,7 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
     </div>
   </div>
 
-  <main class="wrap article-page" data-draft={review.draft ? 'true' : null}>
+  <main class={`wrap article-page${review.wide ? ' article-page--wide' : ''}`} data-draft={review.draft ? 'true' : null}>
     <div class="prose">
       {toc.length > 0 && (
         <nav class="toc">
@@ -119,5 +119,5 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
     </div>
   </main>
 
-  {!review.draft && <Comments />}
+  {!review.draft && <Comments title={review.title} />}
 </Base>
