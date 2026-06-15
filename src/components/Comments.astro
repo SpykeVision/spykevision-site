@@ -40,14 +40,19 @@ const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
                 label::after { content: ' *'; color: #e53e3e; font-size: 12px; }
               `;
               doc.head.appendChild(style);
-              // Watch for React to render labels, then fix Email text
+              // Watch for React to render form elements
               const inner = new MutationObserver(() => {
                 doc.querySelectorAll('label').forEach(l => {
-                  if (l.textContent.includes('optional')) {
-                    l.textContent = 'Email';
-                    inner.disconnect();
-                  }
+                  if (l.textContent.includes('optional')) l.textContent = 'Email';
                 });
+                const ta = doc.querySelector('textarea');
+                if (ta && !ta.dataset.sized) {
+                  ta.dataset.sized = '1';
+                  ta.rows = 6;
+                  ta.style.setProperty('height', 'auto', 'important');
+                  ta.style.setProperty('min-height', '120px', 'important');
+                  inner.disconnect();
+                }
               });
               inner.observe(doc.body, { childList: true, subtree: true });
             } catch (e) {}
