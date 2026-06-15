@@ -21,5 +21,25 @@ const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
       data-page-title={title ?? pageId}
     ></div>
     <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+    <script>
+      // Patch Cusdis labels: remove "(optional)" from Email, resize textarea
+      const thread = document.getElementById('cusdis_thread');
+      if (thread) {
+        const obs = new MutationObserver(() => {
+          const labels = thread.querySelectorAll('label');
+          labels.forEach(l => {
+            if (l.textContent.includes('optional')) {
+              l.textContent = 'Email';
+            }
+          });
+          const ta = thread.querySelector('textarea');
+          if (ta && !ta.dataset.patched) {
+            ta.rows = 6;
+            ta.dataset.patched = '1';
+          }
+        });
+        obs.observe(thread, { childList: true, subtree: true });
+      }
+    </script>
   </section>
 )}

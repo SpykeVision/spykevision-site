@@ -785,13 +785,13 @@ a:hover { color: var(--accent-dk); }
   font-size: 24px; letter-spacing: -.02em; margin-bottom: 20px;
   padding-bottom: 12px; border-bottom: 1px solid var(--border);
 }
-/* Cusdis: mark nickname as required */
-#cusdis_thread label:first-of-type::after { content: ' *'; color: var(--red); font-size: 12px; }
+/* Cusdis: mark all fields as required */
+#cusdis_thread label::after { content: ' *'; color: var(--red); font-size: 12px; }
 #cusdis_thread input, #cusdis_thread textarea {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 8px; color: var(--text);
 }
-#cusdis_thread textarea { min-height: 120px; }
+#cusdis_thread textarea { min-height: 120px !important; }
 #cusdis_thread input:focus, #cusdis_thread textarea:focus {
   outline: none; border-color: var(--accent);
 }
