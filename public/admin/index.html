@@ -63,10 +63,30 @@
       toPreview: ({ src, caption }) => 'R2 Video: ' + (src || '') + (caption ? ' — ' + caption : ''),
     });
 
-    // NOTE: "Local video upload" was removed on purpose. Local .mov/.mp4 files
-    // dumped into the media_folder (public/uploads) bloat the repo and make the
-    // CMS media library crawl. Always upload videos via /admin/upload/ (R2 / CDN)
-    // and insert them with the "Video (R2 / CDN)" component above.
+    // Local video upload — self-hosted, served from /videos/.
+    // The file field has its OWN media_folder (public/videos) so videos do NOT
+    // land in the image media_folder (public/uploads). That keeps them out of
+    // the media library index, which is what used to make the CMS crawl.
+    // toPreview is text-only on purpose — no live <video> render in the editor.
+    CMS.registerEditorComponent({
+      id: 'localvideo',
+      label: 'Local video (upload, self-hosted)',
+      fields: [
+        { name: 'src', label: 'Video file (mp4 / webm / mov)', widget: 'file',
+          media_folder: '/public/videos', public_folder: '/videos' },
+        { name: 'caption', label: 'Caption', widget: 'string', required: false },
+      ],
+      pattern: /^<figure class="video-local"[\s\S]*?<source src="(.*?)"[\s\S]*?(?:<figcaption>([\s\S]*?)<\/figcaption>)?<\/figure>$/,
+      fromBlock: (match) => ({ src: match[1], caption: match[2] || '' }),
+      toBlock: ({ src, caption }) =>
+        '<figure class="video-local"><video controls playsinline>' +
+        '<source src="' + (src || '') + '" type="video/' + ((src || '').endsWith('.webm') ? 'webm' : 'mp4') + '"></video>' +
+        (caption ? '<figcaption>' + caption + '</figcaption>' : '') + '</figure>',
+      toPreview: ({ src, caption }) => '🎬 Local video: ' + (src || '') + (caption ? ' — ' + caption : ''),
+    });
+
+    // For very large clips, /admin/upload/ (R2 / CDN) + the "Video (R2 / CDN)"
+    // component keeps files out of the git repo entirely.
 
     // Spoiler / collapsible — hide content (examples, spoilers) behind a click.
     CMS.registerEditorComponent({
