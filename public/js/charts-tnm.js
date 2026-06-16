@@ -1218,6 +1218,12 @@
       });
     }
 
+    // Hint — points are interactive
+    var hint = document.createElement('p');
+    hint.style.cssText = 'margin:8px 0 4px;font-size:12px;color:' + TC.text3 + ';text-align:center;';
+    hint.textContent = '💡 Hover over any point on the chart to see the actual scene from that measurement';
+    el.appendChild(hint);
+
     // Table card — 4 cols, collapsible, hover scene preview
     var dblePts = DBLE_ON.concat(DBLE_ON_EST).concat(DBLE_ON_PWR).map(function (p) {
       return { x: p.x, y: p.y, img: p.img, desc: p.desc || '', active: true };
