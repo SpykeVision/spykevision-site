@@ -844,7 +844,7 @@ a:hover { color: var(--accent-dk); }
 .cs-body p { color: var(--text-3); font-size: 15px; margin-bottom: 12px; }
 
 /* ---------- Subscribe ---------- */
-.subscribe-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 40px 0; margin: 40px 0; }
+.subscribe-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 40px 0; margin: 40px 0; }
 .subscribe-inner { display: flex; gap: 40px; align-items: center; }
 .subscribe-text { flex: 1; }
 .subscribe-text h3 { font-size: 22px; margin: 0 0 8px; letter-spacing: -.01em; }
