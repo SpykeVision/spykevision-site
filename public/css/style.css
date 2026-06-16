@@ -853,11 +853,15 @@ a:hover { color: var(--accent-dk); }
 @media (max-width: 640px) { .subscribe-inner { flex-direction: column; gap: 20px; } }
 
 /* MailerLite form overrides — match site style */
-.ml-embedded .ml-form-embedWrapper { border-radius: var(--radius) !important; box-shadow: none !important; }
-.ml-embedded .ml-form-fieldRow input,
-.ml-embedded .ml-form-fieldRow textarea { border-radius: var(--radius) !important; font-family: inherit !important; font-size: 15px !important; }
-.ml-embedded .ml-form-embedSubmit button,
-.ml-embedded .ml-btn { border-radius: var(--radius) !important; font-family: inherit !important; font-weight: 600 !important; }
+.ml-embedded [class*="Wrapper"],
+.ml-embedded [class*="Container"],
+.ml-embedded [class*="embedBody"] { border-radius: var(--radius) !important; box-shadow: none !important; }
+.ml-embedded input[type="email"],
+.ml-embedded input[type="text"],
+.ml-embedded textarea { border-radius: var(--radius) !important; font-family: inherit !important; font-size: 15px !important; }
+.ml-embedded button,
+.ml-embedded [class*="Submit"] button,
+.ml-embedded [class*="btn"] { border-radius: var(--radius) !important; font-family: inherit !important; font-weight: 600 !important; }
 
 /* ---------- Contact ---------- */
 .contact-wrap { display: grid; gap: 24px; grid-template-columns: 1fr; }
