@@ -43,6 +43,7 @@
     .add-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(0,122,255,.04); }
 
     .chart-wrap { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; margin-top:8px; }
+    [data-theme="dark"] .chart-wrap { background:#000000; }
     .chart-toolbar { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
     .chart-title-mini { font-size:14px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; }
     .chart-tools { display:flex; gap:8px; flex-wrap:wrap; }
@@ -130,6 +131,7 @@
           <span class="chart-title-mini">ADL contrast curve</span>
           <div class="chart-tools">
             <button class="chart-tool" data-scale="log" onclick="toggleScale('estimateChart', this)">Linear scale</button>
+            <button class="chart-tool" data-xexpand="estimateChart" onclick="toggleXExpand('estimateChart', this)">Expand 0–5%</button>
             <button class="chart-tool" onclick="savePNG('estimateChart','spykevision-adl-estimate')">⬇ Save PNG</button>
             <button class="chart-tool" onclick="toggleExpand('estimateWrap','estimateChart', this)">⛶ Expand</button>
           </div>
@@ -164,6 +166,7 @@
           <span class="chart-title-mini">ADL contrast curve</span>
           <div class="chart-tools">
             <button class="chart-tool" data-scale="log" onclick="toggleScale('manualChart', this)">Linear scale</button>
+            <button class="chart-tool" data-xexpand="manualChart" onclick="toggleXExpand('manualChart', this)">Expand 0–5%</button>
             <button class="chart-tool" onclick="savePNG('manualChart','spykevision-adl-measured')">⬇ Save PNG</button>
             <button class="chart-tool" onclick="toggleExpand('manualWrap','manualChart', this)">⛶ Expand</button>
           </div>
@@ -261,12 +264,35 @@
     estimateChart: localStorage.getItem('sv-scale-estimate') || 'logarithmic',
     manualChart:   localStorage.getItem('sv-scale-manual')   || 'logarithmic'
   };
+  var xExpandPref = {
+    estimateChart: localStorage.getItem('sv-xexpand-estimate') === 'true',
+    manualChart:   localStorage.getItem('sv-xexpand-manual')   === 'true'
+  };
+
+  // Smooth power x-axis: stretches the low end so 5% ADL lands at the middle
+  // (display 25) with no slope break — power p makes (5/50)^p = 0.5.
+  var XEXP_P = Math.log(0.5) / Math.log(5 / 50);   // ≈ 0.301
+  function adlToDisplay(apl, expanded) {
+    if (!expanded) return apl;
+    return 50 * Math.pow(apl / 50, XEXP_P);
+  }
+  function displayToAdl(d, expanded) {
+    if (!expanded) return d;
+    return 50 * Math.pow(d / 50, 1 / XEXP_P);
+  }
+  var EXPAND_ADL_TICKS = [0, 0.25, 0.5, 1, 2, 3, 4, 5, 10, 20, 30, 50];
   var chartRange = { estimateChart:null,     manualChart:null };   // {min,max} of plotted data
+
+  function isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
 
   function getOrCreateChart(canvasId) {
     if (charts[canvasId]) { charts[canvasId].destroy(); }
     var ctx = document.getElementById(canvasId).getContext('2d');
     var mob = window.innerWidth < 640;
+    var dark = isDark();
+    var labelColor = dark ? '#ffffff' : '#8e8e93';
+    var gridColor  = dark ? 'rgba(255,255,255,.15)' : 'rgba(142,142,147,.15)';
+    var tooltipBg  = dark ? 'rgba(0,0,0,.92)' : 'rgba(28,28,30,.92)';
     charts[canvasId] = new Chart(ctx, {
       type: 'line',
       data: { datasets: [] },
@@ -275,26 +301,36 @@
         maintainAspectRatio: false,
         interaction: { mode:'index', intersect:false },
         plugins: {
-          legend: { position:'bottom', labels:{ color:'#8e8e93',
+          legend: { position:'bottom', labels:{ color:labelColor,
             font:{size: mob ? 11 : 13, weight:'600'},
             padding: mob ? 8 : 16,
             usePointStyle:true,
             boxWidth: mob ? 10 : 14, boxHeight: mob ? 10 : 14,
             filter: function(item){ return item.text.indexOf('(measured)') === -1; }
           }},
-          tooltip: { backgroundColor:'rgba(28,28,30,.92)', titleColor:'#f2f2f7', bodyColor:'#ebebf5cc',
+          tooltip: { backgroundColor:tooltipBg, titleColor:'#f2f2f7', bodyColor:'#ebebf5cc',
             padding:12, cornerRadius:10,
             filter: function(item){ return item.dataset.label !== 'Crossover'; },
-            callbacks: { label: function(ctx){ return ' '+ctx.dataset.label+': '+Math.round(ctx.parsed.y).toLocaleString()+':1'; } }
+            callbacks: {
+              title: function(items){ if (!items.length) return ''; var r=displayToAdl(items[0].parsed.x,xExpandPref[canvasId]); return 'ADL: '+(r<1?r.toFixed(2):r.toFixed(1))+'%'; },
+              label: function(ctx){ return ' '+ctx.dataset.label+': '+Math.round(ctx.parsed.y).toLocaleString()+':1'; }
+            }
           }
         },
         scales: {
-          x: { type:'linear', min:0, max:50, title:{display:!mob,text:'ADL (%)',color:'#8e8e93',font:{size:12}},
-            ticks:{color:'#8e8e93',font:{size: mob ? 10 : 12}}, grid:{color:'rgba(142,142,147,.15)'} },
+          x: { type:'linear', min:0, max:50,
+            title:{display:!mob,text:'% of white (ADL)',color:labelColor,font:{size:12}},
+            ticks:{color:labelColor,font:{size: mob ? 10 : 12},
+              callback: function(v){ var r=displayToAdl(v,xExpandPref[canvasId]); return (r<1?r.toFixed(2):Number.isInteger(r)?r:r.toFixed(1))+'%'; }
+            },
+            afterBuildTicks: xExpandPref[canvasId] ? function(axis){
+              axis.ticks = EXPAND_ADL_TICKS.map(function(v){ return {value:adlToDisplay(v,true)}; });
+            } : undefined,
+            grid:{color:gridColor} },
           y: { type: scalePref[canvasId],
-            title:{display:!mob,text:'Contrast ratio',color:'#8e8e93',font:{size:12}},
-            ticks:{color:'#8e8e93',font:{size: mob ? 10 : 12}, callback:function(v){return v>=1000?Math.round(v/1000)+'k:1':v+':1';}},
-            grid:{color:'rgba(142,142,147,.15)'} }
+            title:{display:!mob,text:'Contrast ratio',color:labelColor,font:{size:12}},
+            ticks:{color:labelColor,font:{size: mob ? 10 : 12}, callback:function(v){return v>=1000?Math.round(v/1000)+'k:1':v+':1';}},
+            grid:{color:gridColor} }
         }
       },
       plugins: [{
@@ -328,7 +364,7 @@
             g.restore();
           });
           // Text
-          g.fillStyle = '#8e8e93';
+          g.fillStyle = isDark() ? 'rgba(255,255,255,0.5)' : '#8e8e93';
           g.textAlign = 'left'; g.textBaseline = 'middle';
           g.fillText('SpykeVision.com', lx + logoSz + gap, cy);
           g.restore();
@@ -343,12 +379,13 @@
               var px = xSc.getPixelForValue(pt.x);
               var py = ySc.getPixelForValue(pt.y);
               if (px < a.left || px > a.right || py < a.top || py > a.bottom) return;
-              var txt = pt.x.toFixed(1) + '% · ' + Math.round(pt.y).toLocaleString() + ':1';
+              var rx = displayToAdl(pt.x, xExpandPref[chart.canvas.id]);
+              var txt = (rx<1?rx.toFixed(2):rx.toFixed(1)) + '% · ' + Math.round(pt.y).toLocaleString() + ':1';
               var tw = g.measureText(txt).width + 10, th = 16;
               var lx = px + 10, ly = py - th - 6;
               if (lx + tw > a.right) lx = px - tw - 10;
               if (ly < a.top) ly = py + 6;
-              g.fillStyle = 'rgba(28,28,30,0.82)';
+              g.fillStyle = isDark() ? 'rgba(0,0,0,0.85)' : 'rgba(28,28,30,0.82)';
               g.beginPath(); g.rect(lx, ly, tw, th); g.fill();
               g.fillStyle = '#f2f2f7';
               g.textAlign = 'left'; g.textBaseline = 'top';
@@ -424,6 +461,25 @@
       var isLog = scalePref[canvasId] === 'logarithmic';
       btn.textContent = isLog ? 'Log scale' : 'Linear scale';
       btn.classList.toggle('active', isLog);
+    });
+  }
+
+  // ── Toolbar: x-axis expand (0–5% zoom) ────────────────────────────────────
+  function toggleXExpand(canvasId, btn) {
+    var next = !xExpandPref[canvasId];
+    xExpandPref[canvasId] = next;
+    localStorage.setItem('sv-xexpand-' + (canvasId === 'estimateChart' ? 'estimate' : 'manual'), next ? 'true' : 'false');
+    btn.textContent = next ? 'Full range' : 'Expand 0–5%';
+    btn.classList.toggle('active', next);
+    if (canvasId === 'estimateChart') buildEstimateChart();
+    else buildManualChart();
+  }
+  function syncXExpandButtons() {
+    document.querySelectorAll('.chart-tool[data-xexpand]').forEach(function(btn) {
+      var cid = btn.getAttribute('data-xexpand');
+      var on = xExpandPref[cid];
+      btn.textContent = on ? 'Full range' : 'Expand 0–5%';
+      btn.classList.toggle('active', on);
     });
   }
 
@@ -622,9 +678,13 @@
       nodes.sort(function(a,b){ return a.apl - b.apl; });
       // Interpolate the full curve through the nodes
       var pts = [];
-      for (var apl=0; apl<=50; apl+=0.5) {
+      var expanded = xExpandPref['estimateChart'];
+      // Sample uniformly in display space so the rendered line stays smooth
+      // even where the x-axis transform stretches the low end.
+      for (var d=0; d<=50; d+=0.5) {
+        var apl = displayToAdl(d, expanded);
         var y = interpAt(nodes, apl);
-        pts.push({ x:apl, y: y });
+        pts.push({ x:d, y: y });
         if (y < dataMin) dataMin = y;
         if (y > dataMax) dataMax = y;
       }
@@ -637,7 +697,7 @@
       // Measured points sit exactly on the curve
       chart.data.datasets.push({
         label: name+' (measured)',
-        data: nodes.map(function(n){return{x:n.apl,y:n.cr};}), type:'scatter',
+        data: nodes.map(function(n){return{x:adlToDisplay(n.apl,expanded),y:n.cr};}), type:'scatter',
         borderColor: color, backgroundColor: color,
         pointRadius: pt, pointHoverRadius: ptH, showLine: false
       });
@@ -661,9 +721,10 @@
       var name = block.querySelector('.proj-name-row input').value || 'Projector';
       var id = block.id.replace('mb','');
       var pts = [];
+      var expanded = xExpandPref['manualChart'];
       APL_POINTS.forEach(function(apl,i){
         var v = parseFloat(document.getElementById('man-'+id+'-'+i).value);
-        if (v > 0) { pts.push({x: apl, y: v}); if (v<dataMin) dataMin=v; if (v>dataMax) dataMax=v; }
+        if (v > 0) { pts.push({x: adlToDisplay(apl,expanded), y: v}); if (v<dataMin) dataMin=v; if (v>dataMax) dataMax=v; }
       });
       if (!pts.length) return;
       var color = COLORS[colorIdx++ % COLORS.length];
@@ -671,7 +732,7 @@
         label: name,
         data: pts, borderColor: color, backgroundColor: 'transparent',
         borderWidth: 2.5, pointRadius: pt, pointHoverRadius: ptH,
-        tension: 0.3, fill: false
+        cubicInterpolationMode: 'monotone', fill: false
       });
     });
     chartRange.manualChart = isFinite(dataMin) && isFinite(dataMax) ? {min:dataMin, max:dataMax} : null;
@@ -769,8 +830,18 @@
 
   loadCalcState();
   syncScaleButtons();
+  syncXExpandButtons();
   initEmptyChart('estimateChart');
   initEmptyChart('manualChart');
+
+  // Re-render charts on theme change so colors update
+  document.getElementById('themeToggle').addEventListener('click', function() {
+    setTimeout(function() {
+      ['estimateChart','manualChart'].forEach(function(id) {
+        if (charts[id]) { var ds = charts[id].data.datasets; getOrCreateChart(id); charts[id].data.datasets = ds; applyYScale(id); charts[id].update(); }
+      });
+    }, 0);
+  });
   </script>
   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "92363d386413401286d548d138515fea"}'></script><!-- End Cloudflare Web Analytics -->
 </body>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="0;url=/adl-calculator.html">
+<title>Screen Brightness & Contrast · SpykeVision</title>
+<meta name="description" content="Calculate peak white nits, black level, and perceived contrast for any projector+screen combination. Understand how lumens, screen size, gain, and native CR interact.">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+.lead{font-size:15px;color:var(--text-3);margin-bottom:28px;line-height:1.55;max-width:720px}
+
+/* Input grid */
+.inp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:600px){.inp-grid{grid-template-columns:1fr}}
+
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em}
+.field .hint{font-size:12px;color:var(--text-3);line-height:1.4}
+.field input,.field select{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:11px 14px;font-size:16px;color:var(--text);font-family:var(--font);
+  transition:border-color .15s,box-shadow .15s;width:100%;appearance:none;-webkit-appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,122,255,.15)}
+.field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none}
+.select-wrap{position:relative}
+.select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  color:var(--text-3);pointer-events:none;font-size:14px}
+.select-wrap select{padding-right:36px}
+
+/* AR chips */
+.ar-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.ar-chip{padding:6px 13px;border-radius:20px;border:1px solid var(--border);background:var(--surface-2);
+  font-size:13px;font-weight:600;color:var(--text-2);cursor:pointer;transition:all .15s;font-family:var(--font)}
+.ar-chip:hover{border-color:var(--text-3)}
+.ar-chip.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* Results card */
+.results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
+.results-card h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--text-3);margin-bottom:18px}
+
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:540px){.metrics-row{grid-template-columns:1fr 1fr}}
+
+.metric{background:var(--surface-2);border-radius:var(--radius-sm);padding:14px 16px;text-align:center}
+.metric-val{font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--text);line-height:1;margin-bottom:4px;
+  font-variant-numeric:tabular-nums}
+.metric-unit{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:6px}
+.metric-label{font-size:12px;color:var(--text-3);line-height:1.3}
+
+/* Quality badge */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;
+  letter-spacing:.03em;margin-top:4px}
+.badge-cinema{background:rgba(48,209,88,.18);color:#1d8f3c}
+[data-theme="dark"] .badge-cinema{color:#30d158}
+.badge-excellent{background:rgba(48,209,88,.12);color:#1d8f3c}
+[data-theme="dark"] .badge-excellent{color:#30d158}
+.badge-good{background:rgba(255,214,10,.15);color:#8a6c00}
+[data-theme="dark"] .badge-good{color:#ffd60a}
+.badge-mediocre{background:rgba(255,149,0,.15);color:#a05000}
+[data-theme="dark"] .badge-mediocre{color:#ff9500}
+.badge-poor{background:rgba(255,69,58,.15);color:#c0201a}
+[data-theme="dark"] .badge-poor{color:#ff453a}
+
+/* Scene table */
+.scene-table{width:100%;border-collapse:collapse;font-size:14px}
+.scene-table th{text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--text-3);padding:0 0 10px 0;border-bottom:1px solid var(--border)}
+.scene-table td{padding:10px 0;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+.scene-table tr:last-child td{border-bottom:none}
+.scene-table td:first-child{font-weight:600;width:30%}
+.scene-table td.num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--text)}
+.scene-adl{font-size:11px;color:var(--text-3);font-weight:400;display:block;margin-top:1px}
+
+.cr-bar-wrap{display:flex;align-items:center;gap:8px}
+.cr-bar{height:8px;border-radius:4px;background:var(--accent);min-width:4px;transition:width .3s}
+.cr-bar.dim{background:var(--text-3)}
+
+/* Viewing angle row */
+.angle-row{display:flex;align-items:center;gap:10px;padding:14px 0;border-top:1px solid var(--border);margin-top:4px}
+.angle-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.angle-label{font-size:13px;color:var(--text-3);flex:1}
+.smpte-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;letter-spacing:.03em}
+.smpte-ok{background:rgba(48,209,88,.15);color:#1d8f3c}
+[data-theme="dark"] .smpte-ok{color:#30d158}
+.smpte-low{background:rgba(255,149,0,.15);color:#a05000}
+[data-theme="dark"] .smpte-low{color:#ff9500}
+.smpte-wide{background:rgba(0,122,255,.12);color:#0055cc}
+[data-theme="dark"] .smpte-wide{color:#409cff}
+
+/* Insight card */
+.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
+.insight-card h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--text-3);margin-bottom:14px}
+.insight-body{font-size:14px;color:var(--text-2);line-height:1.65}
+.insight-body p{margin-bottom:10px}
+.insight-body p:last-child{margin-bottom:0}
+.insight-body strong{color:var(--text);font-weight:700}
+.insight-verdict{margin-top:16px;padding:14px 16px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;line-height:1.5}
+.verdict-win{background:rgba(48,209,88,.1);border-left:3px solid #30d158;color:var(--text)}
+.verdict-neutral{background:rgba(255,214,10,.1);border-left:3px solid #ffd60a;color:var(--text)}
+.verdict-lose{background:rgba(255,69,58,.1);border-left:3px solid #ff453a;color:var(--text)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:48px 24px;color:var(--text-3)}
+.empty-state svg{margin-bottom:16px;opacity:.35}
+.empty-state p{font-size:15px}
+
+/* section divider */
+.section-sep{height:1px;background:var(--border);margin:8px 0 20px}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
+    <ul class="nav-links">
+      <li><a href="/reviews/">Reviews</a></li>
+      <li><a href="/#coming-soon">Coming Soon</a></li>
+      <li><a href="/adl-calculator.html">ADL Calculator<span class="beta-tag">beta</span></a></li>
+      <li><a href="/contrast-depth.html">Contrast Depth<span class="beta-tag">beta</span></a></li>
+      <li><a href="/screen-brightness.html" class="active">Brightness &amp; CR<span class="beta-tag">beta</span></a></li>
+      <li><a href="/contact/">Contact</a></li>
+      <li><a href="/about/">About</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:28px;padding-bottom:48px">
+
+  <h1 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:8px">
+    Screen Brightness &amp; Contrast<span class="beta-tag" style="vertical-align:middle;margin-left:8px">beta</span>
+  </h1>
+  <p class="lead">Enter your projector specs and see the actual nits on screen, real black level, and how perceived contrast changes by scene type. Understand the lumens-doubles-everything trade-off.</p>
+
+  <!-- Inputs -->
+  <div class="results-card" style="margin-bottom:20px">
+    <h2>Setup</h2>
+
+    <div class="inp-grid">
+      <div class="field">
+        <label>Lumens (ANSI)</label>
+        <input type="number" id="inpLumens" placeholder="e.g. 1800" min="1" max="50000" step="10">
+        <span class="hint">Measured or rated output of the projector</span>
+      </div>
+      <div class="field">
+        <label>Screen diagonal (inches)</label>
+        <input type="number" id="inpDiag" placeholder="e.g. 100" min="20" max="400" step="1">
+        <span class="hint">Measured corner-to-corner</span>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:14px">
+      <label>Aspect ratio</label>
+      <div class="ar-chips" id="arChips">
+        <button class="ar-chip sel" data-w="16" data-h="9">16:9</button>
+        <button class="ar-chip" data-w="16" data-h="10">16:10</button>
+        <button class="ar-chip" data-w="235" data-h="100">2.35:1</button>
+        <button class="ar-chip" data-w="239" data-h="100">2.39:1</button>
+        <button class="ar-chip" data-w="4" data-h="3">4:3</button>
+        <button class="ar-chip" data-w="1" data-h="1">1:1</button>
+      </div>
+    </div>
+
+    <div class="inp-grid">
+      <div class="field">
+        <label>Screen gain (measured)</label>
+        <input type="number" id="inpGain" placeholder="e.g. 1.0" min="0.1" max="5" step="0.05" value="1.0">
+        <span class="hint">Use your own measured value — manufacturer specs are often optimistic</span>
+      </div>
+      <div class="field">
+        <label>Viewing distance (meters)</label>
+        <input type="number" id="inpDist" placeholder="e.g. 3.5" min="0.5" max="30" step="0.1">
+        <span class="hint">Eye-to-screen distance — used to derive horizontal viewing angle</span>
+      </div>
+    </div>
+
+    <div class="inp-grid">
+      <div class="field">
+        <label>Native contrast ratio</label>
+        <input type="number" id="inpCR" placeholder="e.g. 7000" min="10" max="1000000" step="100">
+        <span class="hint">On/Off or sequential CR from spec sheet or measurement</span>
+      </div>
+      <div class="field">
+        <!-- spacer -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M24 14v10l6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <p>Fill in the inputs above to see results.</p>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── Inputs ────────────────────────────────────────────────────────────────────
+const inpLumens = document.getElementById('inpLumens');
+const inpDiag   = document.getElementById('inpDiag');
+const inpGain   = document.getElementById('inpGain');
+const inpDist   = document.getElementById('inpDist');
+const inpCR     = document.getElementById('inpCR');
+
+// AR chips
+let arW = 16, arH = 9;
+document.getElementById('arChips').addEventListener('click', e => {
+  const chip = e.target.closest('.ar-chip');
+  if (!chip) return;
+  document.querySelectorAll('.ar-chip').forEach(c => c.classList.remove('sel'));
+  chip.classList.add('sel');
+  arW = parseFloat(chip.dataset.w);
+  arH = parseFloat(chip.dataset.h);
+  recalc();
+});
+
+[inpLumens, inpDiag, inpGain, inpDist, inpCR].forEach(el => el.addEventListener('input', recalc));
+
+// ── Physics ───────────────────────────────────────────────────────────────────
+function screenArea(diagIn, w, h) {
+  const diagM = diagIn * 0.0254;
+  return diagM * diagM * (w * h) / (w * w + h * h);
+}
+function screenWidth(diagIn, w, h) {
+  const diagM = diagIn * 0.0254;
+  return diagM * w / Math.sqrt(w * w + h * h);
+}
+function peakNits(lumens, gain, areaSqM) {
+  return lumens * gain / (Math.PI * areaSqM);
+}
+function viewAngle(diagIn, w, h, distM) {
+  const wm = screenWidth(diagIn, w, h);
+  return 2 * Math.atan(wm / (2 * distM)) * 180 / Math.PI;
+}
+// Pupil-adaptation max CR — same model as Contrast Depth tool
+function crMaxForADL(adl) {
+  if (adl <= 0) return 500000;
+  return Math.min(500000, 1000 * Math.pow(0.5 / adl, 1.2));
+}
+
+const SCENES = [
+  { label: 'Dark scene',     adl: 0.03, note: 'night, cave, space' },
+  { label: 'Standard scene', adl: 0.18, note: 'indoor, drama' },
+  { label: 'Bright scene',   adl: 0.40, note: 'outdoor, day, sports' },
+];
+
+function blackQuality(blackNits) {
+  if (blackNits <= 0.001) return { label: 'Cinema-grade', cls: 'badge-cinema' };
+  if (blackNits <= 0.005) return { label: 'Excellent',    cls: 'badge-excellent' };
+  if (blackNits <= 0.02)  return { label: 'Good',         cls: 'badge-good' };
+  if (blackNits <= 0.05)  return { label: 'Mediocre',     cls: 'badge-mediocre' };
+  return                         { label: 'Poor',          cls: 'badge-poor' };
+}
+
+function fmt(n, digits) {
+  if (n === undefined || isNaN(n)) return '—';
+  return n.toLocaleString('en', { maximumFractionDigits: digits });
+}
+function fmtNits(n) {
+  if (n < 0.001) return n.toLocaleString('en', { maximumSignificantDigits: 2 });
+  if (n < 0.01)  return n.toFixed(4);
+  if (n < 1)     return n.toFixed(3);
+  if (n < 10)    return n.toFixed(2);
+  if (n < 100)   return n.toFixed(1);
+  return Math.round(n).toLocaleString('en');
+}
+
+// ── Verdict ───────────────────────────────────────────────────────────────────
+function insightVerdict(peakW, blackN, nativeCR, distM) {
+  // Core insight: is the black level hurting dark scenes?
+  const darkCRmax  = crMaxForADL(SCENES[0].adl);
+  const effCRdark  = Math.min(nativeCR, darkCRmax);
+  const stdCRmax   = crMaxForADL(SCENES[1].adl);
+  const effCRstd   = Math.min(nativeCR, stdCRmax);
+
+  // Is native CR the limiting factor in dark scenes, or is the eye?
+  const crLimitedByEye = nativeCR >= darkCRmax * 0.9;
+
+  let html = '';
+  if (crLimitedByEye) {
+    html = `<div class="insight-verdict verdict-neutral">
+      In dark scenes your eye's adaptation (~${fmt(darkCRmax, 0)}:1) is already the bottleneck —
+      more lumens won't make blacks look worse, because the eye can't resolve that level of contrast anyway.
+      Doubling lumens raises both white and black, but the <em>perceived</em> CR stays about the same.
+    </div>`;
+  } else if (blackN > 0.02) {
+    html = `<div class="insight-verdict verdict-lose">
+      At ${fmtNits(blackN)} nits black level, dark scenes will look noticeably grey.
+      More lumens will raise this further — the trade-off is real.
+      A higher-CR projector would help more than extra lumens at this screen size.
+    </div>`;
+  } else {
+    html = `<div class="insight-verdict verdict-win">
+      Black level looks manageable at ${fmtNits(blackN)} nits. Doubling lumens would raise it proportionally,
+      but at this scale the absolute delta stays small. Extra brightness is worth it here.
+    </div>`;
+  }
+  return html;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function recalc() {
+  const lumens  = parseFloat(inpLumens.value);
+  const diagIn  = parseFloat(inpDiag.value);
+  const gain    = parseFloat(inpGain.value) || 1.0;
+  const distM   = parseFloat(inpDist.value);
+  const nativeCR = parseFloat(inpCR.value);
+
+  const hasCore = lumens > 0 && diagIn > 0 && gain > 0 && nativeCR > 0;
+  const hasDist = distM > 0;
+
+  if (!hasCore) {
+    document.getElementById('results').innerHTML = `
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M24 14v10l6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <p>Fill in the inputs above to see results.</p>
+      </div>`;
+    return;
+  }
+
+  const area    = screenArea(diagIn, arW, arH);
+  const peakW   = peakNits(lumens, gain, area);
+  const blackN  = peakW / nativeCR;
+  const bq      = blackQuality(blackN);
+
+  // Viewing angle (only if distance provided)
+  let angleHTML = '';
+  if (hasDist) {
+    const angle = viewAngle(diagIn, arW, arH, distM);
+    let smpteClass, smpteLabel;
+    if (angle < 20) {
+      smpteClass = 'smpte-low';
+      smpteLabel = 'Below SMPTE THX (30°)';
+    } else if (angle <= 45) {
+      smpteClass = 'smpte-ok';
+      smpteLabel = 'SMPTE / THX range';
+    } else {
+      smpteClass = 'smpte-wide';
+      smpteLabel = 'Wide — immersive but demanding';
+    }
+    angleHTML = `
+      <div class="angle-row">
+        <span class="angle-val">${fmt(angle, 1)}°</span>
+        <span class="angle-label">Horizontal viewing angle<br>
+          <span class="smpte-tag ${smpteClass}">${smpteLabel}</span>
+        </span>
+      </div>`;
+  }
+
+  // Scene table — bar = fraction of native CR that the eye actually perceives
+  const sceneRows = SCENES.map(s => {
+    const eyeMax  = crMaxForADL(s.adl);
+    const effCR   = Math.min(nativeCR, eyeMax);
+    const pct     = Math.round(effCR / nativeCR * 100);
+    const limLabel = effCR < nativeCR
+      ? `eye limits to ~${fmt(eyeMax, 0)}:1`
+      : `full native CR preserved`;
+    return `
+      <tr>
+        <td>${s.label}<span class="scene-adl">ADL ${(s.adl*100).toFixed(0)}% — ${s.note}</span></td>
+        <td class="num">${fmt(Math.round(effCR), 0)}:1
+          <span class="scene-adl">${limLabel}</span>
+        </td>
+        <td>
+          <div class="cr-bar-wrap">
+            <div class="cr-bar" style="width:${Math.max(4, pct)}%"></div>
+            <span style="font-size:11px;color:var(--text-3);font-variant-numeric:tabular-nums">${pct}%</span>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('results').innerHTML = `
+    <!-- Key metrics -->
+    <div class="results-card">
+      <h2>Screen output</h2>
+      <div class="metrics-row">
+        <div class="metric">
+          <div class="metric-val">${fmtNits(peakW)}</div>
+          <div class="metric-unit">nits</div>
+          <div class="metric-label">Peak white</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val">${fmtNits(blackN)}</div>
+          <div class="metric-unit">nits</div>
+          <div class="metric-label">Black level</div>
+          <div><span class="badge ${bq.cls}">${bq.label}</span></div>
+        </div>
+        <div class="metric">
+          <div class="metric-val">${fmt(area, 2)}</div>
+          <div class="metric-unit">m²</div>
+          <div class="metric-label">Screen area</div>
+        </div>
+      </div>
+      ${angleHTML}
+    </div>
+
+    <!-- Perceived CR by scene -->
+    <div class="results-card">
+      <h2>Perceived contrast by scene</h2>
+      <p style="font-size:13px;color:var(--text-3);margin-bottom:16px;line-height:1.5">
+        Effective CR = min(native CR, max CR the eye can resolve at this scene brightness).
+        Eye adaptation model: anchor 50% ADL → ~1,000:1.
+      </p>
+      <table class="scene-table">
+        <thead>
+          <tr>
+            <th>Scene</th>
+            <th>Effective CR</th>
+            <th style="width:30%">Relative</th>
+          </tr>
+        </thead>
+        <tbody>${sceneRows}</tbody>
+      </table>
+    </div>
+
+    <!-- Insight -->
+    <div class="insight-card">
+      <h2>The lumens trade-off</h2>
+      <div class="insight-body">
+        <p>
+          Doubling lumens <strong>doubles both peak white and black level</strong>.
+          Native CR stays constant — it's a hardware ratio.
+          The question is whether the higher absolute black level matters <em>perceptually</em>.
+        </p>
+        <p>
+          In bright scenes your eye is adapted to a high ambient level — a slightly brighter black goes unnoticed.
+          In dark scenes the eye is maximally dilated: it can resolve much higher contrast,
+          so a higher absolute black level <em>does</em> hurt if native CR is the limiting factor.
+          If your eye's adaptation ceiling is already below native CR, the extra lumens are free.
+        </p>
+        ${insightVerdict(peakW, blackN, nativeCR, distM)}
+      </div>
+    </div>
+  `;
+}
+
+recalc();
+</script>
+</body>
+</html>
