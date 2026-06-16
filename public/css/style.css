@@ -775,6 +775,8 @@ a:hover { color: var(--accent-dk); }
   color: var(--text-2); cursor: pointer; transition: border-color .15s, color .15s;
 }
 .footer-support-btn:hover { border-color: var(--accent); color: var(--accent); }
+[data-theme="dark"] .footer-support-btn { background: #fff; color: #000; border-color: #fff; }
+[data-theme="dark"] .footer-support-btn:hover { background: #e5e5ea; border-color: #e5e5ea; color: #000; }
 
 /* ---------- Comments ---------- */
 .comments {
