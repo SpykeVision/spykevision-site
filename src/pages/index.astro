@@ -7,6 +7,11 @@ import { getCollection } from 'astro:content';
 const reviews = (await getCollection('reviews'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
+function cdnImg(src, w = 800) {
+  if (!src || !/^\/(images|uploads)\//.test(src)) return src;
+  return `/.netlify/images?url=${encodeURIComponent(src)}&w=${w}&q=80`;
+}
+
 const comingSoon = [
   {
     category: 'ALR Screen • Fresnel',
@@ -46,7 +51,7 @@ const comingSoon = [
           {reviews.slice(0, 6).map((r, i) => (
             <a href={`/reviews/${r.slug}/`} class={`card${i === 0 ? ' featured' : ''}`} data-draft={r.data.draft ? 'true' : null}>
               <div class="card-media">
-                <img src={r.data.coverCard || r.data.cover} alt={r.data.title} />
+                <img src={cdnImg(r.data.coverCard || r.data.cover)} alt={r.data.title} />
                 {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
               </div>
               <div class="card-body">
@@ -71,7 +76,7 @@ const comingSoon = [
         {comingSoon.map((c) => (
           <a href="#" class="cs-card">
             <div class="cs-media">
-              {c.image && <img src={c.image} alt={c.title} class="cs-img" />}
+              {c.image && <img src={cdnImg(c.image)} alt={c.title} class="cs-img" />}
               <div class="cs-badge">Coming soon</div>
             </div>
             <div class="cs-body">
