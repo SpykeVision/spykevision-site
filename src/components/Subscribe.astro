@@ -1,9 +1,4 @@
 ---
-// MailerLite embedded form.
-// After registering at mailerlite.com:
-//   1. Go to Forms → Create embedded form
-//   2. In the embed code find ml('account', 'XXXXXX') → paste ACCOUNT_ID below
-//   3. Copy the data-form="XXXXXX" value → paste FORM_ID below
 const ACCOUNT_ID = '2448508';
 const FORM_ID    = '8lzoBZ';
 const enabled = ACCOUNT_ID !== '' && FORM_ID !== '';
@@ -26,6 +21,26 @@ const enabled = ACCOUNT_ID !== '' && FORM_ID !== '';
         n=d.getElementsByTagName(e)[0];n.parentNode.insertBefore(l,n);
       })(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
       ml('account', ACCOUNT_ID);
+
+      // Patch border-radius after MailerLite renders (it injects HTML dynamically)
+      var mlTarget = document.querySelector('.ml-embedded');
+      if (mlTarget) {
+        var mlObs = new MutationObserver(function() {
+          mlTarget.querySelectorAll('*').forEach(function(el) {
+            var tag = el.tagName.toLowerCase();
+            var cls = el.className || '';
+            if (
+              cls.indexOf('Wrapper') > -1 ||
+              cls.indexOf('Container') > -1 ||
+              cls.indexOf('embedBody') > -1 ||
+              tag === 'input' || tag === 'button' || tag === 'textarea'
+            ) {
+              el.style.setProperty('border-radius', '12px', 'important');
+            }
+          });
+        });
+        mlObs.observe(mlTarget, { childList: true, subtree: true });
+      }
     </script>
   </section>
 )}
