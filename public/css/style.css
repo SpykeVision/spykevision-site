@@ -852,6 +852,13 @@ a:hover { color: var(--accent-dk); }
 .subscribe-form { flex: 1; }
 @media (max-width: 640px) { .subscribe-inner { flex-direction: column; gap: 20px; } }
 
+/* MailerLite form overrides — match site style */
+.ml-embedded .ml-form-embedWrapper { border-radius: var(--radius) !important; box-shadow: none !important; }
+.ml-embedded .ml-form-fieldRow input,
+.ml-embedded .ml-form-fieldRow textarea { border-radius: var(--radius) !important; font-family: inherit !important; font-size: 15px !important; }
+.ml-embedded .ml-form-embedSubmit button,
+.ml-embedded .ml-btn { border-radius: var(--radius) !important; font-family: inherit !important; font-weight: 600 !important; }
+
 /* ---------- Contact ---------- */
 .contact-wrap { display: grid; gap: 24px; grid-template-columns: 1fr; }
 .contact-card {
