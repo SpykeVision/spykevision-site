@@ -9,7 +9,7 @@ local_backend: true
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
-publish_mode: editorial_workflow
+# No editorial_workflow: a single 'draft' toggle controls visibility instead.
 site_url: https://spykevision.com
 display_url: https://spykevision.com
 

@@ -302,10 +302,10 @@
   if (inlineToc) {
     floatToc = document.createElement('nav');
     floatToc.className = 'toc-float';
-    floatToc.innerHTML = '<h4>In this review</h4>' +
-      '<ul>' + Array.prototype.map.call(inlineToc.querySelectorAll('li'), function (li) {
-        return '<li>' + li.innerHTML + '</li>';
-      }).join('') + '</ul>';
+    var innerHtml = Array.prototype.filter.call(inlineToc.children, function (el) {
+      return el.tagName !== 'H4';
+    }).map(function (el) { return el.outerHTML; }).join('');
+    floatToc.innerHTML = '<h4>In this review</h4>' + innerHtml;
     document.body.appendChild(floatToc);
 
     // Show floating nav once the inline TOC scrolls out of view
@@ -335,6 +335,17 @@
             a.classList.add('active');
             if (a.closest('.toc')) { a.style.color = 'var(--accent)'; a.style.fontWeight = '700'; }
           });
+          if (floatToc) {
+            var activeFloatLink = floatToc.querySelector('a.active');
+            if (activeFloatLink) {
+              var tocTop = floatToc.scrollTop;
+              var tocH = floatToc.clientHeight;
+              var linkTop = activeFloatLink.offsetTop - floatToc.offsetTop;
+              var linkBot = linkTop + activeFloatLink.offsetHeight;
+              if (linkTop < tocTop) floatToc.scrollTop = linkTop;
+              else if (linkBot > tocTop + tocH) floatToc.scrollTop = linkBot - tocH;
+            }
+          }
         }
       });
     }, { rootMargin: '-10% 0px -80% 0px' });

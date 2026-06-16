@@ -67,7 +67,7 @@ const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
               };
               const patch = () => {
                 doc.querySelectorAll('label').forEach(l => {
-                  if (l.textContent.includes('optional') || l.textContent.trim() === 'Email') {
+                  if (!l.dataset.optional && (l.textContent.includes('optional') || l.textContent.trim() === 'Email')) {
                     l.textContent = 'Email';
                     l.dataset.optional = '1';
                   }
