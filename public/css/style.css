@@ -836,6 +836,7 @@ a:hover { color: var(--accent-dk); }
   font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px;
   letter-spacing: .03em; white-space: nowrap; margin-top: 3px;
 }
+.cs-img { flex: none; width: 150px; height: 100px; object-fit: cover; border-radius: calc(var(--radius) - 4px); }
 .cs-body { flex: 1; }
 .cs-body h3 { font-size: 19px; margin: 6px 0 8px; letter-spacing: -.01em; color: var(--text); }
 .cs-body p { color: var(--text-3); font-size: 15px; margin-bottom: 12px; }
@@ -913,6 +914,7 @@ a:hover { color: var(--accent-dk); }
   .prose h2 { font-size: 23px; }
   body { font-size: 16px; }
   .cs-card { flex-direction: column; gap: 10px; }
+  .cs-img { width: 100%; height: 180px; }
   .theme-toggle { right: 12px; top: auto; bottom: 80px; transform: none; }
 }
 
