@@ -577,8 +577,9 @@ a:hover { color: var(--accent-dk); }
 .prose li { margin: 8px 0; line-height: 1.6; }
 .prose strong { color: var(--text); font-weight: 700; }
 .prose hr { border: none; border-top: 1px solid var(--border); margin: 44px 0; }
+.prose img { border-radius: var(--radius-sm); box-shadow: var(--shadow); }
 .prose figure { margin: 32px 0; }
-.prose figure img { border-radius: var(--radius-sm); box-shadow: var(--shadow); width: 100%; }
+.prose figure img { width: 100%; }
 .prose figcaption { text-align: center; color: var(--text-3); font-size: 14px; margin-top: 10px; }
 
 /* Photo gallery — grid of clickable images */
