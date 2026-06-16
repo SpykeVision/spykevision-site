@@ -98,13 +98,13 @@ verdictTitle: A measurement-backed flagship
 
 The Titan Noir Max arrives at an unusual moment for DLP projectors. The category has been accelerating: brighter lasers, faster controllers, and a wave of manufacturers finally taking contrast seriously. What separates the TNM from the crowd is not any single specification — it’s the sum of design choices that, on paper, shouldn’t coexist in a projector at this price.
 
-![](/uploads/копия-titan_noir_series_price.jpg)
+![](/uploads/titan-noir-series-price-copy.jpg)
 
 Start with the core. The 0.47‑inch DMD chip is built on TI’s SST platform, a rework of the micromirror array that optimises pixel density and heat dissipation specifically for laser illumination. It’s driven by the **DLPC8455** controller — currently the most capable in TI’s single‑chip lineup, which enables sub‑1ms latency and introduces a rolling‑buffer architecture that fundamentally changes motion behaviour. The Titan Noir series itself spans three models: base, Pro, and Max — sharing the same chassis but scaling the laser engine from 30 to 50 RGB triple‑laser diodes depending on the tier.
 
 Then there is the feature that genuinely has no equivalent in competing consumer projectors: a dedicated FPGA co‑processor. The **X‑Vision** chip is not an off‑the‑shelf video processor; it’s a programmable logic array that can, in principle, be taught almost anything — custom tone mapping, per‑frame iris and laser control, proprietary sharpening algorithms, frame‑level gamma manipulation. Whether any of this potential materialises depends entirely on XGIMI’s software ambitions and execution, but the fact that the hardware is already inside every TNM is remarkable.
 
-![](/uploads/снимок-экрана-2026-06-16-в-00.06.27_2026-06-15_20_25_04.723534.webp)
+![](/uploads/screenshot-2026-06-16-00-06-27.webp)
 
 The optical path is equally ambitious. A 15‑element all‑glass lens with multi‑layer anti‑reflective coatings, a **0.98–2.0:1** throw range (the widest in its class), and lens shift that — while half the brochure figure still outpaces every direct rival. Lens memory, still a rarity on DLP projectors, is included. Contrast is managed by a **dual‑iris system**: one static iris after the laser, a second dynamic iris in the lens, with XGIMI’s DBLE (Dynamic Black Level Enhancement) own dynamic laser dimming algorithm.
 
@@ -178,7 +178,7 @@ The size + brightness + quietness combination here is hard to overstate. And not
 
 If you're buying this version of the projector for the lens alone, you might not be wrong. Let's dive in.
 
-![](/uploads/снимок-экрана-2026-06-16-в-00.16.07_2026-06-15_20_22_17.314976.webp)
+![](/uploads/screenshot-2026-06-16-00-16-07.webp)
 
 The TNM uses a high-end 15-element all-glass **X-Master Red Ring Lens PRO** with the signature **red ring.** The key upgrade is the throw ratio: **0.98 to 2.0×** (extended to **2.1×** with firmware 1.0.99). This is a genuine full-range zoom. For once, you don't need to buy a separate long-throw lens or rule out this projector because your room is longer than a closet. Finally, manufacturers remembered that home theater enthusiasts with normal rooms exist.
 
@@ -355,7 +355,7 @@ Looking ahead, a **darker version of the dynamic iris would be a valuable additi
 
 ## Dual Iris: Summary
 
-![](/uploads/снимок-экрана-2026-06-16-в-00.10.49_2026-06-15_20_24_26.748129.webp)
+![](/uploads/screenshot-2026-06-16-00-10-49.webp)
 
 The dual‑iris system in the TNM is the most complex contrast mechanism I’ve measured in a consumer DLP. It rewards careful setup — zoom, iris, and lens shift all interact in ways that can make the difference between a **4 000:1** and a **6 500:1** real‑world experience. The absence of a true “F6.0” intermediate step is felt; a mode that sits between **F5.5** and **F7.0** could maintain a high contrast baseline while adding meaningful brightness. Based on the data, **F6.0** would likely land around **5500–6000:1** native with **1 500–1 800 lumens** — a very attractive operating point that I hope XGIMI considers.
 
@@ -451,7 +451,7 @@ Looking ahead, the presence of the **X‑Vision** FPGA creates significant headr
 
 ## Anti-RBE
 
-![](/uploads/снимок-экрана-2026-06-16-в-00.08.25_2026-06-15_20_26_43.854977.webp)
+![](/uploads/screenshot-2026-06-16-00-08-25.webp)
 
 RBE (Rainbow Effect) is an inherent characteristic of single-chip DLP projectors. When the laser colour sequence transitions, some viewers can detect brief flashes of red-blue-green fringing on high-contrast edges. **Anti-RBE** systems suppress this by shortening the visible portion of each colour transition.
 
@@ -479,7 +479,7 @@ Overall, the current Standard mode implementation is an excellent start for the 
 
 One area where the TNM genuinely impresses is its acoustic performance around the **anti**-**RBE** implementation. Unlike some previous projectors — notably the **Valerion** — enabling **anti**-**RBE** does not introduce a high-frequency whine or any objectionable noise.
 
-<figure><img src="/uploads/снимок-экрана-2026-06-13-в-02.49.16.png" alt="Anti-RBE acoustic frequency spectrum — Standard, Enhanced, and Off modes"></figure>
+<figure><img src="/uploads/screenshot-2026-06-13-02-49-16.png" alt="Anti-RBE acoustic frequency spectrum — Standard, Enhanced, and Off modes"></figure>
 
 If you look closely at the real-time frequency analysis (RTA) spectrum:
 
@@ -533,7 +533,7 @@ Two other design decisions help considerably. First, the external power supply. 
 
 Notably, enabling **anti‑RBE** does not introduce any additional acoustic penalty. There is no high‑frequency whine or change in fan behaviour tied to the RBE reduction itself; a more detailed spectral analysis is available in the **Anti‑RBE** section of this review.
 
-<figure><img src="/uploads/снимок-экрана-2026-06-14-в-14.50.12.png" alt="Noise frequency spectrum — fan profile measured at 50 cm"><figcaption>Noise frequency spectrum — fan profile measured at 50 cm via UMIK-1.</figcaption></figure>
+<figure><img src="/uploads/screenshot-2026-06-14-14-50-12.png" alt="Noise frequency spectrum — fan profile measured at 50 cm"><figcaption>Noise frequency spectrum — fan profile measured at 50 cm via UMIK-1.</figcaption></figure>
 
 For a bedroom installation or late‑night viewing where silence is non‑negotiable, this is the quietest projector I am aware of that can still deliver this kind of brightness. The cooling system doesn’t just work well — it was overbuilt with real headroom, and that over‑engineering pays off every time you turn it on.
 
