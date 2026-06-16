@@ -34,22 +34,30 @@ const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
               const doc = iframe.contentDocument;
               if (!doc) return;
               // Inject CSS (label asterisks + remove h-24 height cap)
-              const isDark = document.documentElement.dataset.theme === 'dark';
               const style = doc.createElement('style');
               style.textContent = `
                 label::after { content: ' *'; color: #e53e3e; font-size: 12px; }
                 textarea.h-24 { height: auto !important; min-height: 150px !important; }
-                ${isDark ? `
-                  body, .bg-white, [class*="bg-white"] { background: #1c1c1e !important; color: #f2f2f7 !important; }
-                  input, textarea { background: #2c2c2e !important; color: #f2f2f7 !important; border-color: #38383a !important; }
-                  input::placeholder, textarea::placeholder { color: #8e8e93 !important; }
-                  label, p, span, a { color: #f2f2f7 !important; }
-                  a { color: #6ab0ff !important; }
-                  button[type="submit"] { background: #0a84ff !important; color: #fff !important; border: none !important; }
-                  .text-gray-500, .text-gray-400 { color: #8e8e93 !important; }
-                  hr, [class*="border"] { border-color: #38383a !important; }
-                ` : ''}
               `;
+              const darkStyle = doc.createElement('style');
+              darkStyle.id = 'cusdis-dark';
+              const darkCSS = `
+                body, .bg-white, [class*="bg-white"] { background: #1c1c1e !important; color: #f2f2f7 !important; }
+                input, textarea { background: #2c2c2e !important; color: #f2f2f7 !important; border-color: #38383a !important; }
+                input::placeholder, textarea::placeholder { color: #8e8e93 !important; }
+                label, p, span, a { color: #f2f2f7 !important; }
+                a { color: #6ab0ff !important; }
+                button[type="submit"] { background: #0a84ff !important; color: #fff !important; border: none !important; }
+                .text-gray-500, .text-gray-400 { color: #8e8e93 !important; }
+                hr, [class*="border"] { border-color: #38383a !important; }
+              `;
+              const applyTheme = () => {
+                const dark = document.documentElement.dataset.theme === 'dark';
+                darkStyle.textContent = dark ? darkCSS : '';
+              };
+              doc.head.appendChild(darkStyle);
+              applyTheme();
+              new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
               doc.head.appendChild(style);
               const resize = () => {
                 // Grow the iframe host to fit its content so nothing is clipped
