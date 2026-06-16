@@ -40,6 +40,11 @@ const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
                 textarea.h-24 { height: auto !important; min-height: 150px !important; }
               `;
               doc.head.appendChild(style);
+              const resize = () => {
+                // Grow the iframe host to fit its content so nothing is clipped
+                const h = doc.body.scrollHeight;
+                if (h > 0) iframe.style.height = (h + 24) + 'px';
+              };
               const patch = () => {
                 doc.querySelectorAll('label').forEach(l => {
                   if (l.textContent.includes('optional')) l.textContent = 'Email';
@@ -50,12 +55,16 @@ const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
                   ta.style.height = '150px';
                   ta.rows = 6;
                 }
+                resize();
               };
+              iframe.style.width = '100%';
+              iframe.style.border = '0';
               // Svelte renders synchronously before load — patch immediately
               patch();
               // Also watch in case of re-render
               const inner = new MutationObserver(patch);
               inner.observe(doc.body, { childList: true, subtree: true });
+              window.addEventListener('resize', resize);
             } catch (e) {}
           });
         });
