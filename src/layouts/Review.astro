@@ -77,7 +77,7 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
       <slot />
 
       {(review.pros.length > 0 || review.cons.length > 0) && (
-        <div class="proscons">
+        <div class="proscons" id="proscons">
           {review.pros.length > 0 && (
             <div class="pc-box pros">
               <h4>What's great</h4>
@@ -94,7 +94,7 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
       )}
 
       {(review.verdictTitle || review.verdictText) && (
-        <div class="conclusion">
+        <div class="conclusion" id="conclusion">
           <p class="conclusion-label">Conclusion</p>
           {review.verdictTitle && <h3>{review.verdictTitle}</h3>}
           {review.verdictText && <p>{review.verdictText}</p>}
