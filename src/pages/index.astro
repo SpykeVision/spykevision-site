@@ -69,8 +69,10 @@ const comingSoon = [
       <div class="cs-list">
         {comingSoon.map((c) => (
           <a href="#" class="cs-card">
-            {c.image && <img src={c.image} alt={c.title} class="cs-img" />}
-            <div class="cs-badge">Coming soon</div>
+            <div class="cs-media">
+              {c.image && <img src={c.image} alt={c.title} class="cs-img" />}
+              <div class="cs-badge">Coming soon</div>
+            </div>
             <div class="cs-body">
               <span class="card-cat">{c.category}</span>
               <h3>{c.title}</h3>
