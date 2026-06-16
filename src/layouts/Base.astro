@@ -12,6 +12,7 @@ const { title, description, active, theme = 'light' } = Astro.props;
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="stylesheet" href="/css/style.css" />
+  <link rel="alternate" type="application/rss+xml" title="SpykeVision Reviews" href="/rss.xml" />
   <!-- Before/after comparison slider (web component) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css" />
   <script type="module" src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>

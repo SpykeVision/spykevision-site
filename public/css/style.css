@@ -843,6 +843,15 @@ a:hover { color: var(--accent-dk); }
 .cs-body h3 { font-size: 19px; margin: 6px 0 8px; letter-spacing: -.01em; color: var(--text); }
 .cs-body p { color: var(--text-3); font-size: 15px; margin-bottom: 12px; }
 
+/* ---------- Subscribe ---------- */
+.subscribe-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 40px 0; margin: 40px 0; }
+.subscribe-inner { display: flex; gap: 40px; align-items: center; }
+.subscribe-text { flex: 1; }
+.subscribe-text h3 { font-size: 22px; margin: 0 0 8px; letter-spacing: -.01em; }
+.subscribe-text p { color: var(--text-3); margin: 0; }
+.subscribe-form { flex: 1; }
+@media (max-width: 640px) { .subscribe-inner { flex-direction: column; gap: 20px; } }
+
 /* ---------- Contact ---------- */
 .contact-wrap { display: grid; gap: 24px; grid-template-columns: 1fr; }
 .contact-card {

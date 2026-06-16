@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Subscribe from '../components/Subscribe.astro';
 import { getCollection } from 'astro:content';
 
 // Include drafts — hidden from public by CSS/JS, visible to owner in preview mode.
@@ -63,6 +64,8 @@ const comingSoon = [
         </div>
       </section>
     )}
+
+    <Subscribe />
 
     <section class="section" id="coming-soon">
       <div class="section-head"><h2>Coming Soon</h2></div>
