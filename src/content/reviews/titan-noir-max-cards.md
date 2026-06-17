@@ -108,7 +108,7 @@ Then there is the feature that genuinely has no equivalent in competing consumer
 
 The optical path is equally ambitious. A 15‑element all‑glass lens with multi‑layer anti‑reflective coatings, a **0.98–2.0:1** throw range (the widest in its class), and lens shift that — while half the brochure figure still outpaces every direct rival. Lens memory, still a rarity on DLP projectors, is included. Contrast is managed by a **dual‑iris system**: one static iris after the laser, a second dynamic iris in the lens, with XGIMI’s DBLE (Dynamic Black Level Enhancement) own dynamic laser dimming algorithm.
 
-![](/uploads/ces_2026_tech_logo_2026-06-15_20_29_59.845879.png)
+![](/uploads/ces_2026_tech_logo_2026-06-15_20_29_59.845879.jpg)
 
 The HDR suite covers **HDR10**, **HDR10+**, **Dolby** **Vision**, and **IMAX** **Enhanced**, backed by a claimed **7 000 ISO lumens** at the top of the Max range. Gaming support includes **VRR**, **ALLM**, and a **1080p**/**240 Hz** mode with a **1 ms** input lag figure. **4K/120** is accepted on input but output at 4K/60 — a limitation of the current single DLP controller configuration, shared by every projector in this class.
 
@@ -479,7 +479,7 @@ Overall, the current Standard mode implementation is an excellent start for the 
 
 One area where the TNM genuinely impresses is its acoustic performance around the **anti**-**RBE** implementation. Unlike some previous projectors — notably the **Valerion** — enabling **anti**-**RBE** does not introduce a high-frequency whine or any objectionable noise.
 
-<figure><img src="/uploads/screenshot-2026-06-13-02-49-16.png" alt="Anti-RBE acoustic frequency spectrum — Standard, Enhanced, and Off modes"></figure>
+<figure><img src="/uploads/screenshot-2026-06-13-02-49-16.jpg" alt="Anti-RBE acoustic frequency spectrum — Standard, Enhanced, and Off modes"></figure>
 
 If you look closely at the real-time frequency analysis (RTA) spectrum:
 
@@ -533,7 +533,7 @@ Two other design decisions help considerably. First, the external power supply. 
 
 Notably, enabling **anti‑RBE** does not introduce any additional acoustic penalty. There is no high‑frequency whine or change in fan behaviour tied to the RBE reduction itself; a more detailed spectral analysis is available in the **Anti‑RBE** section of this review.
 
-<figure><img src="/uploads/screenshot-2026-06-14-14-50-12.png" alt="Noise frequency spectrum — fan profile measured at 50 cm"><figcaption>Noise frequency spectrum — fan profile measured at 50 cm via UMIK-1.</figcaption></figure>
+<figure><img src="/uploads/screenshot-2026-06-14-14-50-12.jpg" alt="Noise frequency spectrum — fan profile measured at 50 cm"><figcaption>Noise frequency spectrum — fan profile measured at 50 cm via UMIK-1.</figcaption></figure>
 
 For a bedroom installation or late‑night viewing where silence is non‑negotiable, this is the quietest projector I am aware of that can still deliver this kind of brightness. The cooling system doesn’t just work well — it was overbuilt with real headroom, and that over‑engineering pays off every time you turn it on.
 
