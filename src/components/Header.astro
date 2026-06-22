@@ -28,6 +28,7 @@ const currentFlag = isRu ? flagRu : flagEn;
 <header class="site-header">
   <div class="wrap nav">
     <a href={isRu ? '/ru/' : '/'} class="brand"><Fragment set:html={logo} /><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
+    <a class="lang-flag-mobile" href={isRu ? enHref : ruHref} aria-label={isRu ? 'Switch to English' : 'Переключить на русский'}><Fragment set:html={isRu ? flagEn : flagRu} /></a>
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
     <ul class="nav-links">
       <li><a href={isRu ? '/ru/reviews/' : '/reviews/'} class={active === 'reviews' ? 'active' : ''}>{isRu ? 'Обзоры' : 'Reviews'}</a></li>

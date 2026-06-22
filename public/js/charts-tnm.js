@@ -1129,6 +1129,7 @@
                   'color:' + TC.text,
                 ].join(';');
                 document.body.appendChild(ttEl);
+                window.addEventListener('scroll', function() { ttEl.style.opacity = '0'; }, { passive: true });
               }
               var tooltip = context.tooltip;
               if (tooltip.opacity === 0) { ttEl.style.opacity = '0'; return; }
@@ -1251,6 +1252,7 @@
         'color:' + TC.text, 'opacity:0',
       ].join(';');
       document.body.appendChild(t);
+      window.addEventListener('scroll', function() { t.style.opacity = '0'; }, { passive: true });
     }
     return t;
   }
