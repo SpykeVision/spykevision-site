@@ -28,7 +28,6 @@ const currentFlag = isRu ? flagRu : flagEn;
 <header class="site-header">
   <div class="wrap nav">
     <a href={isRu ? '/ru/' : '/'} class="brand"><Fragment set:html={logo} /><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
-    <a class="lang-flag-mobile" href={isRu ? enHref : ruHref} aria-label={isRu ? 'Switch to English' : 'Переключить на русский'}><Fragment set:html={isRu ? flagEn : flagRu} /></a>
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
     <ul class="nav-links">
       <li><a href={isRu ? '/ru/reviews/' : '/reviews/'} class={active === 'reviews' ? 'active' : ''}>{isRu ? 'Обзоры' : 'Reviews'}</a></li>
@@ -36,17 +35,17 @@ const currentFlag = isRu ? flagRu : flagEn;
       <li><a href={isRu ? '/adl-calculator-ru.html' : '/adl-calculator.html'} class={active === 'calculator' ? 'active' : ''}>{isRu ? 'Калькулятор ADL' : 'ADL Calculator'}<span class="beta-tag hot-tag">hot</span></a></li>
       <li><a href={isRu ? '/ru/contact/' : '/contact/'} class={active === 'contact' ? 'active' : ''}>{isRu ? 'Контакты' : 'Contact'}</a></li>
       <li><a href={isRu ? '/ru/about/' : '/about/'} class={active === 'about' ? 'active' : ''}>{isRu ? 'О нас' : 'About'}</a></li>
-      <li class="lang-dropdown-wrap">
-        <button class="lang-dropdown-btn" aria-haspopup="true" aria-expanded="false" id="langDropBtn">
-          <Fragment set:html={currentFlag} />
-          <svg class="lang-chevron" viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-        </button>
-        <ul class="lang-dropdown-menu" role="menu">
-          <li role="menuitem"><a href={enHref} class={!isRu ? 'lang-active' : ''}><Fragment set:html={flagEn} /> English</a></li>
-          <li role="menuitem"><a href={ruHref} class={isRu ? 'lang-active' : ''}><Fragment set:html={flagRu} /> Русский</a></li>
-        </ul>
-      </li>
     </ul>
+    <div class="lang-dropdown-wrap">
+      <button class="lang-dropdown-btn" aria-haspopup="true" aria-expanded="false" id="langDropBtn">
+        <Fragment set:html={currentFlag} />
+        <svg class="lang-chevron" viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      </button>
+      <ul class="lang-dropdown-menu" role="menu">
+        <li role="menuitem"><a href={enHref} class={!isRu ? 'lang-active' : ''}><Fragment set:html={flagEn} /> English</a></li>
+        <li role="menuitem"><a href={ruHref} class={isRu ? 'lang-active' : ''}><Fragment set:html={flagRu} /> Русский</a></li>
+      </ul>
+    </div>
   </div>
 </header>
 

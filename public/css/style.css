@@ -74,7 +74,7 @@ a:hover { color: var(--accent-dk); }
   border-bottom: 1px solid var(--border);
 }
 .nav {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; gap: 4px;
   height: 56px;
 }
 .brand {
@@ -113,7 +113,7 @@ a:hover { color: var(--accent-dk); }
 
 
 .site-footer .brand .logo-mark { width: 22px; height: 22px; }
-.nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+.nav-links { display: flex; align-items: center; gap: 4px; list-style: none; margin-left: auto; }
 .nav-links a {
   color: var(--text-2); font-weight: 500; font-size: 15px;
   padding: 8px 14px; border-radius: 10px; transition: background .15s, color .15s;
@@ -121,7 +121,7 @@ a:hover { color: var(--accent-dk); }
 .nav-links a:hover { background: var(--surface-2); color: var(--text); }
 .nav-links a.active { color: var(--accent); }
 .flag-svg { border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.12); display: block; flex-shrink: 0; }
-.lang-dropdown-wrap { position: relative; margin-right: 6px; }
+.lang-dropdown-wrap { position: relative; }
 .lang-dropdown-btn {
   display: flex; align-items: center; gap: 4px;
   background: none; border: none; cursor: pointer;
@@ -154,14 +154,6 @@ a:hover { color: var(--accent-dk); }
 }
 .btn-support-nav:hover { background: var(--accent); color: #fff; }
 
-.lang-flag-mobile {
-  display: none; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--surface);
-  flex-shrink: 0;
-}
-.lang-flag-mobile:hover { background: var(--surface-2); }
-.lang-flag-mobile .flag-svg { display: block; border-radius: 2px; }
 
 .nav-toggle {
   display: none; width: 40px; height: 40px; border: none; background: none;
@@ -1004,8 +996,7 @@ a:hover { color: var(--accent-dk); }
 
 @media (max-width: 760px) {
   .nav-toggle { display: flex; }
-  .lang-flag-mobile { display: flex; }
-  .lang-dropdown-wrap { display: none; }
+  .lang-dropdown-wrap { margin-left: auto; }
   .nav-links {
     position: fixed; inset: 56px 0 auto 0;
     flex-direction: column; align-items: stretch; gap: 0;
