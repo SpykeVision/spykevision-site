@@ -1,14 +1,19 @@
 ---
+const { lang = 'en' } = Astro.props;
 const ACCOUNT_ID = '2448508';
 const FORM_ID    = '8lzoBZ';
 const enabled = ACCOUNT_ID !== '' && FORM_ID !== '';
+const heading = lang === 'ru' ? 'Новые обзоры на почту' : 'New reviews in your inbox';
+const subtext = lang === 'ru'
+  ? 'Когда выйдет новый обзор — узнаете первыми. Без спама, отписка в один клик.'
+  : "When a new review drops — you'll know. No spam, unsubscribe any time.";
 ---
 {enabled && (
   <section class="subscribe-section">
     <div class="wrap subscribe-inner">
       <div class="subscribe-text">
-        <h3>New reviews in your inbox</h3>
-        <p>When a new review drops — you'll know. No spam, unsubscribe any time.</p>
+        <h3>{heading}</h3>
+        <p>{subtext}</p>
       </div>
       <div class="subscribe-form">
         <div class="ml-embedded" data-form={FORM_ID}></div>

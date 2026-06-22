@@ -2,13 +2,12 @@
 buyLink: https://eu.xgimi.com/pages/titan-noir-max
 title: XGIMI Titan Noir Max — In-Depth Review
 eyebrow: In-Depth Review
-category: 4K Laser • Flagship
+category: 4K • Triple-Laser • Flagship
 cover: /images/tnm/hero-tnm.jpeg
 readTime: 45 min read
 draft: false
 badge: NEW
-summary: Unboxing, build quality, accessories, lens optics, and full brightness
-  & contrast measurements for the XGIMI Titan Noir Max.
+summary: Unboxing, build quality, lens, DBLE, and full brightness & contrast measurements for the XGIMI Titan Noir Max.
 date: 2026-06-01
 extra: Firmware 1.2.36
 score: 9.2
@@ -36,7 +35,7 @@ cons:
   - Anti-RBE Standard doesn't match 1.0.56's 12× pulse rate; Enhanced adds artifacts without improving suppression
   - Game Mode needs a firmware overhaul — locked picture controls, forced oversaturation, no DBLE toggle
   - DBLE too conservative — disengages at the slightest peak luminance; slow ramp misses brief dark scenes
-  - White field uniformity varies heavily with zoom and iris — extreme telephoto produces colour shifts (green/pink corners)
+  - White field uniformity varies heavily with zoom and iris — max zoom (2.1×) position produces colour shifts (green/pink corners)
 wide: true
 ratings:
   - label: Brightness
@@ -91,6 +90,7 @@ tocGroups:
   - label: Performance
     sections:
       - Gaming Performance and Motion
+      - Motion in Movies
       - "3D Performance: Brilliant Depth, Unfinished Cadence"
 verdictTitle: A measurement-backed flagship
 ---
@@ -276,7 +276,7 @@ Brightness was sampled with a 9‑point average across all whole‑number zoom s
 
 <div class="chart-section" id="chart-brightness"></div>
 
-First, the **2.1×** extreme telephoto position is an outlier. At this zoom, stepping down the iris produces a much steeper reduction in light output than at any other throw ratio. **F5.5** and **F7.0** at **2.1×** are the dimmest settings in the entire matrix — nearly 30% below the same apertures at **2.0×**. The most plausible explanation is that at **2.1×**, the both post‑laser and lens irises are fully closed position to maintain contrast. The result is a very dark, very high‑contrast mode that comes with its own set of uniformity penalties (more on that later). Other zoom positions show a more uniform, gradual brightness reduction as expected.
+First, the **2.1×** max zoom (wide-angle) position is an outlier. At this zoom, stepping down the iris produces a much steeper reduction in light output than at any other throw ratio. **F5.5** and **F7.0** at **2.1×** are the dimmest settings in the entire matrix — nearly 30% below the same apertures at **2.0×**. The most plausible explanation is that at **2.1×**, the both post‑laser and lens irises are fully closed position to maintain contrast. The result is a very dark, very high‑contrast mode that comes with its own set of uniformity penalties (more on that later). Other zoom positions show a more uniform, gradual brightness reduction as expected.
 
 Second, a distinct brightness spike appears between **1.2×** and **1.3×** zoom. At this throw ratio, the iris combination suddenly lets through more light — up to 10–15% more than at adjacent zoom positions for the same F‑stop. This is not a gradual trend; it’s a sharp local maximum. As we’ll see in the contrast section, this spike coincides with a significant drop in native contrast, and it points to a transition point in the dual‑iris control algorithm.
 
@@ -301,9 +301,9 @@ The headline figure is **8 650:1**, achieved at **2.1×** zoom with the **F7.0
 
 <div class="gallery"><figure><img src="/uploads/img_2602.jpg" alt="Uniformity at 2.1× zoom"><figcaption>Uniformity at 2.1× zoom</figcaption></figure><figure><img src="/uploads/img_2603.jpg" alt="Green borderline at the bottom"><figcaption>Green borderline at the bottom</figcaption></figure></div>
 
-Ignoring the extreme telephoto position, the practical contrast range across the usable zoom range is **5 000–6 500:1**. That is a realistic, repeatable figure, and it places the TNM at the top of the current 0.47″ DLP field — but it’s not the **8 000–10 000:1** some early reports suggested for typical configurations.
+Ignoring the extreme wide-angle (2.1×) position, the practical contrast range across the usable zoom range is **5 000–6 500:1**. That is a realistic, repeatable figure, and it places the TNM at the top of the current 0.47″ DLP field — but it’s not the **8 000–10 000:1** some early reports suggested for typical configurations.
 
-The now‑familiar brightness spike at **1.2–1.3×** zoom is accompanied by a sharp contrast dip of roughly 15–20% for the affected iris settings. This is the dual‑iris handover point. At shorter throw distances, the post‑laser iris does most of the contrast work while the lens iris stays relatively open. As you move toward the tele end, the post‑laser iris gradually opens to maintain brightness; around **1.2–1.3×**, it reaches its fully open state, and the lens iris takes over as the primary contrast control. The transition creates a local maximum in brightness and a local minimum in contrast. Once the lens iris is fully in command, contrast recovers and continues to climb toward the telephoto end.
+The now‑familiar brightness spike at **1.2–1.3×** zoom is accompanied by a sharp contrast dip of roughly 15–20% for the affected iris settings. This is the dual‑iris handover point. At shorter throw distances, the post‑laser iris does most of the contrast work while the lens iris stays relatively open. As you move toward the tele end, the post‑laser iris gradually opens to maintain brightness; around **1.2–1.3×**, it reaches its fully open state, and the lens iris takes over as the primary contrast control. The transition creates a local maximum in brightness and a local minimum in contrast. Once the lens iris is fully in command, contrast recovers and continues to climb toward the tele end.
 
 **F7.0**’s behaviour is particularly interesting: it doesn’t simply get better as you zoom in. It peaks early (at **2.1×**), dips in the mid‑range as the iris interplay changes, and then rises again. The dual‑iris system is not a simple linear mechanism; it’s a coordinated dance that responds to both throw distance and the user’s iris setting.
 
@@ -601,7 +601,7 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 ![](/uploads/pic5-tnm-review-by_it_2026-06-15_20_28_42.543672.webp)
 
-For enthusiasts and competitive gamers, the XGIMI Titan Noir Max presents a compelling, albeit currently imperfect, proposition. While the core hardware offers a phenomenal foundation, firmware refinements are still needed to unlock its full potential.
+The hardware is there. The software isn't. Game Mode today means locked picture controls, forced oversaturation presets, and no way to calibrate anything. XGIMI knows about it and is working on fixes — but right now it's the weakest part of a strong machine.
 
 **Input Lag and Motion Clarity**
 
@@ -639,13 +639,11 @@ None of these modes are anywhere near reference color accuracy. They aggressivel
 
 **DBLE (Dynamic Black) Inheritance:** DBLE currently inherits its state from the previous picture mode. If DBLE was enabled before entering Game Mode, it remains enabled, and vice versa. There is no dedicated toggle for DBLE within Game Mode itself. A proper on/off switch for the dynamic system in Game Mode would be a welcome addition in a future firmware update.
 
-**The Verdict on Gaming: Bright Future**
+**The Verdict on Gaming**
 
-Gaming on the TNM has enormous potential. Yes, there are software constraints, locked calibration menus, and rendering quirks that still need to be ironed out. However, the fact that XGIMI is actively investigating these specific issues to fix them in future firmware updates is a highly encouraging sign.
+The raw specs are there — sub-**5ms** at 1080p/240, 4:4:4, VRR. Once the calibration gets unlocked and the rolling buffer is properly addressed, this will be genuinely great for gaming. Right now it's 70% of the way there, and XGIMI is actively working on the remaining 30%.
 
-When you combine the TitanNoirMax's immense raw brightness, deep contrast, and top-tier lens sharpness with sub-**5 ms** response times, this machine has all the core ingredients to become an absolute ultimate gaming display once the software reaches full maturity.
-
-### Motion in Movies
+## Motion in Movies
 
 **MEMC and 24p Playback**
 
@@ -661,9 +659,9 @@ The built-in MEMC motion interpolation itself is present but unremarkable. It be
 
 **The Good**
 
-* **Uncompromised Luminance:** The single biggest factor is brightness. With active shutter glasses cutting perceived luminance by more than half, most lamp-based projectors quickly become too dim for comfortable 3D at screen sizes beyond **100 inches**. The TNM has enough laser output to push through that penalty without strain. At roughly **120–150 inches** on a moderate-gain screen, the image remains punchy, and there is none of the fatiguing dimness that forces you to squint into dark scenes. That alone makes it more watchable than nearly any lamp-driven alternative.
-* **Flawless Linkage & Ghosting Isolation:** The reliability of the DLP-Link signal on this chassis sets a new benchmark for modern DLPs. Once your active glasses lock on, the handshake remains bulletproof, eliminating the annoying synchronization drops, signal searching, and eye-straining flicker that usually ruin a movie mid-way through. Furthermore, channel separation is remarkably pristine.
-* **Intact Chromatic Fidelity:** Typically, entering a consumer projector's 3D mode triggers a disastrous shift in color and gamma tracking. Refreshingly, the TNM avoids this pitfall; color temperatures remain balanced, skin tones preserve their natural warmth, and the lower end of the gamma curve doesn't clip important shadow detail. It feels like a fully realized feature rather than a rushed, checklist-style software addition.
+* **Brightness:** Shutter glasses cut perceived luminance by more than half — that's the death sentence for 3D on most lamp projectors at large screen sizes. At **120–150 inches** on a moderate-gain screen the TNM stays punchy. No squinting, no eye fatigue from dimness. That's a bigger deal than it sounds.
+* **Sync and ghosting:** DLP-Link is bulletproof here. Lock on once and it stays locked — no sync drops, no searching mid-film. Channel separation is clean; ghosting is minimal.
+* **Color accuracy:** Most projectors shift their color balance the moment you switch to 3D. The TNM doesn't. Color temperature stays consistent, skin tones hold, shadows don't clip. It behaves like a properly implemented feature, not a checkbox.
 * **True Native 1080p Resolution:** This machine outputs a complete **1080p** canvas to each eye. There are no spatial interpolation tricks or scaling compromises at play here, because the XPR pixel-shifter physically parks itself when a 3D signal is detected, revealing the clean, raw pixel structure of the underlying native **1080p** DMD chip. That said, SDE on this 0.47" chip is still much higher than on the old 0.95" units.
 
 **Where It Falls Short**
@@ -675,6 +673,6 @@ The built-in MEMC motion interpolation itself is present but unremarkable. It be
 
 **The Verdict on 3D**
 
-In the context of modern lifestyle and solid-state DLP options, this represents the high-water mark for 3D performance. If you have an extensive collection of stereoscopic discs, the sheer luminous punch of this engine makes it an incredibly tempting option on its own. When you layer in the locked-in sync, rich color accuracy, and uncompressed resolution, it creates a genuinely captivating viewing experience.
+For a laser DLP, this is the best 3D I've seen. The brightness holds up at real screen sizes, sync is solid, and color accuracy in 3D is something I don't take for granted anymore — most projectors fail badly here.
 
-If the software team can sort out the motion cadence — giving us **144 Hz** processing, clean 5:5 pulldown, and an RF expansion pathway in future models — this platform will transition from merely beating its contemporary rivals to cementing itself as an all-time classic. The optical and processing muscle is sitting right there; it just requires a bit more love in the firmware lab.
+The judder problem is real and fixable. Get us native 5:5 pulldown and **144 Hz** support and there's nothing left to complain about. The hardware is already there. It just needs the firmware to catch up.

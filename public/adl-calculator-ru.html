@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="ru" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ADL Contrast Calculator | SpykeVision</title>
-  <meta name="description" content="Calculate and compare projector ADL contrast curves. Estimate from On/Off + ANSI, or plot known measurement points.">
+  <title>Калькулятор ADL-контраста | SpykeVision</title>
+  <meta name="description" content="Рассчитайте и сравните кривые ADL-контраста проекторов. Оцените по On/Off + ANSI или постройте по известным точкам измерений.">
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
@@ -79,38 +79,33 @@
 </head>
 <body>
 
-  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+  <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
     <span class="theme-icon">☀️</span>
     <span class="theme-label">Light</span>
   </button>
 
   <header class="site-header">
     <div class="wrap nav">
-      <a href="/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
-      <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span></button>
+      <a href="/ru/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
+      <button class="nav-toggle" aria-label="Меню" aria-expanded="false"><span></span></button>
       <ul class="nav-links">
-        <li><a href="/reviews/">Reviews</a></li>
-        <li><a href="/#coming-soon">Coming Soon</a></li>
-        <li><a href="/adl-calculator.html" class="active">ADL Calculator<span class="beta-tag hot-tag">hot</span></a></li>
-        <li><a href="/contact/">Contact</a></li>
-        <li><a href="/about/">About</a></li>
+        <li><a href="/ru/reviews/">Обзоры</a></li>
+        <li><a href="/ru/#coming-soon">Скоро</a></li>
+        <li><a href="/adl-calculator-ru.html" class="active">Калькулятор ADL<span class="beta-tag hot-tag">hot</span></a></li>
+        <li><a href="/ru/contact/">Контакты</a></li>
+        <li><a href="/ru/about/">О нас</a></li>
         <li class="lang-dropdown-wrap">
           <button class="lang-dropdown-btn" aria-haspopup="true" aria-expanded="false" id="langDropBtn">
             <svg viewBox="0 0 30 20" width="22" height="15" class="flag-svg" aria-hidden="true">
-              <rect width="30" height="20" fill="#B22234"/>
-              <rect y="1.54" width="30" height="1.54" fill="#fff"/>
-              <rect y="4.62" width="30" height="1.54" fill="#fff"/>
-              <rect y="7.69" width="30" height="1.54" fill="#fff"/>
-              <rect y="10.77" width="30" height="1.54" fill="#fff"/>
-              <rect y="13.85" width="30" height="1.54" fill="#fff"/>
-              <rect y="16.92" width="30" height="1.54" fill="#fff"/>
-              <rect width="12" height="10.77" fill="#3C3B6E"/>
+              <rect width="30" height="6.67" fill="#fff"/>
+              <rect y="6.67" width="30" height="6.67" fill="#0039A6"/>
+              <rect y="13.33" width="30" height="6.67" fill="#D52B1E"/>
             </svg>
             <svg class="lang-chevron" viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
           </button>
           <ul class="lang-dropdown-menu" role="menu">
-            <li role="menuitem"><a href="/adl-calculator.html" class="lang-active"><svg viewBox="0 0 30 20" width="22" height="15" class="flag-svg" aria-hidden="true"><rect width="30" height="20" fill="#B22234"/><rect y="1.54" width="30" height="1.54" fill="#fff"/><rect y="4.62" width="30" height="1.54" fill="#fff"/><rect y="7.69" width="30" height="1.54" fill="#fff"/><rect y="10.77" width="30" height="1.54" fill="#fff"/><rect y="13.85" width="30" height="1.54" fill="#fff"/><rect y="16.92" width="30" height="1.54" fill="#fff"/><rect width="12" height="10.77" fill="#3C3B6E"/></svg> English</a></li>
-            <li role="menuitem"><a href="/adl-calculator-ru.html"><svg viewBox="0 0 30 20" width="22" height="15" class="flag-svg" aria-hidden="true"><rect width="30" height="6.67" fill="#fff"/><rect y="6.67" width="30" height="6.67" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/></svg> Русский</a></li>
+            <li role="menuitem"><a href="/adl-calculator.html"><svg viewBox="0 0 30 20" width="22" height="15" class="flag-svg" aria-hidden="true"><rect width="30" height="20" fill="#B22234"/><rect y="1.54" width="30" height="1.54" fill="#fff"/><rect y="4.62" width="30" height="1.54" fill="#fff"/><rect y="7.69" width="30" height="1.54" fill="#fff"/><rect y="10.77" width="30" height="1.54" fill="#fff"/><rect y="13.85" width="30" height="1.54" fill="#fff"/><rect y="16.92" width="30" height="1.54" fill="#fff"/><rect width="12" height="10.77" fill="#3C3B6E"/></svg> English</a></li>
+            <li role="menuitem"><a href="/adl-calculator-ru.html" class="lang-active"><svg viewBox="0 0 30 20" width="22" height="15" class="flag-svg" aria-hidden="true"><rect width="30" height="6.67" fill="#fff"/><rect y="6.67" width="30" height="6.67" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/></svg> Русский</a></li>
           </ul>
         </li>
       </ul>
@@ -131,74 +126,74 @@
 
   <main class="wrap">
     <div class="article-hero">
-      <h1>ADL Contrast Calculator<span class="beta-tag">beta</span></h1>
-      <p style="color:var(--text-3);font-size:17px;margin-top:8px">Calculate an approximate ADL contrast curve from a few measurements, or plot known data points and compare multiple projectors.</p>
+      <h1>Калькулятор ADL-контраста<span class="beta-tag">beta</span></h1>
+      <p style="color:var(--text-3);font-size:17px;margin-top:8px">Рассчитайте приблизительный ADL контраст по нескольким измерениям или постройте график по уже известным замерам и сравните несколько проекторов.</p>
     </div>
 
     <div class="calc-tabs" role="tablist">
-      <button class="calc-tab active" role="tab" data-tab="estimate" onclick="switchTab('estimate')">Calculate ADL contrast</button>
-      <button class="calc-tab" role="tab" data-tab="manual" onclick="switchTab('manual')">Compare ADL contrast</button>
+      <button class="calc-tab active" role="tab" data-tab="estimate" onclick="switchTab('estimate')">Рассчитать ADL контраст</button>
+      <button class="calc-tab" role="tab" data-tab="manual" onclick="switchTab('manual')">Сравнить ADL контраст</button>
     </div>
 
     <!-- TAB 1: ESTIMATE -->
     <div class="calc-panel active" id="tab-estimate">
       <div class="prose" style="margin-bottom:20px">
-        <p>Enter the known contrast measurements. The calculator uses a power-law model to interpolate the full ADL curve from On/Off (100% black) down to the measured ANSI and/or ADL points. More input points = more accurate estimate.</p>
+        <p>Введите известные значения контраста. Калькулятор использует степенную модель для интерполяции полной кривой ADL от On/Off (100% чёрного) до измеренных значений ANSI и/или ADL. Чем больше точек — тем точнее оценка.</p>
       </div>
 
       <div id="estimateBlocks">
         <!-- filled by JS -->
       </div>
-      <button class="add-btn" onclick="addEstimateBlock()">+ Add projector</button>
+      <button class="add-btn" onclick="addEstimateBlock()">+ Добавить проектор</button>
 
       <div class="calc-actions">
-        <button class="btn" onclick="buildEstimateChart()">Calculate &amp; plot</button>
-        <button class="btn-secondary" onclick="clearChart('estimateChart')">Clear chart</button>
+        <button class="btn" onclick="buildEstimateChart()">Рассчитать и построить</button>
+        <button class="btn-secondary" onclick="clearChart('estimateChart')">Очистить график</button>
       </div>
 
       <div class="chart-wrap" id="estimateWrap">
         <div class="chart-toolbar">
-          <span class="chart-title-mini">ADL contrast curve</span>
+          <span class="chart-title-mini">Кривая ADL-контраста</span>
           <div class="chart-tools">
-            <button class="chart-tool" data-scale="log" onclick="toggleScale('estimateChart', this)">Linear scale</button>
-            <button class="chart-tool" data-xexpand="estimateChart" onclick="toggleXExpand('estimateChart', this)">Expand 0–5%</button>
-            <button class="chart-tool" onclick="savePNG('estimateChart','spykevision-adl-estimate')">⬇ Save PNG</button>
-            <button class="chart-tool" onclick="toggleExpand('estimateWrap','estimateChart', this)">⛶ Expand</button>
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('estimateChart', this)">Линейная шкала</button>
+            <button class="chart-tool" data-xexpand="estimateChart" onclick="toggleXExpand('estimateChart', this)">Расширить 0–5%</button>
+            <button class="chart-tool" onclick="savePNG('estimateChart','spykevision-adl-estimate')">⬇ Сохранить PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('estimateWrap','estimateChart', this)">⛶ Развернуть</button>
           </div>
         </div>
         <div class="chart-canvas-box"><canvas id="estimateChart"></canvas></div>
       </div>
 
       <div class="prose" style="margin-top:20px">
-        <h3>How the estimate works</h3>
-        <p>The curve is interpolated in log space directly through every value you enter (On/Off, 1% ADL, 5% ADL, ANSI) so it always passes exactly through your measured points. Gaps between points are interpolated and the tail beyond your last point is extrapolated from the local slope. The result is an estimate; real-world ADL behaviour can deviate, especially on projectors with aggressive dynamic iris.</p>
+        <h3>Как работает оценка</h3>
+        <p>Кривая интерполируется в логарифмическом пространстве через каждое введённое значение (On/Off, 1% ADL, 5% ADL, ANSI) и точно проходит через все измеренные точки. Промежутки между точками интерполируются, а хвост за последней точкой экстраполируется по локальному наклону. Результат является оценкой; реальное поведение ADL может отличаться, особенно у проекторов с агрессивной динамической диафрагмой.</p>
       </div>
     </div>
 
     <!-- TAB 2: MANUAL -->
     <div class="calc-panel" id="tab-manual">
       <div class="prose" style="margin-bottom:20px">
-        <p>Enter the exact measured contrast values for each ADL level. Leave fields blank if not measured; the chart will connect only the points you provide. Add multiple projectors to compare them side by side.</p>
+        <p>Введите точные измеренные значения контраста для каждого уровня ADL. Оставьте поля пустыми, если измерение не выполнялось; график соединит только введённые точки. Добавьте несколько проекторов для сравнения.</p>
       </div>
 
       <div id="manualBlocks">
         <!-- filled by JS -->
       </div>
-      <button class="add-btn" onclick="addManualBlock()">+ Add projector</button>
+      <button class="add-btn" onclick="addManualBlock()">+ Добавить проектор</button>
 
       <div class="calc-actions">
-        <button class="btn" onclick="buildManualChart()">Plot</button>
-        <button class="btn-secondary" onclick="clearChart('manualChart')">Clear chart</button>
+        <button class="btn" onclick="buildManualChart()">Построить</button>
+        <button class="btn-secondary" onclick="clearChart('manualChart')">Очистить график</button>
       </div>
 
       <div class="chart-wrap" id="manualWrap">
         <div class="chart-toolbar">
-          <span class="chart-title-mini">ADL contrast curve</span>
+          <span class="chart-title-mini">Кривая ADL-контраста</span>
           <div class="chart-tools">
-            <button class="chart-tool" data-scale="log" onclick="toggleScale('manualChart', this)">Linear scale</button>
-            <button class="chart-tool" data-xexpand="manualChart" onclick="toggleXExpand('manualChart', this)">Expand 0–5%</button>
-            <button class="chart-tool" onclick="savePNG('manualChart','spykevision-adl-measured')">⬇ Save PNG</button>
-            <button class="chart-tool" onclick="toggleExpand('manualWrap','manualChart', this)">⛶ Expand</button>
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('manualChart', this)">Линейная шкала</button>
+            <button class="chart-tool" data-xexpand="manualChart" onclick="toggleXExpand('manualChart', this)">Расширить 0–5%</button>
+            <button class="chart-tool" onclick="savePNG('manualChart','spykevision-adl-measured')">⬇ Сохранить PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('manualWrap','manualChart', this)">⛶ Развернуть</button>
           </div>
         </div>
         <div class="chart-canvas-box"><canvas id="manualChart"></canvas></div>
@@ -209,14 +204,14 @@
 
   <footer class="site-footer">
     <div class="wrap footer-inner">
-      <a href="/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
+      <a href="/ru/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
       <nav class="footer-links">
-        <a href="/reviews/">Reviews</a>
-        <a href="/adl-calculator.html">ADL Calculator<span class="beta-tag hot-tag">hot</span></a>
-        <a href="/contact/">Contact</a>
-        <a href="/about/">About</a>
+        <a href="/ru/reviews/">Обзоры</a>
+        <a href="/adl-calculator-ru.html">Калькулятор ADL<span class="beta-tag hot-tag">hot</span></a>
+        <a href="/ru/contact/">Контакты</a>
+        <a href="/ru/about/">О нас</a>
       </nav>
-      <p class="copyright">© 2026 SpykeVision. Independent &amp; reader-supported.</p>
+      <p class="copyright">© 2026 SpykeVision. Независимое издание.</p>
     </div>
   </footer>
 
@@ -232,7 +227,7 @@
   function switchTab(name) {
     document.querySelectorAll('.calc-tab').forEach(function(t){ t.classList.toggle('active', t.dataset.tab===name); });
     document.querySelectorAll('.calc-panel').forEach(function(p){ p.classList.toggle('active', p.id==='tab-'+name); });
-    localStorage.setItem('sv-calc-tab', name);
+    localStorage.setItem('sv-calc-tab-ru', name);
   }
 
   // ── Estimate tab ──────────────────────────────────────────────────────────
@@ -247,12 +242,12 @@
     div.style.borderLeftColor = color;
     div.innerHTML = '<button class="remove-btn" onclick="removeBlock(\'eb'+idx+'\')">×</button>'
       + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
-      + '<input type="text" placeholder="Projector name" value="Projector '+nameNum+'"></div>'
+      + '<input type="text" placeholder="Название проектора" value="Проектор '+nameNum+'"></div>'
       + '<div class="calc-grid">'
-      + field('On/Off contrast', 'est-onoff-'+idx, 'e.g. 30000', 'Full-field on/off (0% ADL)')
-      + field('ANSI contrast', 'est-ansi-'+idx, 'e.g. 800', '50% ADL checkerboard')
-      + field('1% ADL contrast', 'est-apl1-'+idx, 'e.g. 15000', 'Optional')
-      + field('5% ADL contrast', 'est-apl5-'+idx, 'e.g. 8000', 'Optional')
+      + field('On/Off контраст', 'est-onoff-'+idx, 'напр. 30000', 'Полноэкранный On/Off (0% ADL)')
+      + field('ANSI контраст', 'est-ansi-'+idx, 'напр. 800', 'Шахматная доска 50% ADL')
+      + field('Контраст при 1% ADL', 'est-apl1-'+idx, 'напр. 15000', 'Необязательно')
+      + field('Контраст при 5% ADL', 'est-apl5-'+idx, 'напр. 8000', 'Необязательно')
       + '</div>';
     document.getElementById('estimateBlocks').appendChild(div);
   }
@@ -271,11 +266,11 @@
     div.className = 'projector-block'; div.id = 'mb'+idx;
     div.style.borderLeftColor = color;
     var fields = APL_POINTS.map(function(apl,i){
-      return field(APL_LABELS[i]+' contrast','man-'+idx+'-'+i, 'e.g. '+ Math.round(30000*Math.pow(1-apl/100,1.8)||30000), 'Optional');
+      return field(APL_LABELS[i]+' контраст','man-'+idx+'-'+i, 'напр. '+ Math.round(30000*Math.pow(1-apl/100,1.8)||30000), 'Необязательно');
     }).join('');
     div.innerHTML = '<button class="remove-btn" onclick="removeBlock(\'mb'+idx+'\')">×</button>'
       + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
-      + '<input type="text" placeholder="Projector name" value="Projector '+nameNum+'"></div>'
+      + '<input type="text" placeholder="Название проектора" value="Проектор '+nameNum+'"></div>'
       + '<div class="calc-grid">' + fields + '</div>';
     document.getElementById('manualBlocks').appendChild(div);
   }
@@ -291,17 +286,15 @@
   // ── Chart helpers ─────────────────────────────────────────────────────────
   var charts = {};
   var scalePref  = {
-    estimateChart: localStorage.getItem('sv-scale-estimate') || 'logarithmic',
-    manualChart:   localStorage.getItem('sv-scale-manual')   || 'logarithmic'
+    estimateChart: localStorage.getItem('sv-scale-estimate-ru') || 'logarithmic',
+    manualChart:   localStorage.getItem('sv-scale-manual-ru')   || 'logarithmic'
   };
   var xExpandPref = {
-    estimateChart: localStorage.getItem('sv-xexpand-estimate') === 'true',
-    manualChart:   localStorage.getItem('sv-xexpand-manual')   === 'true'
+    estimateChart: localStorage.getItem('sv-xexpand-estimate-ru') === 'true',
+    manualChart:   localStorage.getItem('sv-xexpand-manual-ru')   === 'true'
   };
 
-  // Smooth power x-axis: stretches the low end so 5% ADL lands at the middle
-  // (display 25) with no slope break — power p makes (5/50)^p = 0.5.
-  var XEXP_P = Math.log(0.5) / Math.log(5 / 50);   // ≈ 0.301
+  var XEXP_P = Math.log(0.5) / Math.log(5 / 50);
   function adlToDisplay(apl, expanded) {
     if (!expanded) return apl;
     return 50 * Math.pow(apl / 50, XEXP_P);
@@ -311,7 +304,7 @@
     return 50 * Math.pow(d / 50, 1 / XEXP_P);
   }
   var EXPAND_ADL_TICKS = [0, 0.25, 0.5, 1, 2, 3, 4, 5, 10, 20, 30, 50];
-  var chartRange = { estimateChart:null,     manualChart:null };   // {min,max} of plotted data
+  var chartRange = { estimateChart:null, manualChart:null };
 
   function isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
 
@@ -336,11 +329,11 @@
             padding: mob ? 8 : 16,
             usePointStyle:true,
             boxWidth: mob ? 10 : 14, boxHeight: mob ? 10 : 14,
-            filter: function(item){ return item.text.indexOf('(measured)') === -1; }
+            filter: function(item){ return item.text.indexOf('(измеренные)') === -1; }
           }},
           tooltip: { backgroundColor:tooltipBg, titleColor:'#f2f2f7', bodyColor:'#ebebf5cc',
             padding:12, cornerRadius:10,
-            filter: function(item){ return item.dataset.label !== 'Crossover'; },
+            filter: function(item){ return item.dataset.label !== 'Пересечение'; },
             callbacks: {
               title: function(items){ if (!items.length) return ''; var r=displayToAdl(items[0].parsed.x,xExpandPref[canvasId]); return 'ADL: '+(r<1?r.toFixed(2):r.toFixed(1))+'%'; },
               label: function(ctx){ return ' '+ctx.dataset.label+': '+Math.round(ctx.parsed.y).toLocaleString()+':1'; }
@@ -349,7 +342,7 @@
         },
         scales: {
           x: { type:'linear', min:0, max:50,
-            title:{display:!mob,text:'% of white (ADL)',color:labelColor,font:{size:12}},
+            title:{display:!mob,text:'% белого (ADL)',color:labelColor,font:{size:12}},
             ticks:{color:labelColor,font:{size: mob ? 10 : 12},
               callback: function(v){ var r=displayToAdl(v,xExpandPref[canvasId]); return (r<1?r.toFixed(2):Number.isInteger(r)?r:r.toFixed(1))+'%'; }
             },
@@ -358,7 +351,7 @@
             } : undefined,
             grid:{color:gridColor} },
           y: { type: scalePref[canvasId],
-            title:{display:!mob,text:'Contrast ratio',color:labelColor,font:{size:12}},
+            title:{display:!mob,text:'Контраст',color:labelColor,font:{size:12}},
             ticks:{color:labelColor,font:{size: mob ? 10 : 12}, callback:function(v){return v>=1000?Math.round(v/1000)+'k:1':v+':1';}},
             grid:{color:gridColor} }
         }
@@ -369,7 +362,6 @@
           var a = chart.chartArea; if (!a) return;
           var g = chart.ctx;
           var cx = (a.left+a.right)/2, cy = (a.top+a.bottom)/2;
-          // Watermark: logo + text, centred in chart area
           g.save();
           g.globalAlpha = 0.11;
           var chartW = a.right - a.left, chartH = a.bottom - a.top;
@@ -379,7 +371,6 @@
           g.font = 'bold ' + fontSize + 'px -apple-system,BlinkMacSystemFont,sans-serif';
           var tw = g.measureText('SpykeVision.com').width;
           var lx = cx - (logoSz + gap + tw) / 2;
-          // Draw pinwheel blades (replicates the SVG logo)
           var bladeAngles = [0,60,120,180,240,300];
           var bladeColors = ['#0a84ff','#0a84ff','#ff9500','#0a84ff','#0a84ff','#0a84ff'];
           var sc = logoSz / 32;
@@ -393,16 +384,14 @@
             g.fillStyle = bladeColors[k]; g.fill();
             g.restore();
           });
-          // Text
           g.fillStyle = isDark() ? 'rgba(255,255,255,0.5)' : '#8e8e93';
           g.textAlign = 'left'; g.textBaseline = 'middle';
           g.fillText('SpykeVision.com', lx + logoSz + gap, cy);
           g.restore();
-          // Crossover annotations
           var xSc = chart.scales.x, ySc = chart.scales.y;
           if (!xSc || !ySc) return;
           chart.data.datasets.forEach(function(ds) {
-            if (ds.label !== 'Crossover' || !ds.data) return;
+            if (ds.label !== 'Пересечение' || !ds.data) return;
             g.save();
             g.font = '600 11px -apple-system,BlinkMacSystemFont,sans-serif';
             ds.data.forEach(function(pt) {
@@ -426,7 +415,6 @@
         }
       }]
     });
-    // Hide tooltip when finger lifts (prevents stuck tooltip on mobile)
     ctx.canvas.addEventListener('touchend', function() {
       if (charts[canvasId]) {
         charts[canvasId].tooltip.setActiveElements([], {x:0, y:0});
@@ -438,12 +426,11 @@
 
   function clearChart(id) {
     chartRange[id] = null;
-    getOrCreateChart(id);     // fresh empty chart
+    getOrCreateChart(id);
     applyYScale(id);
     charts[id].update();
   }
 
-  // Round up to next "nice" linear ceiling with ~25% headroom above max
   function niceLinearMax(max) {
     var target = max * 1.25;
     var mag = Math.pow(10, Math.floor(Math.log10(target)));
@@ -453,7 +440,6 @@
     return 10 * mag;
   }
 
-  // ── Apply y-axis scale (used on build AND on toggle, so they never diverge) ─
   function applyYScale(canvasId) {
     var chart = charts[canvasId]; if (!chart) return;
     var y = chart.options.scales.y;
@@ -469,37 +455,34 @@
       y.type = 'linear';
       y.afterBuildTicks = undefined;
       y.min = 0;
-      y.max = r ? niceLinearMax(r.max) : 30000;   // headroom above data; 30k for empty chart
+      y.max = r ? niceLinearMax(r.max) : 30000;
     }
   }
 
-  // ── Toolbar: log/linear toggle ────────────────────────────────────────────
   function toggleScale(canvasId, btn) {
     var next = scalePref[canvasId]==='logarithmic' ? 'linear' : 'logarithmic';
     scalePref[canvasId] = next;
-    localStorage.setItem('sv-scale-' + (canvasId === 'estimateChart' ? 'estimate' : 'manual'), next);
-    btn.textContent = next==='logarithmic' ? 'Log scale' : 'Linear scale';
+    localStorage.setItem('sv-scale-' + (canvasId === 'estimateChart' ? 'estimate' : 'manual') + '-ru', next);
+    btn.textContent = next==='logarithmic' ? 'Лог. шкала' : 'Линейная шкала';
     btn.classList.toggle('active', next==='logarithmic');
     applyYScale(canvasId);
     if (charts[canvasId]) charts[canvasId].update();
   }
 
-  // Sync button state to the saved scale preference
   function syncScaleButtons() {
     document.querySelectorAll('.chart-tool[data-scale="log"]').forEach(function(btn) {
       var canvasId = btn.getAttribute('onclick').match(/'(\w+)'/)[1];
       var isLog = scalePref[canvasId] === 'logarithmic';
-      btn.textContent = isLog ? 'Log scale' : 'Linear scale';
+      btn.textContent = isLog ? 'Лог. шкала' : 'Линейная шкала';
       btn.classList.toggle('active', isLog);
     });
   }
 
-  // ── Toolbar: x-axis expand (0–5% zoom) ────────────────────────────────────
   function toggleXExpand(canvasId, btn) {
     var next = !xExpandPref[canvasId];
     xExpandPref[canvasId] = next;
-    localStorage.setItem('sv-xexpand-' + (canvasId === 'estimateChart' ? 'estimate' : 'manual'), next ? 'true' : 'false');
-    btn.textContent = next ? 'Full range' : 'Expand 0–5%';
+    localStorage.setItem('sv-xexpand-' + (canvasId === 'estimateChart' ? 'estimate' : 'manual') + '-ru', next ? 'true' : 'false');
+    btn.textContent = next ? 'Полный диапазон' : 'Расширить 0–5%';
     btn.classList.toggle('active', next);
     if (canvasId === 'estimateChart') buildEstimateChart();
     else buildManualChart();
@@ -508,17 +491,16 @@
     document.querySelectorAll('.chart-tool[data-xexpand]').forEach(function(btn) {
       var cid = btn.getAttribute('data-xexpand');
       var on = xExpandPref[cid];
-      btn.textContent = on ? 'Full range' : 'Expand 0–5%';
+      btn.textContent = on ? 'Полный диапазон' : 'Расширить 0–5%';
       btn.classList.toggle('active', on);
     });
   }
 
-  // ── Toolbar: expand / fullscreen ──────────────────────────────────────────
   function toggleExpand(wrapId, canvasId, btn) {
     var wrap = document.getElementById(wrapId);
     var expanded = wrap.classList.toggle('expanded');
     document.body.classList.toggle('no-scroll', expanded);
-    btn.textContent = expanded ? '✕ Close' : '⛶ Expand';
+    btn.textContent = expanded ? '✕ Закрыть' : '⛶ Развернуть';
     setTimeout(function(){ if (charts[canvasId]) charts[canvasId].resize(); }, 60);
   }
   document.addEventListener('keydown', function(e){
@@ -526,20 +508,18 @@
       document.querySelectorAll('.chart-wrap.expanded').forEach(function(w){
         w.classList.remove('expanded'); document.body.classList.remove('no-scroll');
         var c = w.querySelector('canvas'); if (c && charts[c.id]) setTimeout(function(){charts[c.id].resize();},60);
-        var b = w.querySelector('.chart-tool[onclick*="toggleExpand"]'); if (b) b.textContent='⛶ Expand';
+        var b = w.querySelector('.chart-tool[onclick*="toggleExpand"]'); if (b) b.textContent='⛶ Развернуть';
       });
     }
   });
 
-  // ── Toolbar: save PNG ─────────────────────────────────────────────────────
   function savePNG(canvasId, filename) {
     var chart = charts[canvasId];
-    if (!chart) { alert('Plot the chart first.'); return; }
+    if (!chart) { alert('Сначала постройте график.'); return; }
     var src = chart.canvas;
     var out = document.createElement('canvas');
-    out.width = src.width; out.height = src.height;   // native (DPR-scaled) resolution
+    out.width = src.width; out.height = src.height;
     var g = out.getContext('2d');
-    // solid background so PNG isn't transparent
     var bg = getComputedStyle(document.querySelector('.chart-wrap')).backgroundColor || '#ffffff';
     g.fillStyle = bg; g.fillRect(0,0,out.width,out.height);
     g.drawImage(src, 0, 0);
@@ -549,25 +529,12 @@
     a.click();
   }
 
-  // ── Estimate: interpolate through measured points ─────────────────────────
-  // Physical model, calibrated against 20 measured projectors (LCOS + DLP).
-  // The dark-state leak (1/CR) rises roughly linearly with ADL, so we work in
-  // 1/CR space: through the low points (On/Off at 0% plus 1% and/or 5% ADL) the
-  // black level interpolates linearly, and the tail extrapolates that slope with
-  // a mild steepening term (1+0.01·d) that matches the real roll-off past 5%.
-  // ANSI (50% ADL) isn't used as a hard node — chording to it misses the bend —
-  // instead it pulls the tail: a smooth log-space correction that ramps from the
-  // last low point up to 50%, landing exactly on the entered ANSI value. The
-  // curve still passes through every entered measurement exactly. This cut the
-  // mean error at 50% from ~45% (old power-law) to ~11%.
   function interpAt(nodes, apl) {
-    // Low nodes = On/Off (0%) + 1%/5% ADL; ANSI (50%) is handled separately.
     var low = nodes.filter(function(n){ return n.apl <= 5; });
     low.sort(function(a, b){ return a.apl - b.apl; });
     var ansiNode = null;
     for (var i = 0; i < nodes.length; i++) if (nodes[i].apl === 50) ansiNode = nodes[i];
 
-    // Base curve: linear in 1/CR through the low nodes, steepening extrapolation.
     function basePred(x) {
       if (x <= 0 || low.length === 1) return low[0].cr;
       for (var i = 1; i < low.length; i++) {
@@ -585,7 +552,6 @@
     var base = basePred(apl);
     if (!ansiNode) return base;
 
-    // ANSI pull: ramp a log-space correction from the last low node up to 50%.
     var lowmax = low[low.length-1].apl;
     var f50 = ansiNode.cr / basePred(50);
     var t = (apl - lowmax) / (50 - lowmax);
@@ -593,9 +559,6 @@
     return base * Math.pow(f50, t);
   }
 
-  // Clean 1-2-5 logarithmic ticks (matches industry charts like projectiondream).
-  // Adds `padDown` extra steps below the minimum so the lowest point (typically
-  // ANSI, rarely >1000) sits comfortably above the axis floor instead of on it.
   function niceLogTicks(min, max, padDown, padUp) {
     padDown = padDown == null ? 2 : padDown;
     padUp   = padUp   == null ? 2 : padUp;
@@ -605,7 +568,6 @@
       for (var k = 0; k < mults.length; k++) ladder.push(d * mults[k]);
       d *= 10;
     }
-    // lo: step down padDown rungs below min; hi: step up padUp rungs above max
     var lo = 0, hi = 0;
     for (var i = 0; i < ladder.length; i++) {
       if (ladder[i] <= min) lo = i;
@@ -616,9 +578,6 @@
     return ladder.slice(lo, hi + 1);
   }
 
-  // ── Intersection detection (both charts) ─────────────────────────────────
-  // Proper segment-segment intersection — works even when curves have different
-  // x-grids (manual chart) or different lengths (one curve ends early).
   function addIntersections(chart) {
     var lines = chart.data.datasets.filter(function(d) {
       return (!d.type || d.type === 'line') && d.data && d.data.length > 1;
@@ -653,7 +612,7 @@
     if (!crossPts.length) return;
     var mob = window.innerWidth < 640;
     chart.data.datasets.push({
-      label: 'Crossover',
+      label: 'Пересечение',
       data: crossPts, type: 'scatter',
       borderColor: '#ff9500', backgroundColor: '#fff',
       borderWidth: mob ? 2 : 3, pointRadius: mob ? 6 : 9, pointHoverRadius: mob ? 8 : 12,
@@ -661,12 +620,10 @@
     });
   }
 
-  // Expand chartRange min/max to include crossover y-values so log scale
-  // doesn't clip the intersection marker below the visible axis.
   function expandRangeForCrossovers(chart, cid) {
     var r = chartRange[cid]; if (!r) return;
     chart.data.datasets.forEach(function(d) {
-      if (d.label === 'Crossover' && d.data) {
+      if (d.label === 'Пересечение' && d.data) {
         d.data.forEach(function(pt) {
           if (pt.y < r.min) r.min = pt.y;
           if (pt.y > r.max) r.max = pt.y;
@@ -675,7 +632,6 @@
     });
   }
 
-  // Dismiss all chart tooltips on touch end anywhere on the page
   document.addEventListener('touchend', function() {
     ['estimateChart', 'manualChart'].forEach(function(id) {
       if (charts[id]) {
@@ -693,24 +649,20 @@
     var colorIdx = 0;
     var dataMin = Infinity, dataMax = -Infinity;
     blocks.forEach(function(block){
-      var name = block.querySelector('.proj-name-row input').value || 'Projector';
+      var name = block.querySelector('.proj-name-row input').value || 'Проектор';
       var id = block.id.replace('eb','');
       var onoff = parseFloat(document.getElementById('est-onoff-'+id).value);
       var ansi  = parseFloat(document.getElementById('est-ansi-'+id).value);
       var apl1  = parseFloat(document.getElementById('est-apl1-'+id).value);
       var apl5  = parseFloat(document.getElementById('est-apl5-'+id).value);
       if (!onoff || onoff <= 0) return;
-      // Build sorted node list (On/Off at 0% + every measured point)
       var nodes = [{apl:0, cr:onoff}];
       if (apl1  > 0) nodes.push({apl:1,  cr:apl1});
       if (apl5  > 0) nodes.push({apl:5,  cr:apl5});
       if (ansi  > 0) nodes.push({apl:50, cr:ansi});
       nodes.sort(function(a,b){ return a.apl - b.apl; });
-      // Interpolate the full curve through the nodes
       var pts = [];
       var expanded = xExpandPref['estimateChart'];
-      // Sample uniformly in display space so the rendered line stays smooth
-      // even where the x-axis transform stretches the low end.
       for (var d=0; d<=50; d+=0.5) {
         var apl = displayToAdl(d, expanded);
         var y = interpAt(nodes, apl);
@@ -720,13 +672,12 @@
       }
       var color = COLORS[colorIdx++ % COLORS.length];
       chart.data.datasets.push({
-        label: name + ' (estimated)',
+        label: name + ' (оценка)',
         data: pts, borderColor: color, backgroundColor: 'transparent',
         borderWidth: 2.5, pointRadius: 0, tension: 0, fill: false
       });
-      // Measured points sit exactly on the curve
       chart.data.datasets.push({
-        label: name+' (measured)',
+        label: name+' (измеренные)',
         data: nodes.map(function(n){return{x:adlToDisplay(n.apl,expanded),y:n.cr};}), type:'scatter',
         borderColor: color, backgroundColor: color,
         pointRadius: pt, pointHoverRadius: ptH, showLine: false
@@ -739,7 +690,6 @@
     chart.update();
   }
 
-  // ── Manual: plot known points ─────────────────────────────────────────────
   function buildManualChart() {
     var chart = getOrCreateChart('manualChart');
     var mob = window.innerWidth < 640;
@@ -748,7 +698,7 @@
     var colorIdx = 0;
     var dataMin = Infinity, dataMax = -Infinity;
     blocks.forEach(function(block){
-      var name = block.querySelector('.proj-name-row input').value || 'Projector';
+      var name = block.querySelector('.proj-name-row input').value || 'Проектор';
       var id = block.id.replace('mb','');
       var pts = [];
       var expanded = xExpandPref['manualChart'];
@@ -772,7 +722,6 @@
     chart.update();
   }
 
-  // ── Persist inputs across reloads ────────────────────────────────────────
   function saveCalcState() {
     var estData = [];
     document.querySelectorAll('#estimateBlocks .projector-block').forEach(function(block) {
@@ -785,7 +734,7 @@
         apl5:  document.getElementById('est-apl5-'+id).value
       });
     });
-    localStorage.setItem('sv-calc-estimate', JSON.stringify(estData));
+    localStorage.setItem('sv-calc-estimate-ru', JSON.stringify(estData));
 
     var manData = [];
     document.querySelectorAll('#manualBlocks .projector-block').forEach(function(block) {
@@ -798,14 +747,13 @@
         })
       });
     });
-    localStorage.setItem('sv-calc-manual', JSON.stringify(manData));
+    localStorage.setItem('sv-calc-manual-ru', JSON.stringify(manData));
   }
 
   function loadCalcState() {
-    // Estimate blocks
     var estLoaded = false;
     try {
-      var estData = JSON.parse(localStorage.getItem('sv-calc-estimate') || '[]');
+      var estData = JSON.parse(localStorage.getItem('sv-calc-estimate-ru') || '[]');
       if (estData.length) {
         estCount = 0;
         estData.forEach(function(d) {
@@ -822,10 +770,9 @@
     } catch(e) {}
     if (!estLoaded) addEstimateBlock();
 
-    // Manual blocks
     var manLoaded = false;
     try {
-      var manData = JSON.parse(localStorage.getItem('sv-calc-manual') || '[]');
+      var manData = JSON.parse(localStorage.getItem('sv-calc-manual-ru') || '[]');
       if (manData.length) {
         manCount = 0;
         manData.forEach(function(d) {
@@ -842,16 +789,13 @@
     } catch(e) {}
     if (!manLoaded) addManualBlock();
 
-    // Active tab
-    var savedTab = localStorage.getItem('sv-calc-tab');
+    var savedTab = localStorage.getItem('sv-calc-tab-ru');
     if (savedTab && savedTab !== 'estimate') switchTab(savedTab);
 
-    // Wire up auto-save on any input change
     document.getElementById('estimateBlocks').addEventListener('input', saveCalcState);
     document.getElementById('manualBlocks').addEventListener('input', saveCalcState);
   }
 
-  // Show an empty axis grid on load (instead of a blank white box)
   function initEmptyChart(canvasId) {
     getOrCreateChart(canvasId);
     applyYScale(canvasId);
@@ -864,7 +808,6 @@
   initEmptyChart('estimateChart');
   initEmptyChart('manualChart');
 
-  // Re-render charts on theme change so colors update
   document.getElementById('themeToggle').addEventListener('click', function() {
     setTimeout(function() {
       ['estimateChart','manualChart'].forEach(function(id) {

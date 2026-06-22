@@ -991,7 +991,7 @@
 
     var mainWrap = document.createElement('div');
     mainWrap.className = 'chart-main';
-    mainWrap.style.height = '480px';
+    mainWrap.style.height = (window.innerWidth <= 600 ? '300' : '480') + 'px';
     row.appendChild(mainWrap);
 
     // Native z1.5× ADL contrast curve (reference baseline)
@@ -1142,7 +1142,7 @@
               var nat = nativeAt(item.parsed.x);
               var html = '';
               if (imgSrc) {
-                html += '<img src="' + imgSrc + '" style="width:360px;display:block;" onerror="this.style.display=\'none\'">';
+                html += '<img src="' + imgSrc + '" style="width:100%;display:block;" onerror="this.style.display=\'none\'">';
               }
               html += '<div style="padding:10px 12px;">';
               html += '<div style="font-weight:600;color:' + TC.ttTitle + ';margin-bottom:6px;">ADL ' + adl + '%</div>';
@@ -1166,8 +1166,10 @@
               var rect = context.chart.canvas.getBoundingClientRect();
               var tx = rect.left + tooltip.caretX;
               var ty = rect.top + tooltip.caretY;
-              var ttW = imgSrc ? 360 : 260;
+              var ttW = imgSrc ? Math.min(360, window.innerWidth - 16) : Math.min(260, window.innerWidth - 16);
+              ttEl.style.maxWidth = ttW + 'px';
               if (tx + ttW + 10 > window.innerWidth) tx -= ttW + 20; else tx += 12;
+              tx = Math.max(8, tx);
               if (ty + 120 + 10 > window.innerHeight) ty -= 120 + 20; else ty += 12;
               ttEl.style.left = tx + 'px';
               ttEl.style.top = ty + 'px';
@@ -1303,7 +1305,7 @@
         tr.style.cursor = 'help';
         tr.addEventListener('mouseenter', function () {
           var t = dbleRowTip();
-          var html = '<img src="/img/dble/' + p.img + '" style="width:360px;display:block;" onerror="this.style.display=\'none\'">';
+          var html = '<img src="/img/dble/' + p.img + '" style="width:100%;display:block;" onerror="this.style.display=\'none\'">';
           html += '<div style="padding:10px 12px;">';
           html += '<div style="font-weight:600;color:' + TC.ttTitle + ';margin-bottom:6px;">ADL ' + p.x.toFixed(3) + '%</div>';
           html += p.active
@@ -1318,7 +1320,9 @@
         tr.addEventListener('mousemove', function (e) {
           var t = dbleRowTip();
           var tx = e.clientX, ty = e.clientY;
-          if (tx + 380 > window.innerWidth) tx -= 380; else tx += 16;
+          var ttW2 = Math.min(380, window.innerWidth - 16);
+          if (tx + ttW2 > window.innerWidth) tx -= ttW2; else tx += 16;
+          tx = Math.max(8, tx);
           if (ty + 300 > window.innerHeight) ty -= 300; else ty += 12;
           t.style.left = tx + 'px';
           t.style.top = ty + 'px';

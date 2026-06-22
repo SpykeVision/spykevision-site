@@ -355,3 +355,23 @@
     });
   }
 })();
+
+// Scroll buttons
+(function () {
+  var btnTop = document.getElementById('scrollTop');
+  var btnBottom = document.getElementById('scrollBottom');
+  function update() {
+    var scrollY = window.scrollY;
+    var maxScroll = document.body.scrollHeight - window.innerHeight;
+    if (btnTop) btnTop.classList.toggle('visible', scrollY > 400);
+    if (btnBottom) btnBottom.classList.toggle('visible', maxScroll - scrollY > 400);
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+  if (btnTop) btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  if (btnBottom) btnBottom.addEventListener('click', function () {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  });
+})();

@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Контакты | SpykeVision"
+  description="Связаться со SpykeSIK: запросы на обзоры, исправления и вопросы от производителей."
+  active="contact"
+>
+  <main class="wrap">
+    <div class="article-hero">
+      <h1>Контакты</h1>
+    </div>
+
+    <div class="contact-wrap">
+      <div class="contact-card">
+        <p class="contact-name">SpykeVision</p>
+        <p class="contact-line">Хотите прислать продукт на обзор или есть вопросы к опубликованным материалам? Пишите через форму или напрямую на AVS Forum.</p>
+        <div style="margin-top:20px">
+          <p class="contact-line" style="margin-bottom:8px;font-weight:600;opacity:1">Активен на:</p>
+          <a href="https://www.avsforum.com/members/spykesik.8223142/" target="_blank" rel="noopener" class="contact-forum">AVS Forum → SpykeSIK ↗</a>
+        </div>
+      </div>
+
+      <form class="contact-form" id="contactForm">
+        <input type="hidden" name="access_key" value="87fe1b0f-1e6d-4ddd-9dd7-dad928ae315b" />
+        <input type="hidden" name="subject" value="Новое сообщение с сайта SpykeVision" />
+        <input type="hidden" name="from_name" value="SpykeVision website" />
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+        <div class="form-group">
+          <label>Ваше имя</label>
+          <input type="text" name="name" placeholder="Имя" required />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="email@example.com" required />
+        </div>
+        <div class="form-group">
+          <label>Тема</label>
+          <input type="text" name="topic" placeholder="Запрос на обзор / исправление / другое" />
+        </div>
+        <div class="form-group">
+          <label>Сообщение</label>
+          <textarea name="message" placeholder="Ваше сообщение..." rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn">Отправить</button>
+        <p class="form-status" id="formStatus" aria-live="polite"></p>
+      </form>
+    </div>
+  </main>
+</Base>

@@ -34,6 +34,13 @@ const { title, description, active, theme = 'light' } = Astro.props;
 
   <Donate />
 
+  <button class="scroll-top" id="scrollTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+  <button class="scroll-bottom" id="scrollBottom" aria-label="Go to bottom">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+
   <script is:inline src="/js/main.js"></script>
   <script is:inline src="/js/compare.js"></script>
   <script is:inline src="/js/charts-tnm.js"></script>

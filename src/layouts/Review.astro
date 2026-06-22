@@ -2,10 +2,25 @@
 import Base from './Base.astro';
 import Comments from '../components/Comments.astro';
 const { review, headings } = Astro.props;
-const fmtDate = new Date(review.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+const ML_ACCOUNT_ID = '2448508';
+const ML_FORM_ID    = '8lzoBZ';
+const isRu = Astro.url.pathname.startsWith('/ru');
+const locale = isRu ? 'ru-RU' : 'en-US';
+const fmtDate = new Date(review.date).toLocaleDateString(locale, { year: 'numeric', month: 'long' });
 const toc = (headings || []).filter((h) => h.depth === 2);
 const meta = [fmtDate, review.readTime, review.extra].filter(Boolean);
 const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
+const t = {
+  inThisReview: isRu ? 'В этом обзоре' : 'In this review',
+  whatsGreat:   isRu ? 'Что понравилось' : "What's great",
+  watchOut:     isRu ? 'Обратите внимание' : 'Watch out for',
+  conclusion:   isRu ? 'Заключение' : 'Conclusion',
+  donate:       isRu ? 'Поддержать' : 'Donate',
+  subscribe:    isRu ? 'Подписаться' : 'Subscribe',
+  officialPage: isRu ? 'Официальная страница →' : 'Official page →',
+  subTitle:     isRu ? 'Новые обзоры на почту' : 'New reviews in your inbox',
+  subDesc:      isRu ? 'Когда выйдет новый обзор — узнаете первыми. Без спама, отписка в один клик.' : "When a new review drops — you'll know. No spam, unsubscribe any time.",
+};
 ---
 <Base title={`${review.title} | SpykeVision`} description={review.summary} active="reviews">
   <!-- Draft overlay: shown to non-preview visitors when article is a draft -->
@@ -51,7 +66,7 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
     <div class="prose">
       {toc.length > 0 && (
         <nav class="toc">
-          <h4>In this review</h4>
+          <h4>{t.inThisReview}</h4>
           {review.tocGroups ? (
             <div class="toc-grid">
               {review.tocGroups.map((group) => {
@@ -80,13 +95,13 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
         <div class="proscons" id="proscons">
           {review.pros.length > 0 && (
             <div class="pc-box pros">
-              <h4>What's great</h4>
+              <h4>{t.whatsGreat}</h4>
               <ul>{review.pros.map((p) => (<li>{p}</li>))}</ul>
             </div>
           )}
           {review.cons.length > 0 && (
             <div class="pc-box cons">
-              <h4>Watch out for</h4>
+              <h4>{t.watchOut}</h4>
               <ul>{review.cons.map((c) => (<li>{c}</li>))}</ul>
             </div>
           )}
@@ -95,14 +110,18 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
 
       {(review.verdictTitle || review.verdictText) && (
         <div class="conclusion" id="conclusion">
-          <p class="conclusion-label">Conclusion</p>
+          <p class="conclusion-label">{t.conclusion}</p>
           {review.verdictTitle && <h3>{review.verdictTitle}</h3>}
           {review.verdictText && <p>{review.verdictText}</p>}
           <div class="conclusion-actions">
-            <button class="btn btn-donate" data-donate-open>Donate</button>
+            <button class="btn btn-donate" data-donate-open>
+              {t.donate}
+              <svg class="heart-icon" viewBox="0 0 20 18" width="16" height="16" fill="#ff3b30" aria-hidden="true"><path d="M10 17S1 11 1 5.5A4.5 4.5 0 0 1 10 3.57 4.5 4.5 0 0 1 19 5.5C19 11 10 17 10 17z"/></svg>
+            </button>
+            <button class="btn btn-subscribe" data-subscribe-open>{t.subscribe}</button>
             {review.buyLink && (
               <a href={review.buyLink} target="_blank" rel="noopener" class="btn btn-official">
-                Official page →
+                {t.officialPage}
               </a>
             )}
           </div>
@@ -112,4 +131,48 @@ const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
   </main>
 
   {!review.draft && <Comments title={review.title} />}
+
+  {!review.draft && (
+    <>
+      <div class="subscribe-backdrop" id="subscribeBackdrop" aria-hidden="true"></div>
+      <dialog class="subscribe-modal" id="subscribeModal" aria-label="Subscribe to updates">
+        <button class="subscribe-close" id="subscribeClose" aria-label="Close">✕</button>
+        <h2 class="subscribe-modal-title">{t.subTitle}</h2>
+        <p class="subscribe-modal-sub">{t.subDesc}</p>
+        <div class="ml-embedded" data-form={ML_FORM_ID}></div>
+      </dialog>
+      <script define:vars={{ ML_ACCOUNT_ID, ML_FORM_ID }} is:inline>
+      (function(w,d,e,u,f,l,n){
+        w[f]=w[f]||function(){(w[f].q=w[f].q||[]).push(arguments);};
+        l=d.createElement(e);l.async=1;l.src=u;
+        n=d.getElementsByTagName(e)[0];n.parentNode.insertBefore(l,n);
+      })(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+      ml('account', ML_ACCOUNT_ID);
+
+      var sModal = document.getElementById('subscribeModal');
+      var sBackdrop = document.getElementById('subscribeBackdrop');
+      var sClose = document.getElementById('subscribeClose');
+
+      function openSub() { sModal.classList.add('open'); sBackdrop.classList.add('open'); document.body.style.overflow = 'hidden'; }
+      function closeSub() { sModal.classList.remove('open'); sBackdrop.classList.remove('open'); document.body.style.overflow = ''; }
+
+      document.querySelectorAll('[data-subscribe-open]').forEach(function(el) { el.addEventListener('click', openSub); });
+      sClose.addEventListener('click', closeSub);
+      sBackdrop.addEventListener('click', closeSub);
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSub(); });
+
+      var mlT = document.querySelector('#subscribeModal .ml-embedded');
+      if (mlT) {
+        new MutationObserver(function() {
+          mlT.querySelectorAll('*').forEach(function(el) {
+            var t = el.tagName.toLowerCase(), c = el.className || '';
+            if (c.indexOf('Wrapper') > -1 || c.indexOf('Container') > -1 || c.indexOf('embedBody') > -1 || t === 'input' || t === 'button' || t === 'textarea') {
+              el.style.setProperty('border-radius', '12px', 'important');
+            }
+          });
+        }).observe(mlT, { childList: true, subtree: true });
+      }
+      </script>
+    </>
+  )}
 </Base>

@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import Subscribe from '../../components/Subscribe.astro';
+import { getCollection } from 'astro:content';
+
+const reviews = (await getCollection('reviews-ru'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const comingSoon = [
+  {
+    category: 'ALR-экран • Fresnel • UST',
+    title: 'FScreen Fresnel Screen 120" Gen4 — Обзор',
+    text: 'Fresnel ALR-экран 4-го поколения на фиксированной раме для работы при любом освещении. Полное тестирование: усиление, подавление засветки, цветовой сдвиг, углы обзора и равномерность.',
+    status: 'В процессе',
+    image: '/images/cs-fscreen-fresnel.jpg',
+  },
+  {
+    category: '4K • Трёхлазерный • Флагман • UST',
+    title: 'AWOL Aetherion Max — Полный обзор',
+    text: 'Ритейл версия на тестировании. Лабораторные измерения: яркость, нативный / ANSI / ADL контраст, эффективность anti-RBE и EBL, резкость объектива и геометрия.',
+    status: 'В процессе',
+    image: '/images/cs-awol-aetherion-max.jpg',
+  },
+];
+---
+<Base
+  title="SpykeVision — Углублённые обзоры и измерения проекторов"
+  description="Независимые обзоры проекторов на основе измерений. Яркость, контраст, ANSI, ADL и тестирование объектива."
+  active="reviews"
+>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Обзоры на основе измерений</p>
+      <h1>Обзоры проекторов, подкреплённые реальными данными.</h1>
+      <p>Никакого маркетинга. Каждый обзор построен только на реальных измерениях: яркость, нативный On/Off и ANSI контраст, цвет, качество объектива и передача движения. Все цифры с объяснением.</p>
+      <a href="/ru/reviews/" class="btn">Обзоры</a>
+    </div>
+  </section>
+
+  <main class="wrap">
+    {reviews.length > 0 && (
+      <section class="section" id="reviews">
+        <div class="section-head"><h2>Последние обзоры</h2><a href="/ru/reviews/">Все обзоры →</a></div>
+        <div class="grid">
+          {reviews.slice(0, 6).map((r, i) => (
+            <a href={`/ru/reviews/${r.slug}/`} class={`card${i === 0 ? ' featured' : ''}`} data-draft={r.data.draft ? 'true' : null}>
+              <div class="card-media">
+                <img src={r.data.coverCard || r.data.cover} alt={r.data.title} />
+                {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
+              </div>
+              <div class="card-body">
+                {r.data.draft && <span class="draft-badge">Черновик</span>}
+                {r.data.category && <span class="card-cat">{r.data.category}</span>}
+                <h3>{r.data.title}</h3>
+                <p>{r.data.summary}</p>
+                <div class="card-meta">
+                  <span class="author"><span class="avatar"></span>SpykeSIK</span>
+                  <span>•</span><span>{new Date(r.data.date).toLocaleDateString('ru-RU',{year:'numeric',month:'short'})}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="section" id="coming-soon">
+      <div class="section-head"><h2>Скоро</h2></div>
+      <div class="cs-list">
+        {comingSoon.map((c) => (
+          <a href="#" class="cs-card">
+            <div class="cs-media">
+              {c.image && <img src={c.image} alt={c.title} class="cs-img" />}
+              <div class="cs-badge">Скоро</div>
+            </div>
+            <div class="cs-body">
+              <span class="card-cat">{c.category}</span>
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+              <div class="card-meta">
+                <span class="author"><span class="avatar"></span>SpykeSIK</span>
+                <span>•</span><span>{c.status}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section" id="measurements">
+      <div class="section-head"><h2>Почему важны измерения</h2></div>
+      <div class="grid">
+        <div class="card"><div class="card-body">
+          <span class="card-cat" style="color:var(--accent)">Яркость</span>
+          <h3>Реальные люмены</h3>
+          <p>Реальный световой поток, измеренный при всех положениях зума и диафрагмы, в откалиброванных производителем режимах.</p>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <span class="card-cat" style="color:var(--orange)">Контраст</span>
+          <h3>Нативный, ANSI и ADL</h3>
+          <p>On/off, шахматный ANSI и полные кривые ADL по всему диапазону — метрики, которые реально предсказывают уровень чёрного.</p>
+        </div></div>
+        <div class="card"><div class="card-body">
+          <span class="card-cat" style="color:var(--purple)">Оптика</span>
+          <h3>Объектив и геометрия</h3>
+          <p>Резкость, дисторсия, равномерность и поведение сдвига объектива — тестируются на предельных значениях.</p>
+        </div></div>
+      </div>
+    </section>
+  </main>
+
+  <Subscribe lang="ru" />
+</Base>
