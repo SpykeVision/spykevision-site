@@ -15,27 +15,27 @@ pros:
   - Monolithic chassis — premium build, no flex, no creaks
   - 15-element all-glass lens, 0.98–2.1× zoom — no separate long-throw lens needed
   - Sharpness among the best in the 0.47″ DLP class
-  - Lens shift best-in-class for DLP — generous H/V range, sealed optical block
-  - Lens memory — functional on beta firmware, great for scope screens and 16:9 black-bar elimination
-  - "Brightness or contrast — your choice: Laser 10/10+ for ambient, F4.0–F7.0 iris for dedicated rooms"
-  - "ANSI contrast up to 846:1 with shifted lens — outstanding for a DLP"
-  - Best 3D in the current generation — very bright, solid sync
-  - Effective anti-RBE Standard mode with no acoustic penalty
+  - Lens shift best-in-class — generous H/V range, sealed optical block
+  - Lens memory — functional on beta firmware
+  - "Brightness or contrast — your choice: you can get a very bright or a very high-contrast projector, but not both at once"
+  - "ANSI contrast up to 846:1 with shifted lens — one of the best results for a DLP"
+  - Excellent 3D — very bright, solid sync
+  - Effective anti-RBE Standard mode with no high-frequency whine
   - Quietest projector at this brightness level — external PSU and robust cooling pay off
-  - Capable DTM — screen-size/gain adjustments reward manual tuning with punchy, accurate HDR
-  - DBLE delivers genuine dynamic contrast on suitable content — up to 5–7× multiplier
-verdictText: The Titan Noir Max combines a genuinely versatile lens with a
-  dual-iris contrast system that, on paper and on the bench, delivers the goods.
-  A few firmware-fixable quirks keep it from perfection, but this is one of the
-  most capable home-theater projectors available today.
+  - Excellent DTM — screen-size/gain adjustments help dial it in for your setup
+  - DBLE delivers genuine dynamic contrast on suitable content — up to 3.5×
+verdictText: The Titan Noir Max combines genuinely unique characteristics — from
+  its versatile lens to a dual-iris system that substantially improves real-world
+  contrast. A few firmware-fixable shortcomings keep it from perfection, but
+  taken as a whole, this is one of the best home-theater projectors at its price.
 coverCard: /images/tnm/card-tnm.jpg
 cons:
-  - Rolling buffer (hardware) — affects motion clarity on fast edges; anti-RBE partially mitigates it
-  - Image artifacts — blocking, dithering, static contour, grayscale non-uniformity, hidden sharpening; most are firmware-addressable
-  - Anti-RBE Standard doesn't match 1.0.56's 12× pulse rate; Enhanced adds artifacts without improving suppression
-  - Game Mode needs a firmware overhaul — locked picture controls, forced oversaturation, no DBLE toggle
-  - DBLE too conservative — disengages at the slightest peak luminance; slow ramp misses brief dark scenes
-  - White field uniformity varies heavily with zoom and iris — max zoom (2.1×) position produces colour shifts (green/pink corners)
+  - Rolling buffer (hardware) — creates motion artifacts on fast edges; anti-RBE partially compensates
+  - Image artifacts — blocking, dithering, static contour, grayscale non-uniformity, hidden sharpening; most are firmware-fixable
+  - Anti-RBE Standard doesn't match firmware 1.0.56's effectiveness; Enhanced adds artifacts without improving suppression
+  - Game Mode needs a firmware overhaul
+  - DBLE too conservative — disengages at the slightest peak luminance; slow response
+  - White field uniformity varies heavily with zoom and iris position
 wide: true
 ratings:
   - label: Brightness
