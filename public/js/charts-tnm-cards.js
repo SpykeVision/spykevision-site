@@ -23,6 +23,22 @@
     '1.5×':[6400,5928,5533,4368,3320,2184,764],
     '2.0×':[4882,4368,4150,3192,2441,1627,557]
   };
+  var DI_ZOOMS = ['1.0×','1.1×','1.2×','1.3×','1.4×','1.5×','1.6×','1.7×','1.8×','1.9×','2.0×','2.1×'];
+  var DI_ADL_L = ['0%','1%','2%','5%'];
+  var DI = {
+    '1.0×':[4912,4632,3935,2200],
+    '1.1×':[5053,4697,3994,2253],
+    '1.2×':[5000,4600,3907,2218],
+    '1.3×':[5309,4951,4267,2142],
+    '1.4×':[5204,4770,4154,2067],
+    '1.5×':[4962,4563,3970,1965],
+    '1.6×':[4878,4512,3923,1920],
+    '1.7×':[4650,4267,3708,1843],
+    '1.8×':[4483,4088,3564,1782],
+    '1.9×':[5577,5020,4114,1719],
+    '2.0×':[5256,4684,3848,1596],
+    '2.1×':[5000,4431,3679,1535]
+  };
 
   /* ---- one-time CSS ---- */
   var css = '\
@@ -138,6 +154,61 @@
     render();
   }
 
+  /* ---------- DYNAMIC IRIS CONTRAST CARD ---------- */
+  function buildDynamicIris(host){
+    var state = { zoom: '1.5×' };
+    host.className = 'cc';
+    var head = el('div','cc-head');
+    head.appendChild(el('div', null,
+      '<div class="t">Dynamic Iris ADL Contrast</div>'+
+      '<div class="h">Contrast vs. content brightness</div>'+
+      '<div class="sub">ISF Night / D65 · dynamic iris active. 0% ADL = on/off black, 5% ADL ≈ dark mixed scene.</div>'));
+    host.appendChild(head);
+
+    var chips = el('div','cc-chips');
+    DI_ZOOMS.forEach(function(z){
+      var c = el('button','cc-chip'+(z===state.zoom?' on':''), 'Zoom '+z);
+      c.onclick = function(){ state.zoom=z; render(); };
+      chips.appendChild(c);
+    });
+    host.appendChild(chips);
+
+    var tiles = el('div','cc-tiles'); host.appendChild(tiles);
+    var rowsWrap = el('div','cc-rows'); host.appendChild(rowsWrap);
+    var foot = el('div','cc-foot'); host.appendChild(foot);
+
+    function render(){
+      Array.prototype.forEach.call(chips.children, function(c){
+        c.classList.toggle('on', c.textContent === 'Zoom '+state.zoom);
+      });
+
+      var data = DI[state.zoom];
+      var max = Math.max.apply(null, data), min = Math.min.apply(null, data);
+      function pct(v){ return 12 + (v-min)/(max-min||1)*88; }
+
+      tiles.innerHTML='';
+      [['On/Off (0%)',data[0]],['Dark scene (1%)',data[1]],['Mixed (5%)',data[3]]].forEach(function(t){
+        tiles.appendChild(el('div','cc-tile',
+          '<div class="n">'+t[1].toLocaleString()+'<span class="u">:1</span></div><div class="l">'+t[0]+'</div>'));
+      });
+
+      rowsWrap.innerHTML='';
+      var barRefs=[];
+      DI_ADL_L.forEach(function(lab,i){
+        var row = el('div','cc-row');
+        row.appendChild(el('div','k', lab+' ADL'));
+        row.appendChild(el('div','v', fmt(data[i])));
+        var barBox = el('div','cc-bar'); var fill=el('i'); barBox.appendChild(fill); row.appendChild(barBox);
+        rowsWrap.appendChild(row);
+        barRefs.push({bar:fill, pct:pct(data[i])});
+      });
+      paint(barRefs);
+
+      foot.innerHTML = '<span class="dot"></span>Bars rescaled to show how intra-scene contrast drops as content brightens.';
+    }
+    render();
+  }
+
   /* ---------- NATIVE CONTRAST CARD ---------- */
   function buildNative(host){
     var state = { ap: 'F7' };
@@ -191,7 +262,7 @@
     render();
   }
 
-  var BUILD = { adl: buildADL, native: buildNative };
+  var BUILD = { adl: buildADL, native: buildNative, 'dynamic-iris': buildDynamicIris };
   Array.prototype.forEach.call(cards, function(host){
     var type = host.getAttribute('data-card');
     if (BUILD[type]) BUILD[type](host);

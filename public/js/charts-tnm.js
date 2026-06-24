@@ -1469,6 +1469,110 @@
     addViewToggle(el);
   }
 
+  /* ══════════════════════════════════════════════════════
+     CHART 8 — Dynamic Iris ADL Contrast
+  ══════════════════════════════════════════════════════ */
+  function buildDynIris(el) {
+    mkTitle(el, 'DYNAMIC IRIS ADL CONTRAST', 'ISF Night / D65 · dynamic iris active · on/off through 5% ADL by zoom');
+
+    var DI_ZOOMS = ['2.1×','2.0×','1.9×','1.8×','1.7×','1.6×','1.5×','1.4×','1.3×','1.2×','1.1×','1.0×'];
+    var DI = {
+      '0%': [5000,5256,5577,4483,4650,4878,4962,5204,5309,5000,5053,4912],
+      '1%': [4431,4684,5020,4088,4267,4512,4563,4770,4951,4600,4697,4632],
+      '2%': [3679,3848,4114,3564,3708,3923,3970,4154,4267,3907,3994,3935],
+      '5%': [1535,1596,1719,1782,1843,1920,1965,2067,2142,2218,2253,2200],
+    };
+    var DI_COLORS = { '0%': '#4FC3F7', '1%': '#66BB6A', '2%': '#FFA726', '5%': '#EF5350' };
+
+    var row = document.createElement('div');
+    row.className = 'chart-row';
+    el.appendChild(row);
+
+    var mainWrap = document.createElement('div');
+    mainWrap.className = 'chart-main';
+    mainWrap.style.height = '480px';
+    row.appendChild(mainWrap);
+
+    mkChart(mkCanvas(mainWrap), {
+      type: 'line',
+      data: {
+        labels: DI_ZOOMS,
+        datasets: ['0%','1%','2%','5%'].map(function(adl) {
+          return {
+            label: adl + ' ADL',
+            data: DI[adl],
+            borderColor: DI_COLORS[adl],
+            backgroundColor: DI_COLORS[adl] + '22',
+            pointBackgroundColor: DI_COLORS[adl],
+            pointRadius: 4, pointHoverRadius: 7,
+            borderWidth: 2.5, tension: 0.3, fill: false,
+          };
+        }),
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, clip: false,
+        layout: { padding: 0 },
+        plugins: {
+          legend: { position: 'top', labels: { color: TC.text, boxWidth: 14, padding: 16 } },
+          tooltip: ttOpts(function(v) { return v.toLocaleString() + ':1'; }),
+        },
+        scales: {
+          x: { grid: GRID, offset: false, ticks: { align: 'inner' }, afterFit: function(s) { s.paddingLeft = 0; s.paddingRight = 0; } },
+          y: { type: 'logarithmic', min: 1000, grid: GRID, ticks: {
+            maxTicksLimit: 10,
+            callback: function(v) {
+              var nice = [1000,1200,1500,2000,2500,3000,4000,5000,6000,7000];
+              return nice.indexOf(v) >= 0 ? v.toLocaleString() + ':1' : null;
+            }
+          }},
+        },
+      },
+    });
+
+    var sideWrap = document.createElement('div');
+    sideWrap.className = 'chart-side';
+    row.appendChild(sideWrap);
+    mkTitle(sideWrap, 'ZOOM 1.5× REFERENCE', 'Contrast by ADL level');
+
+    mkChart(mkCanvas(sideWrap), {
+      type: 'bar',
+      plugins: DL_PLUGIN,
+      data: {
+        labels: ['0%', '1%', '2%', '5%'],
+        datasets: [{
+          label: 'Contrast',
+          data: [4962, 4563, 3970, 1965],
+          backgroundColor: ['#4FC3F7cc','#66BB6Acc','#FFA726cc','#EF5350cc'],
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: ttOpts(function(v) { return v.toLocaleString() + ':1'; }),
+          datalabels: Object.assign({}, DL_OPTS, { formatter: function(v) { return v.toLocaleString() + ':1'; } }),
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { display: false },
+        },
+      },
+    });
+
+    var tableRows = DI_ZOOMS.map(function(z, i) {
+      return [z, DI['0%'][i].toLocaleString()+':1', DI['1%'][i].toLocaleString()+':1', DI['2%'][i].toLocaleString()+':1', DI['5%'][i].toLocaleString()+':1'];
+    });
+    var tbl = mkTableCard(el, 'DYNAMIC IRIS ADL — ALL VALUES', 'Contrast by zoom and content brightness · click a column to sort',
+      ['Zoom', '0% ADL', '1% ADL', '2% ADL', '5% ADL'], tableRows, 'tbl-dynIris');
+    var diAdls = ['0%','1%','2%','5%'];
+    var ths = tbl.querySelectorAll('thead th');
+    diAdls.forEach(function(adl, i) {
+      if (ths[i + 1]) ths[i + 1].innerHTML = '<span class="color-dot" style="background:' + DI_COLORS[adl] + '"></span>' + adl + ' ADL';
+    });
+    addViewToggle(el);
+  }
+
   /* ── Init ─────────────────────────────────────────────── */
   var MAP = {
     'chart-brightness': buildBrightness,
@@ -1479,6 +1583,7 @@
     'chart-adl':        buildADL,
     'chart-dble':       buildDBLE,
     'chart-power':      buildPower,
+    'chart-dynIris':    buildDynIris,
   };
 
   function init() {

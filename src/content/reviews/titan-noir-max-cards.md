@@ -95,24 +95,23 @@ tocGroups:
 verdictTitle: A measurement-backed flagship
 ---
 
-
-The Titan Noir Max arrives at an unusual moment for DLP projectors. The category has been accelerating: brighter lasers, faster controllers, and a wave of manufacturers finally taking contrast seriously. What separates the TNM from the crowd is not any single specification — it’s the sum of design choices that, on paper, shouldn’t coexist in a projector at this price.
+Right now is an interesting time for DLP projectors — lasers keep getting more powerful, controllers faster, manufacturers are finally paying serious attention to contrast. Into this comes XGIMI’s new flagship, stacking almost every current technology into one chassis.
 
 ![](/uploads/titan-noir-series-price-copy.jpg)
 
-Start with the core. The 0.47‑inch DMD chip is built on TI’s SST platform, a rework of the micromirror array that optimises pixel density and heat dissipation specifically for laser illumination. It’s driven by the **DLPC8455** controller — currently the most capable in TI’s single‑chip lineup, which enables sub‑1ms latency and introduces a rolling‑buffer architecture that fundamentally changes motion behaviour. The Titan Noir series itself spans three models: base, Pro, and Max — sharing the same chassis but scaling the laser engine from 30 to 50 RGB triple‑laser diodes depending on the tier.
+Start with the core. The 0.47‑inch DMD is built on TI’s SST platform — an updated micromirror architecture optimised specifically for laser illumination, with higher pixel density and better heat dissipation. Driving it is the **DLPC8455** controller, currently the most powerful single-chip controller in TI’s lineup, which enables sub-1ms latency in certain modes and introduces a rolling-buffer architecture that draws the image line by line — fundamentally changing how motion behaves.
 
-Then there is the feature that genuinely has no equivalent in competing consumer projectors: a dedicated FPGA co‑processor. The **X‑Vision** chip is not an off‑the‑shelf video processor; it’s a programmable logic array that can, in principle, be taught almost anything — custom tone mapping, per‑frame iris and laser control, proprietary sharpening algorithms, frame‑level gamma manipulation. Whether any of this potential materialises depends entirely on XGIMI’s software ambitions and execution, but the fact that the hardware is already inside every TNM is remarkable.
+The feature with no real equivalent in consumer projectors in this class: a dedicated FPGA co-processor. The **X-Vision** chip is not an off-the-shelf video processor — it’s a programmable logic array that can, in principle, be taught almost anything: Lumagen-grade per-frame tone mapping, fine-grained per-scene iris and laser control, custom sharpening like Darbee, per-zone gamma adjustment. Whether any of this actually gets used depends entirely on XGIMI’s software ambitions, but the hardware is already inside every TNM.
 
 ![](/uploads/screenshot-2026-06-16-00-06-27.webp)
 
-The optical path is equally ambitious. A 15‑element all‑glass lens with multi‑layer anti‑reflective coatings, a **0.98–2.0:1** throw range (the widest in its class), and lens shift that — while half the brochure figure still outpaces every direct rival. Lens memory, still a rarity on DLP projectors, is included. Contrast is managed by a **dual‑iris system**: one static iris after the laser, a second dynamic iris in the lens, with XGIMI’s DBLE (Dynamic Black Level Enhancement) own dynamic laser dimming algorithm.
+The optics are equally serious. A 15‑element all‑glass lens with multi‑layer anti‑reflective coatings, a **0.98–2.0:1** throw range (widest in its class), both vertical and horizontal lens shift that — even at half the brochure figures — still outpaces every direct competitor. Lens memory, rare on DLP projectors, is included. Contrast is handled by a **dual-iris system**: one static iris after the laser, one dynamic iris in the lens. DBLE (Dynamic Black Level Enhancement) handles the laser dimming.
 
 ![](/uploads/ces_2026_tech_logo_2026-06-15_20_29_59.845879.jpg)
 
-The HDR suite covers **HDR10**, **HDR10+**, **Dolby** **Vision**, and **IMAX** **Enhanced**, backed by a claimed **7 000 ISO lumens** at the top of the Max range. Gaming support includes **VRR**, **ALLM**, and a **1080p**/**240 Hz** mode with a **1 ms** input lag figure. **4K/120** is accepted on input but output at 4K/60 — a limitation of the current single DLP controller configuration, shared by every projector in this class.
+The Titan Noir line spans three tiers — base, Pro, and Max — all on the same dual-iris platform, scaling from 30 to 50 RGB laser diodes. The Max is rated at **7,000 ISO lumens**. HDR covers **HDR10**, **HDR10+**, **Dolby Vision**, and **IMAX Enhanced**. Gaming: **VRR**, **ALLM**, **1080p/240 Hz** at **1ms** input lag. **4K/120** is accepted on input but output at 4K/60 — a ceiling imposed by the current single-controller architecture, shared by every projector in this class.
 
-This is, on paper, an unusually complete projector. The review that follows is an attempt to understand how much of that engineering translates into actual performance — and where the firmware still needs to catch up.
+On the spec sheet, a genuinely unique projector. In this review, we'll find out how much of that engineering shows up in real performance — and what the firmware still needs to catch up on.
 
 ## The Outer Box
 
@@ -136,7 +135,7 @@ Now the main unit. Lifting the TNM out of the case, the first thing that hits yo
 
 <div class="gallery cols-3"><figure><img src="/images/tnm/p1-09.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-10.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-11.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-12.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-13.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-14.jpeg" alt=""></figure><figure><img src="/images/tnm/p1-15.jpeg" alt=""></figure></div>
 
-Let's talk about the design philosophy. I really appreciate what XGIMI has done here. Instead of the awful "gimbal" designs or overly "gamer" aesthetics we see on a lot of other Chinese projectors, the TNM looks more minimalist, serious, and functional. It looks like a piece of professional cinema equipment, not a toy. For example, the **Valerion Max** *tried* to feel premium. The TNM actually feels like it costs every dollar of its price. When you consider that the entire TitanNoir lineup shares this same chassis and build quality, it's a massive step forward and sets a new standard for the category.
+Let's talk about the design philosophy. I genuinely like what XGIMI has done here. Instead of the awful gimbal-foot designs or overly gamer aesthetics on so many Chinese projectors, the TNM is minimalist, serious, and functional — it looks like professional cinema equipment, not a toy. The **Valerion Max**, for instance, tried to feel premium. The TNM actually feels like it costs every dollar of its price. Given that the entire Titan Noir lineup shares the same platform and build quality, this is a serious step forward for the whole segment and a new benchmark for competitors.
 
 ## The Feet
 
@@ -182,7 +181,7 @@ If you're buying this version of the projector for the lens alone, you might not
 
 The TNM uses a high-end 15-element all-glass **X-Master Red Ring Lens PRO** with the signature **red ring.** The key upgrade is the throw ratio: **0.98 to 2.0×** (extended to **2.1×** with firmware 1.0.99). This is a genuine full-range zoom. For once, you don't need to buy a separate long-throw lens or rule out this projector because your room is longer than a closet. Finally, manufacturers remembered that home theater enthusiasts with normal rooms exist.
 
-<div class="note">X-Master Red Ring Lens PRO is exclusive for the Pro and Max variants — the base model gets a simpler lens in terms of glass quality</div>
+<div class="note">X-Master Red Ring Lens PRO is exclusive for the Pro and Max variants — the base model gets a simpler lens in terms of glass quality and coatings</div>
 
 **Lens shift** is also available on both horizontal and vertical axes, which makes installation dramatically more flexible. The front element is covered by a protective glass plate with the **IMAX** **Enhanced** logo in gold (the Pro version gets a silver logo). Below the lens there are sensors for automatic focus, ambient light detection for auto-brightness, and a human presence sensor that dims the laser if someone walks in front of the beam. All of these can be turned off in the menu.
 
@@ -194,7 +193,7 @@ One more important hardware note: the TNM uses a **dual iris setup**. This isn't
 
 **Lens Memory**
 
-The long‑awaited lens memory function **arrived with beta firmware 1.2.36**. For owners of CinemaScope screens and anamorphic lenses, this is a genuinely useful addition that makes switching between aspect ratios a practical, one‑button operation rather than a tedious manual recalibration. Even users with standard 16:9 screens will find value here: effectively eliminating black bars without cropping the picture.
+The long‑awaited lens memory function **arrived with beta firmware 1.2.36**. For owners of CinemaScope screens and anamorphic lenses, this is a genuinely useful addition that makes switching between aspect ratios a practical, one‑button operation rather than a tedious manual recalibration. Even users with standard 16:9 screens will find value here: it effectively eliminates black bars without cropping the picture.
 
 ![](/uploads/pic4-tnm-review-by_it_2026-06-15_20_29_37.743234.webp)
 
@@ -206,7 +205,7 @@ Both of these are firmware‑correctable, and given how actively XGIMI has been 
 
 I tested the lens with a laser level against the screen edge. Even at maximum shift and minimum zoom, the lines stayed dead straight. **No barrel distortion**, no waviness, nothing like what we've seen from some competitors. There's a very minor deviation near the center of the image, but it's negligible. Geometry is solid.
 
-Measured lens shift falls short of the advertised range — I measured only half of the claims: **65%** of the horizontal and about **25%** of the vertical. The vertical number is particularly conservative because the mechanism appears to prioritize optical centering over extreme offset. Even so, this is still substantially more shift than any direct competitor provides, and it makes installation in real rooms far more forgiving than fixed-throw alternatives. Just don't plan your mount location using the brochure figures alone.
+Measured lens shift falls short of the advertised range — the actual shift came in at roughly half the advertised spec: **65%** of the horizontal and about **25%** of the vertical. The vertical number is particularly conservative because the mechanism appears to prioritize optical centering over extreme offset. Even so, this is still substantially more shift than any direct competitor provides, and it makes installation in real rooms far more forgiving than fixed-throw alternatives. Just don't plan your mount location using the brochure figures alone.
 
 One usability gripe: the zoom and shift adjustments use steps that are too large. Sometimes it's hard to nail the sweet spot with such coarse control. XGIMI has indicated in community feedback that finer steps are being considered for a future firmware update. Also, there's some light spilling from the lens onto the floor and ceiling. If you have a light-coloured ceiling and the projector is mounted fairly close, the scattered light can subtly lift the room's ambient level in very dark scenes. Not a deal-breaker, but worth mentioning.
 
@@ -232,7 +231,7 @@ Lens sharpness is excellent — among the best I've seen in this category. No si
 
 ## White Field Uniformity
 
-My sample has some uniformity issues out of the box. The left edge leans pink, and the upper right corner has a greenish cast. It's visible on a white field without squinting.
+My beta sample has some uniformity issues out of the box. The left edge leans pink, and the upper right corner has a greenish cast. It's visible on a white field without squinting.
 
 But uniformity is heavily dependent on zoom position, lens shift, iris setting, and even warm-up. The worst uniformity on my unit is at the extreme max zoom end (**2.1×** zoom). At around **1.3×** zoom with a small amount of horizontal lens shift, the uniformity cleans up dramatically and becomes nearly perfect.
 
@@ -250,7 +249,7 @@ If you want to eliminate speckle entirely, the right screen choice is the most r
 
 ## Brightness & Contrast Measurements
 
-What follows is a detailed breakdown of the Titan Noir Max’s brightness and contrast behaviour across its entire zoom and iris range. All measurements were taken with a calibrated lux meter (NIST-certified), mounted on a tripod. To minimize stray reflections, I used a velvet tube — velvet both inside and outside. The sensor was always fully illuminated, and the angle was chosen so no shadows fell inside the tube. Black level never dropped below 2 lux even in the darkest, most aggressive modes, and was usually well above that. Unless stated otherwise, the projector was set to I**SF Night** / **D65** or **Movie**. All readings were taken within 90 seconds of pattern display to avoid laser throttle effects.
+What follows is a detailed breakdown of the Titan Noir Max’s brightness and contrast behaviour across its entire zoom and iris range. All measurements were taken with a calibrated lux meter (NIST-certified), mounted on a tripod. To minimize stray reflections, I used a velvet tube — velvet both inside and outside. The sensor was always fully illuminated, and the angle was chosen so no shadows fell inside the tube. Black level never dropped below 2 lux even in the darkest, most aggressive modes, and was usually well above that. Unless stated otherwise, the projector was set to **ISF Night** / **D65** or **Movie**. All readings were taken within 90 seconds of pattern display to avoid laser throttle effects.
 
 <div class="gallery"><figure><img src="/uploads/img_2627.jpg" alt=""></figure><figure><img src="/uploads/img_2637.jpg" alt=""></figure></div>
 
@@ -268,7 +267,7 @@ The TNM offers multiple brightness modes that trade output for color accuracy. H
 
 **Laser 10+** pushes the laser to maximum while trying to keep the color balance within tolerable limits. Brightness is almost the same as the base TITAN at this laser level. I wouldn't call it accurate — colors shift noticeably, and the gamut drops below Rec.709. But it has practical uses: backyard movie nights, presentations, bars, ambient viewing. If accuracy doesn't matter and you need every last lumen, it's usable.
 
-**Laser 10** is the maximum brightness at the standard mode. The brightness is adjustable, though not at every iris setting.
+**Laser 10** is the maximum brightness in standard mode. The brightness is adjustable, though not at every iris setting.
 
 <div class="note">Important: all brightness measurements were taken with the lens centered. Using lens shift can reduce brightness by 3–10%.</div>
 
@@ -276,7 +275,7 @@ Brightness was sampled with a 9‑point average across all whole‑number zoom s
 
 <div class="chart-section" id="chart-brightness"></div>
 
-First, the **2.1×** max zoom (wide-angle) position is an outlier. At this zoom, stepping down the iris produces a much steeper reduction in light output than at any other throw ratio. **F5.5** and **F7.0** at **2.1×** are the dimmest settings in the entire matrix — nearly 30% below the same apertures at **2.0×**. The most plausible explanation is that at **2.1×**, the both post‑laser and lens irises are fully closed position to maintain contrast. The result is a very dark, very high‑contrast mode that comes with its own set of uniformity penalties (more on that later). Other zoom positions show a more uniform, gradual brightness reduction as expected.
+First, the **2.1×** max zoom (wide-angle) position is an outlier. At this zoom, stepping down the iris produces a much steeper reduction in light output than at any other throw ratio. **F5.5** and **F7.0** at **2.1×** are the dimmest settings in the entire matrix — nearly 30% below the same apertures at **2.0×**. The most plausible explanation is that at **2.1×**, both the post-laser and lens irises are in their fully closed positions to maintain contrast. The result is a very dark, very high‑contrast mode that comes with its own set of uniformity penalties (more on that later). Other zoom positions show a more uniform, gradual brightness reduction as expected.
 
 Second, a distinct brightness spike appears between **1.2×** and **1.3×** zoom. At this throw ratio, the iris combination suddenly lets through more light — up to 10–15% more than at adjacent zoom positions for the same F‑stop. This is not a gradual trend; it’s a sharp local maximum. As we’ll see in the contrast section, this spike coincides with a significant drop in native contrast, and it points to a transition point in the dual‑iris control algorithm.
 
@@ -301,11 +300,11 @@ The headline figure is **8 650:1**, achieved at **2.1×** zoom with the **F7.0
 
 <div class="gallery"><figure><img src="/uploads/img_2602.jpg" alt="Uniformity at 2.1× zoom"><figcaption>Uniformity at 2.1× zoom</figcaption></figure><figure><img src="/uploads/img_2603.jpg" alt="Green borderline at the bottom"><figcaption>Green borderline at the bottom</figcaption></figure></div>
 
-Ignoring the extreme wide-angle (2.1×) position, the practical contrast range across the usable zoom range is **5 000–6 500:1**. That is a realistic, repeatable figure, and it places the TNM at the top of the current 0.47″ DLP field — but it’s not the **8 000–10 000:1** some early reports suggested for typical configurations.
+Ignoring the extreme wide-angle (2.1×) position, the practical contrast range across the usable zoom range is **5 000–6 500:1**. That is a realistic, repeatable figure, and it places the TNM among the best in the current 0.47″ DLP field — but it’s not the **8 000–10 000:1** some early reports suggested for typical configurations.
 
 The now‑familiar brightness spike at **1.2–1.3×** zoom is accompanied by a sharp contrast dip of roughly 15–20% for the affected iris settings. This is the dual‑iris handover point. At shorter throw distances, the post‑laser iris does most of the contrast work while the lens iris stays relatively open. As you move toward the tele end, the post‑laser iris gradually opens to maintain brightness; around **1.2–1.3×**, it reaches its fully open state, and the lens iris takes over as the primary contrast control. The transition creates a local maximum in brightness and a local minimum in contrast. Once the lens iris is fully in command, contrast recovers and continues to climb toward the tele end.
 
-**F7.0**’s behaviour is particularly interesting: it doesn’t simply get better as you zoom in. It peaks early (at **2.1×**), dips in the mid‑range as the iris interplay changes, and then rises again. The dual‑iris system is not a simple linear mechanism; it’s a coordinated dance that responds to both throw distance and the user’s iris setting.
+**F7.0**’s behaviour is particularly interesting: it doesn’t simply get better as you zoom in. It peaks at maximum zoom (**2.1×**), drops in the mid-range as the iris interplay changes, then rises again. The dual‑iris system is not a simple linear mechanism; it’s a coordinated dance that responds to both throw distance and the user’s iris setting.
 
 One of the most practical findings is that **F4.0** can, at several zoom positions, deliver the same native contrast as **F5.5** while providing roughly 30% more brightness (~**2 700 lm** vs ~**2 050 lm**). For anyone trying to balance black level with screen size, this is a powerful tool — you don’t have to sacrifice as much light as the aperture numbering might suggest.
 
@@ -345,9 +344,11 @@ What’s important is that the TNM can sustain over **4 000:1** at 5% ADL in i
 
 The TNM’s dynamic iris operates independently of DBLE. This is a deliberate design choice and a welcome one: you can engage the dynamic iris without laser dimming, or use DBLE on its own, or combine both. This separation gives the user meaningful control and stands in contrast to integrated systems like **SAE** on the **Nexigo**, where the two mechanisms are tied together with no per‑component adjustment.
 
-At present, the dynamic iris works in a range roughly equivalent to **F4.0–F5.0** when compared to the manual iris settings. However, it is notably brighter across most content than either of those static modes at a comparable on/off contrast. The reason is that the iris does not sit at a fixed position; it opens and closes continuously in response to scene brightness. The trade‑off is that the dynamic iris never opens fully — the first iris, positioned after the laser, appears to remain partially closed at all times, while the second iris in the lens handles the real‑time movement. This means you cannot achieve the projector’s maximum possible brightness with the dynamic iris active. It is a conscious limitation that prioritises contrast over raw output.
+At present, the dynamic iris works in a range roughly equivalent to **F4.0–F5.5** when compared to the manual iris settings. However, it is notably brighter across most content than either of those static modes at a comparable on/off contrast. The reason is that the iris does not sit at a fixed position; it opens and closes continuously in response to scene brightness. The trade‑off is that the dynamic iris never opens fully — the first iris, positioned after the laser, appears to remain partially closed at all times, while the second iris in the lens handles the real‑time movement. This means you cannot achieve the projector’s maximum possible brightness with the dynamic iris active. It is a conscious limitation that prioritises contrast over raw output.
 
-The more important consequence concerns intra‑scene contrast. When the lens iris opens during a bright scene, the intra-scene contrast drops — and it drops quickly. At around 1–2% ADL, the contrast falls nearly to the level of the static **F2.0** mode. So while the dynamic iris delivers on/off figures comparable to **F4.0**–**F5.0** in dark scenes, the real mixed‑brightness contrast is noticeably lower than what a truly static **F4.0** or **F5.5** would provide. This is not unique to the TNM — it is inherent almost to any dynamic iris that adjusts on a per‑frame basis, but it is worth understanding if you are trying to extract the maximum intra‑scene performance.
+The more important consequence concerns intra‑scene contrast. When the lens iris opens during a bright scene, the intra-scene contrast drops and it drops quickly. Between 2–5% ADL, the contrast falls nearly to the level of the static **F2.0** mode. So while the dynamic iris delivers on/off figures comparable to **F4.0**–**F5.5** in dark scenes, the real mixed‑brightness contrast is noticeably lower than what a truly static **F4.0** or **F5.5** would provide. This is not unique to the TNM — it is inherent to almost any dynamic iris that adjusts on a per‑frame basis, but it is worth understanding if you are trying to extract the maximum intra‑scene performance.
+
+<div id="chart-dynIris" class="chart-section"></div>
 
 Looking ahead, a **darker version of the dynamic iris would be a valuable addition**. A mode that operates in the **F5.5–F7.0** range would target owners of small to medium screens who prioritise contrast above all else. In such a configuration, the loss of intra‑scene contrast when the iris opens would be far less pronounced, while the brightness gain compared to running static **F7.0** would still be significant. It would make the dynamic iris genuinely useful for the contrast‑focused audience. Given the hardware is already capable of that range in manual mode, the ask is purely a firmware adjustment and one that would substantially broaden the TNM’s appeal.
 
@@ -365,7 +366,7 @@ If I had to sum up the TNM’s contrast personality in one line: it is a native 
 
 Power draw on the TNM is variable. It starts around 180W depending on iris position and climbs above **200W** in normal use. The actual draw shifts with warm-up time, projector temperature, ambient temperature, selected mode, and whether High Altitude mode is active.
 
-Laser levels scale cleanly and nearly linearly — from **87.8W** at Laser 1 up to **214.2W** at Laser 10. Each step adds roughly **12–15W**. Iris position at the same laser level has surprisingly little effect: **F2.0** through Dynamic all sit within a **19W** window at Laser 10, with the closed **F7.0** aperture actually drawing the least (**202.3W**). The TNM actively limits the laser power to control the thermal load on the iris mechanism and the entire optical path
+Laser levels scale cleanly and nearly linearly — from **87.8W** at Laser 1 up to **214.2W** at Laser 10. Each step adds roughly **12–15W**. Iris position at the same laser level has surprisingly little effect: **F2.0** through Dynamic all sit within a **19W** window at Laser 10, with the closed **F7.0** aperture actually drawing the least (**202.3W**). The TNM actively limits the laser power to control the thermal load on the iris mechanism and the entire optical path. Notably, **F3.0** and **F4.0** draw slightly more than neighbouring positions — apparently because the partially closed post-laser iris offloads work from the lens iris, allowing a bit more total power. The most power-hungry setting of all is the dynamic iris at **221.5W**.
 
 At the top end, Performance mode hits **343W** and the fan becomes intrusive — this mode exists to win lumen benchmarks, not for actual viewing. The fact that the **360W** power brick and cooling system were engineered to survive Performance mode means Laser 10 runs comfortably within headroom, which likely explains the near-silent operation at standard brightness.
 
@@ -385,15 +386,15 @@ On the original firmware builds (1.0.56 and 1.0.99), DBLE was effectively non-fu
 
 The 1.2.36 beta changes that. A great deal has moved forward here, and this section evaluates that newer, far more capable version of DBLE.
 
-**Full black: phenomenal.** On a fully black field the result is spectacular. The projector dumps the laser to its physical limit to stop emitting almost entirely — **on/off** contrast climbs past advertised **100,000:1**, with a subjective effect very close to a full-field-to-black (FFTB) dynamic. The laser is barely lit, the image falls to a deep, clean black. This is the hardware showing what it can do when the firmware lets it.
+**Full black: phenomenal.** On a fully black field the result is spectacular. The projector dumps the laser to its physical limit to stop emitting almost entirely — **on/off** contrast climbs past advertised **100,000:1**, with a subjective effect very close to a full-field-to-black (FFTB) dynamic. The laser is barely lit, the room plunges into near-total darkness. This is the hardware showing what it can do when the firmware lets it.
 
-**Real scenes: a different story.** Where DBLE actually engages on real content, the quality is excellent — minimal clipping, almost no color shift, a clean picture. Color shift does appear in rare moments, but it's easily corrected with a dedicated setting already present in the projector's menu — a real plus that not all implementations can claim. If you treat the current behavior as a baseline "Low" mode, the implementation is good and the feature is ready for a first public retail firmware. What it needs is work on reaction speed and, further out, more aggressive modes that aren't afraid to manipulate gamma at higher luminance. Those would pull far more real contrast from this hardware and let DBLE work across many more scenes.
+**Real scenes: a different story.** Where DBLE actually engages on real content, the quality is excellent — minimal clipping, almost no color shift, a clean picture. Color shift does appear in rare moments, but it's easily corrected with a dedicated setting already present in the projector's menu — a real plus that not all implementations can claim. If you treat the current behavior as a baseline "Low" mode, the implementation is good and the feature is ready for a first public retail firmware. What it needs is work on reaction speed and, further out, more aggressive modes that aren't afraid to manipulate gamma at higher ADL. Those would pull far more real contrast from this hardware and let DBLE work across many more scenes.
 
 <div class="ba-compare" data-before="/images/tnm/dble-off.jpg" data-after="/images/tnm/dble-on.jpg" data-label-before="DBLE Off" data-label-after="DBLE On" data-caption="DBLE Off vs On — Firmware 1.2.36"></div>
 
 ### What DBLE actually responds to
 
-An important detail that shapes everything below: DBLE does not respond to average scene luminance (ADL). It responds to a **peak luminance threshold** — the brightest pixel or bright region in the frame. If that peak crosses the threshold, the system disengages, regardless of how dark the rest of the image is. If the peak stays below it, the system can engage even at quite high average brightness.
+DBLE does not respond to average scene luminance (ADL). It responds to a **peak luminance threshold** — the brightest pixel or bright region in the frame. If that peak crosses the threshold, the system disengages, regardless of how dark the rest of the image is. If the peak stays below it, the system can engage even at quite high average brightness.
 
 This matters in practice. A very dark scene with a single bright lamp in frame — DBLE off. A moderately bright, uniformly lit scene with no highlights — DBLE on. The system's natural territory is not "dark scenes" in the intuitive sense; it is **content with a compressed, uniform brightness range and no specular peaks**.
 
@@ -413,13 +414,13 @@ The effectiveness analysis was conducted by separately measuring laser dimming a
 
 The contrast gain comes from two mechanisms working together: laser dimming and a dynamic gamma boost.
 
-On real content in viewing-appropriate modes, the laser can dim on average around **3.5×**. But the contrast multiplier can run *higher* in theory than that, because gamma is doing work alongside it. DBLE uses the headroom that calibrated content leaves between the displayed white point and the laser's physical ceiling to push highlights *above* their DBLE-off level — lifting the bright end rather than only lowering the dark end. The gap between black and white widens from both sides.
+On real content in viewing-appropriate modes, the laser can dim by around **3.5×**. But the contrast multiplier can run *higher* in theory than that, because gamma is doing work alongside it. DBLE uses the headroom that calibrated content leaves between the displayed white point and the laser's physical ceiling to push highlights *above* their DBLE-off level — lifting the bright end rather than only lowering the dark end. The gap between black and white widens from both sides.
 
 With the iris held static, the effective formula is:
 
 **multiplier = laser dimming × highlight compensation via gamma**
 
-This is measurable. On a 0.065% ADL scene, enabling DBLE raised the absolute brightness of highlights above the baseline — not reduced it. The lux meter read above what dimming alone would predict, confirming the gamma contribution at low APL.
+This is measurable. On a 0.065% ADL scene, enabling DBLE raised the absolute brightness of highlights above the baseline — not reduced it. The lux meter read above what dimming alone would predict, confirming the gamma contribution at low ADL.
 
 The key consequence: more aggressive gamma manipulation can yield a higher multiplier on real scenes at the same laser dimming level. That headroom is exactly what future Medium/High modes should exploit — accept some highlight clipping, manipulate gamma harder, and the projector returns far more real contrast across far more content.
 
@@ -427,7 +428,7 @@ Perceptually, the **5–7×** range punches above its measured value. The eye ev
 
 ### Speed
 
-Reaction speed is one of the core problems. The mechanism enters and exits dimming slowly. That sluggishness has a real upside — it suppresses flicker — but the cost is that it filters out a large number of scenes where DBLE could otherwise be working.
+Reaction speed is one of the core problems. The mechanism enters and exits dimming slowly. It behaves more like old lamp-projector dimming than a laser projector. That sluggishness has one real upside — it suppresses flicker — but the cost is that it filters out a large number of scenes where DBLE could otherwise be working.
 
 It isn't slow everywhere. The transition from a dark scene into a very bright one is almost instant and well-executed, with almost no clipping in those moments. The problem is the other direction: transitions into mid-brightness scenes are smooth but laggy, and the ramp into dark scenes is slow enough that brief dark moments come and go before the laser has fully responded.
 
@@ -439,7 +440,7 @@ The limiting factor is architecture, not hardware: a binary, conservative engage
 
 The fix is a firmware decision. Replace the hard cutoff with a continuous curve — dim aggressively at low luminance peaks, then reduce the dimming factor progressively as peak brightness rises instead of dropping to zero. Tighten the reaction speed so dark scenes engage promptly without reintroducing pumping. Layer **Low/Medium/High** modes on top, with higher modes accepting a little more highlight clipping in exchange for meaningful contrast across a wider range of content.
 
-**Summary.** Firmware 1.2.36 turns DBLE from a non-functional placeholder into a genuinely working dynamic system. Full-black performance is phenomenal. Where it engages on real content — especially tonally compressed, uniform material — the result is outstanding, with minimal artifacts and a color-shift correction that's one menu toggle away. As a first retail-ready baseline it's a strong "Low" mode. The work that remains is speed and a smoother, more aggressive engagement model — and the hardware is comfortably capable of all of it.
+**Summary.** Firmware 1.2.36 turns DBLE from a non-functional placeholder into a genuinely working dynamic system. Full-black performance is phenomenal. Where it engages on real content — especially tonally compressed, uniform material — the result is outstanding, with minimal artifacts and a color-shift correction that's one menu toggle away. As a first retail-ready baseline it's a strong "Low" mode. The work that remains is speed and a smoother, more dynamic engagement model — and the hardware is comfortably capable of all of it.
 
 ## Dynamic Tone Mapping (DTM)
 
@@ -447,33 +448,33 @@ The TNM’s onboard dynamic tone mapping is, in its current form, a genuinely ef
 
 The default values, unfortunately, are not optimal, even when the correct diagonal and gain figures for a given screen are entered. Spending fifteen minutes experimenting with these two parameters transforms the picture. A carefully tuned DTM curve brings real punch to specular highlights, keeps shadow detail visible without grey‑out, and preserves strong colour saturation in mixed‑brightness scenes. The difference between a default‑settings DTM and a manually adjusted one is substantial, and the projector rewards the effort.
 
-Looking ahead, the presence of the **X‑Vision** FPGA creates significant headroom for improvement. A custom tone‑mapping engine running on dedicated programmable logic could, in principle, offer per‑scene or even per‑frame analysis far beyond what the MediaTek SoC provides. Whether XGIMI pursues this path is an open question, but the hardware is already in place. For now, DTM on the TNM is a very capable implementation that needs a bit of user effort to unlock its full potential.
+Looking ahead, the presence of the **X‑Vision** FPGA creates significant headroom for improvement. A custom tone‑mapping engine running on dedicated programmable logic could, in principle, offer per‑scene or even per‑frame analysis far beyond what the MediaTek SoC provides — potentially approaching the quality of external processors like Lumagen. Whether XGIMI pursues this path is an open question, but the hardware is already in place. For now, DTM on the TNM is a very capable implementation that needs a bit of user effort to unlock its full potential.
 
 ## Anti-RBE
 
 ![](/uploads/screenshot-2026-06-16-00-08-25.webp)
 
-RBE (Rainbow Effect) is an inherent characteristic of single-chip DLP projectors. When the laser colour sequence transitions, some viewers can detect brief flashes of red-blue-green fringing on high-contrast edges. **Anti-RBE** systems suppress this by shortening the visible portion of each colour transition.
+RBE (Rainbow Effect) is an inherent characteristic of single-chip DLP projectors. When the laser colour sequence transitions, some viewers can detect brief flashes of red-blue-green fringing on high-contrast edges. **Anti-RBE** systems suppress this by increasing the laser pulse rate and shortening the visible portion of each colour transition.
 
 I've been thoroughly testing the **anti-RBE** implementations across three generations of firmware: the original 1.0.56, followed by 1.0.99, and now the current beta 1.2.36. Each has presented a distinct experience.
 
 **Firmware 1.0.56: The Champion of Suppression**
 
-The initial 1.0.56 firmware proved to be the most effective at RBE suppression. While it introduced noticeable heavy dithering, its ability to reduce the rainbow effect was the best I've seen on the TNM. The pulsation rate across all colors was approximately **12×**, providing a significantly smoother visual — very close to the **Valerion** **Max** implementation.
+The initial 1.0.56 firmware proved to be the most effective at RBE suppression. While it introduced noticeably heavy dithering, its ability to reduce the rainbow effect was the best I've seen on the TNM. The pulsation rate across all colors was approximately **12×**, providing a significantly smoother visual — very close to the **Valerion** **Max** implementation.
 
 **Firmware 1.0.99: A Step Back in Effectiveness**
 
-With the update to 1.0.99, dithering became much less intrusive. However, this came at the cost of **anti-RBE** effectiveness, which noticeably dropped. The pulse rate fell to **8×**, making rainbows easier to spot — similar to the **8×** pulsation rate observed on Aetherion models.
+With the update to 1.0.99, dithering became much less intrusive, but banding appeared. This came at the cost of **anti-RBE** effectiveness, which noticeably dropped. The pulse rate fell to **8×**, making rainbows easier to spot — similar to the **8×** pulsation rate observed on Aetherion models.
 
 **Firmware 1.2.36: Polished but Not Peak Performance**
 
 The current beta introduces a split into **Standard** and **Enhanced** modes. Standard is cleaner than 1.0.99, with even less dithering and banding, but still doesn't match the raw suppression of 1.0.56. Enhanced, unfortunately, adds nothing meaningful in terms of RBE reduction and introduces some yellow/light-green segment artifacts when quickly moving your eyes. Standard maintains an 8× pulsation rate; Enhanced reaches **12×**, though not across all colors.
 
-The ultimate sweet spot for XGIMI would be a hybrid mode: the aggressive **12×** pulse rate of 1.0.56 combined with the clean dithering algorithms of 1.2.36 Standard. Further tuning is absolutely necessary, especially for Enhanced mode.
+The ultimate sweet spot for XGIMI would be a hybrid mode: the aggressive **12×** pulse rate of 1.0.56 combined with the clean dithering and banding suppression of 1.2.36 Standard. Further tuning is absolutely necessary, especially for Enhanced mode.
 
-It's also important to understand that until native **24 Hz** and **23.976 Hz** modes arrive — which reduce the XPR-Shift frequency — we won't be able to fully evaluate the true effectiveness of anti-RBE in those modes. In the **Valerion** **Pro2**/**Max**, the XPR-Shift frequency and laser pulsation were both lowered in **24p**, highlighting another reason why further improvements are necessary.
+One more caveat: until native **24 Hz** and **23.976 Hz** modes arrive — which lower the XPR-Shift frequency — we can't fully evaluate anti-RBE effectiveness in those modes. In the **Valerion** **Pro2**/**Max**, the XPR-Shift frequency and laser pulsation were both lowered in **24p**, highlighting another reason why further improvements are necessary.
 
-Overall, the current Standard mode implementation is an excellent start for the first public retail firmware versions of the Titan Noir series. But further improvement and polishing of all modes are essential.
+The current Standard mode is a solid starting point for the first public retail firmware. Further tuning is necessary, especially for Enhanced.
 
 ### Anti-RBE's Acoustic Footprint
 
@@ -483,11 +484,9 @@ One area where the TNM genuinely impresses is its acoustic performance around th
 
 If you look closely at the real-time frequency analysis (RTA) spectrum:
 
-* Enabling Anti-RBE merely causes a subtle shift in the low-frequency acoustic signature, hovering around the 100–300 Hz range. It’s a minor tonal shift under electronic load that completely disappears into the ambient room floor.
+* Enabling Anti-RBE merely causes a subtle shift in the low-frequency acoustic signature, hovering around the 100–300 Hz range. It’s a minor tonal shift under electronic load that completely disappears into the ambient noise floor.
 * It introduces absolutely no sharp, screeching spikes in the upper frequencies.
-* The distinct high-frequency spikes visible on the graphs are completely static—they remain identical across *all*operating modes. This allows us to confidently deduce that this specific acoustic hum is generated by the physical actuator of the 4K XPR-Shift hardware itself, rather than the electronic pulse-width modulation of the lasers.
-
-
+* The distinct high-frequency spikes visible on the graphs are completely static—they remain identical across *all* operating modes. This allows us to confidently deduce that this specific acoustic hum is generated by the physical actuator of the 4K XPR-Shift hardware itself, rather than the electronic pulse-width modulation of the lasers.
 
 ## Image Enhancers
 
@@ -499,7 +498,7 @@ There are four enhancers in the menu.
 
 **AI Contrast** tries to add depth by boosting contrast around bright/dark transitions, with some light sharpening thrown in. The idea is solid, but it's way too aggressive. It frequently makes the image look flatter by raising shadow detail too much, or gives it that overprocessed "cooked" look. On a Low setting this could be usable, but right now it's all or nothing. It needs a slider or multiple levels.
 
-**Dynamic Contrast** only manipulates the gamma curve of the entire image. In bright scenes it raises gamma, in dark scenes it lowers it, trying to pull out a bit more detail. Being a global adjustment, it doesn't introduce the same kind of localized artifacts as the others, but the effect is still heavy-handed. Honestly, it's a bit strange that in 2026 a projector at this level does dynamic gamma manipulation worse than what old Oppo players were doing years ago on QDEO processors. You'd hope this could be improved on the FPGA, though it's possible the processing is baked into the MediaTek SoC and XGIMI can't do much about it. Hard to say without more info.
+**Dynamic Contrast** only manipulates the gamma curve of the entire image. In bright scenes it raises gamma, in dark scenes it lowers it, trying to pull out a bit more detail. Being a global adjustment, it doesn't introduce the same kind of localized artifacts as the others, but the effect is still heavy-handed. Honestly, it's a bit strange that in 2026 a projector at this level does dynamic gamma manipulation worse than what old Oppo players were doing years ago with QDEO processors. You'd hope this could be improved on the FPGA, though it's possible the processing is baked into the MediaTek SoC and XGIMI can't do much about it. Hard to say without more info.
 
 **Local Contrast** has three fixed strengths — Weak, Middle, High. It also manipulates gamma, but works in a more localized way than Dynamic Contrast. It still tends to lift shadow detail too aggressively, especially on High. Same comment applies as with Dynamic Contrast: we had better gamma processing in dedicated video chips a decade ago. Weak is actually borderline usable — the one mode that doesn't immediately make me want to turn it off.
 
@@ -531,7 +530,7 @@ Two other design decisions help considerably. First, the external power supply. 
 
 **High Altitude** mode spins the fans faster to compensate for thinner air, but it does not push the projector into objectionable territory. The character of the sound changes — you can hear a shift in the fan frequency but the absolute level remains manageable and still quieter than many projectors at their default settings.
 
-Notably, enabling **anti‑RBE** does not introduce any additional acoustic penalty. There is no high‑frequency whine or change in fan behaviour tied to the RBE reduction itself; a more detailed spectral analysis is available in the **Anti‑RBE** section of this review.
+Enabling **anti‑RBE** does not introduce any additional acoustic penalty. There is no high‑frequency whine or change in fan behaviour tied to the RBE reduction itself; a more detailed spectral analysis is available in the **Anti‑RBE** section of this review.
 
 <figure><img src="/uploads/screenshot-2026-06-14-14-50-12.jpg" alt="Noise frequency spectrum — fan profile measured at 50 cm"><figcaption>Noise frequency spectrum — fan profile measured at 50 cm via UMIK-1.</figcaption></figure>
 
@@ -539,7 +538,7 @@ For a bedroom installation or late‑night viewing where silence is non‑negoti
 
 ## Artifacts
 
-**Rolling buffer.** The most significant artifact on the TNM is rolling buffer — a direct consequence of how the **DLPC8455** writes pixels. Instead of updating the entire frame at once, it scans from top to bottom row by row. On static content this is invisible. On fast-moving high-contrast edges it produces a rolling-shutter-like distortion: the top of a moving edge renders differently from the bottom. This is hardware-level behaviour. It can't be eliminated by settings. Turning off XPR-Shift doesn't help — the artifact persists even without the shift overlay, which is unexpected. **Anti-RBE** partially reduces the visible effect. A firmware fix is theoretically possible and XGIMI is aware of it. The practical impact is real: this is a step backward in motion quality compared to the previous DLPC generation.
+**Rolling buffer.** The most significant artifact on the TNM is rolling buffer — a direct consequence of how the **DLPC8455** writes pixels. Instead of updating the entire frame at once, it scans from top to bottom row by row. On static content this is invisible. On fast-moving high-contrast edges it produces a rolling-shutter-like distortion: the top of a moving edge renders differently from the bottom. This is hardware-level behaviour. It can't be eliminated by settings. Turning off XPR-Shift doesn't help — the artifact persists even without the shift overlay, which is unexpected. **Anti-RBE** partially reduces the visible effect. A firmware fix in 1080p mode is theoretically possible and XGIMI is aware of it. The practical impact is real: this is a step backward in motion quality compared to the previous DLPC generation.
 
 <details class="spoiler"><summary>Show example</summary>
 
@@ -607,7 +606,7 @@ The hardware is there. The software isn't. Game Mode today means locked picture 
 
 If you try to game in any of the standard picture profiles, you are going to notice a heavy, sluggish delay: input lag sits right in the unplayable **100ms** range.
 
-However, switching to GameMode transforms the experience: average latency drops to approximately **16ms** at 4K/60 and as low as **4ms** at **1080p/240 Hz**. The **1080p/240 H**z figure in particular places the TNM among the fastest projectors available.
+However, switching to GameMode transforms the experience: average latency drops to approximately **16ms** at 4K/60 and as low as **4ms** at **1080p/240 Hz**. The **1080p/240 Hz** figure in particular places the TNM among the fastest projectors available.
 
 The **DLPC8455** controller draws pixels line by line from top to bottom. This means latency is lowest at the top of the screen (up to **1ms**) and rises toward the bottom, where it is similar to older controllers. The average latency is lower overall, which is a genuine improvement, but the trade-off is the rolling buffer, and in gaming this is especially relevant. Fast camera pans with high-contrast edges (a bright object moving across a dark background, for example) can reveal the RBE-like artefacts. Whether the latency benefit outweighs the motion penalty will depend on the types of games played and individual sensitivity.
 
@@ -615,7 +614,7 @@ The **DLPC8455** controller draws pixels line by line from top to bottom. This m
 
 In terms of pure motion clarity, the TNM behaves as expected from a fast DLP. At **1080p/120** and particularly **1080p/240**, the improvement in fluidity and motion resolution is immediate if the source can deliver real frames at those rates. For high-resolution gaming, **4K/60** with this reference-grade glass lens is an excellent experience, offering the sharpness and crisp detail needed for slower, cinematic titles.
 
-It is also worth noting that the projector accepts a **4K/120 Hz** input signal, but it outputs it at **4K/60 Hz** by dropping every other frame (a hardware ceiling). The upside to feeding it a **120 Hz** signal anyway? It shaves even more fractions of a millisecond off the overall input latency, making controls feel even tighter.
+The projector also accepts a **4K/120 Hz** input signal, but outputs it at **4K/60 Hz** by dropping every other frame (a hardware ceiling). The upside to feeding it a **120 Hz** signal anyway? It shaves even more fractions of a millisecond off the overall input latency, making controls feel even tighter.
 
 It also supports **VRR** and **AMD** **FreeSync** **Premium** in **1080p** mode, which is genuinely good for competitive gamers, along with widescreen 21:9 scope gaming.
 
@@ -641,7 +640,7 @@ None of these modes are anywhere near reference color accuracy. They aggressivel
 
 **The Verdict on Gaming**
 
-The raw specs are there — sub-**5ms** at 1080p/240, 4:4:4, VRR. Once the calibration gets unlocked and the rolling buffer is properly addressed, this will be genuinely great for gaming. Right now it's 70% of the way there, and XGIMI is actively working on the remaining 30%.
+The raw specs are there — sub-**5ms** at 1080p/240, 4:4:4, VRR. Once the calibration gets unlocked and the rolling buffer in 1080p mode is properly addressed, this will be genuinely great for gaming. Right now it's 70% of the way there, and XGIMI is actively working on the remaining 30%.
 
 ## Motion in Movies
 
@@ -669,7 +668,7 @@ The built-in MEMC motion interpolation itself is present but unremarkable. It be
 * **Judder & Pulldown Flaws:** Where this system stumbles — and it's a glaring blemish given the strength of the optics — is in its motion processing. The TNM fails to execute a native 5:5 cadence for **24p** stereoscopic files. Instead, it subjects cinematic content to a crude 3:2 pulldown routine to reach **60 Hz** before pushing it to the eyes, resulting in glaring judder. This stuttering is far more fatiguing in a 3D space, since your brain is already processing spatial depth.
 * **Lack of Triple-Flash Cadence:** The display drives its 3D presentation at a **120 Hz** refresh cycle (**Dual Flash**) rather than the premium **144 Hz** (**Triple Flash**) standard used by high-end legacy cinema gear. That **144 Hz** threshold on units like the **Lumis** was a massive differentiator, virtually wiping out peripheral flicker and allowing for hours of viewing without fatigue. While **120 Hz** gets the job done, it can't quite replicate the glassy smoothness of a true **144 Hz** cycle.
 * **Missing Dedicated RF Expansion:** If we are compiling a wishlist for future revisions, adding an external RF emitter port should be a priority. As solid as the DLP-Link implementation is on this machine, the technology remains inherently vulnerable to localized line-of-sight dropouts or environmental lighting interference. Incorporating a dedicated radio-frequency option would elevate a highly competent feature into a flawless, enthusiast-grade solution.
-* **Interpolation Gaps & Interface Hurdles:** Frame interpolation (MEMC) is entirely greyed out once stereoscopic rendering begins. Calculating motion vectors across dual video streams is admittedly resource-intensive, but given the custom FPGA silicon tucked inside this chassis, leaving it out feels like underutilized hardware capacity. Furthermore, the operational workflow has its share of friction: the display completely strips away automated 3D flag recognition, requiring you to dive into menus to select layout formats manually every single time. Additionally, your essential picture adjustments and laser illumination controls are completely padlocked while in this mode.
+* **Interpolation Gaps & Interface Hurdles:** Frame interpolation (MEMC) is entirely greyed out once stereoscopic rendering begins. Calculating motion vectors across dual video streams is admittedly resource-intensive, but given the custom FPGA silicon tucked inside this chassis, leaving it out feels like underutilized hardware capacity. On top of that, the projector strips out automatic 3D flag recognition entirely — you have to go into the menu and select the layout format by hand every single time. Picture controls and laser level are locked out in 3D mode as well.
 
 **The Verdict on 3D**
 
