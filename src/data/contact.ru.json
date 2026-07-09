@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "Контакты | SpykeVision",
+    "description": "Связаться со SpykeSIK: запросы на обзоры, исправления и вопросы от производителей."
+  },
+  "heading": "Контакты",
+  "card": {
+    "name": "SpykeVision",
+    "text": "Хотите прислать продукт на обзор или есть вопросы к опубликованным материалам? Пишите через форму или напрямую на AVS Forum.",
+    "activeLabel": "Активен на:",
+    "forumLabel": "AVS Forum → SpykeSIK ↗",
+    "forumUrl": "https://www.avsforum.com/members/spykesik.8223142/"
+  },
+  "form": {
+    "emailSubject": "Новое сообщение с сайта SpykeVision",
+    "nameLabel": "Ваше имя",
+    "namePlaceholder": "Имя",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email@example.com",
+    "subjectLabel": "Тема",
+    "subjectPlaceholder": "Запрос на обзор / исправление / другое",
+    "messageLabel": "Сообщение",
+    "messagePlaceholder": "Ваше сообщение...",
+    "submitLabel": "Отправить"
+  }
+}

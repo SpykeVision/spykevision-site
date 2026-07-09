@@ -1,48 +1,49 @@
 ---
 import Base from '../layouts/Base.astro';
+import c from '../data/contact.en.json';
 ---
 <Base
-  title="Contact | SpykeVision"
-  description="Get in touch with SpykeSIK: review requests, corrections and manufacturer inquiries."
+  title={c.meta.title}
+  description={c.meta.description}
   active="contact"
 >
   <main class="wrap">
     <div class="article-hero">
-      <h1>Contact</h1>
+      <h1>{c.heading}</h1>
     </div>
 
     <div class="contact-wrap">
       <div class="contact-card">
-        <p class="contact-name">SpykeVision</p>
-        <p class="contact-line">Want to submit a product for review or have questions about published content? Use the form or reach out directly on AVS Forum.</p>
+        <p class="contact-name">{c.card.name}</p>
+        <p class="contact-line">{c.card.text}</p>
         <div style="margin-top:20px">
-          <p class="contact-line" style="margin-bottom:8px;font-weight:600;opacity:1">Active on:</p>
-          <a href="https://www.avsforum.com/members/spykesik.8223142/" target="_blank" rel="noopener" class="contact-forum">AVS Forum → SpykeSIK ↗</a>
+          <p class="contact-line" style="margin-bottom:8px;font-weight:600;opacity:1">{c.card.activeLabel}</p>
+          <a href={c.card.forumUrl} target="_blank" rel="noopener" class="contact-forum">{c.card.forumLabel}</a>
         </div>
       </div>
 
       <form class="contact-form" id="contactForm">
         <input type="hidden" name="access_key" value="87fe1b0f-1e6d-4ddd-9dd7-dad928ae315b" />
-        <input type="hidden" name="subject" value="New message from SpykeVision contact form" />
+        <input type="hidden" name="subject" value={c.form.emailSubject} />
         <input type="hidden" name="from_name" value="SpykeVision website" />
         <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
         <div class="form-group">
-          <label>Your name</label>
-          <input type="text" name="name" placeholder="Name" required />
+          <label>{c.form.nameLabel}</label>
+          <input type="text" name="name" placeholder={c.form.namePlaceholder} required />
         </div>
         <div class="form-group">
-          <label>Your email</label>
-          <input type="email" name="email" placeholder="email@example.com" required />
+          <label>{c.form.emailLabel}</label>
+          <input type="email" name="email" placeholder={c.form.emailPlaceholder} required />
         </div>
         <div class="form-group">
-          <label>Subject</label>
-          <input type="text" name="topic" placeholder="Review request / correction / other" />
+          <label>{c.form.subjectLabel}</label>
+          <input type="text" name="topic" placeholder={c.form.subjectPlaceholder} />
         </div>
         <div class="form-group">
-          <label>Message</label>
-          <textarea name="message" placeholder="Your message..." rows="5" required></textarea>
+          <label>{c.form.messageLabel}</label>
+          <textarea name="message" placeholder={c.form.messagePlaceholder} rows="5" required></textarea>
         </div>
-        <button type="submit" class="btn">Send message</button>
+        <button type="submit" class="btn">{c.form.submitLabel}</button>
         <p class="form-status" id="formStatus" aria-live="polite"></p>
       </form>
     </div>

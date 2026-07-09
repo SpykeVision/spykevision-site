@@ -1,36 +1,19 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getEntry } from 'astro:content';
+
+const page = await getEntry('pages', 'privacy-en');
+const { Content } = await page.render();
 ---
-<Base
-  title="Privacy Policy | SpykeVision"
-  description="How SpykeVision handles your data — analytics, comments, and nothing else."
-  active=""
->
+<Base title={page.data.title} description={page.data.description} active={page.data.active}>
   <main class="wrap">
     <div class="article-hero">
-      <h1>What we collect and why.</h1>
-      <div class="article-meta"><span class="author"><span class="avatar"></span>SpykeSIK</span></div>
+      <h1 style={page.data.centered ? 'text-align:center' : undefined}>{page.data.heroTitle}</h1>
+      {page.data.showAuthor && <div class="article-meta"><span class="author"><span class="avatar"></span>SpykeSIK</span></div>}
     </div>
 
     <div class="prose">
-      <p>SpykeVision is a small, independent site with no ads, no tracking pixels, and no data brokers. Here's the full picture.</p>
-
-      <h2>Analytics</h2>
-      <p>We use <strong>Cloudflare Web Analytics</strong> to understand traffic — which pages are popular, where visitors come from, what devices they use. Cloudflare's analytics are cookieless and privacy-first: no personal data is collected, no cross-site tracking, no fingerprinting. Your browser sends no identifying information and receives no tracking cookies.</p>
-
-      <h2>Comments</h2>
-      <p>Comments are powered by <strong>Cusdis</strong>, an open-source, privacy-friendly comment system. When you leave a comment, you provide a name and optionally an email. That data is stored by Cusdis solely to display your comment and notify you of replies if you opt in. It is not used for advertising, profiling, or shared with third parties. Comments require manual approval before they appear.</p>
-
-      <h2>Email newsletter</h2>
-      <p>If you subscribe to review updates, your email address is stored by <strong>MailerLite</strong> (EU-based, GDPR-compliant). It is used solely to send you new-review notifications. You can unsubscribe at any time via the link in every email. MailerLite does not sell or share your data.</p>
-
-      <h2>No ads or third-party trackers</h2>
-      <p>There are no advertising networks, social media widgets, or third-party scripts on this site beyond the two services listed above.</p>
-
-      <h2>Contact</h2>
-      <p>Questions about your data? Use the <a href="/contact/">contact form</a> or reach out on the <a href="https://www.avsforum.com/members/spykesik.8223142/" target="_blank" rel="noopener">AVS Forum</a>.</p>
-
-      <p class="note" style="font-size:0.85em;color:var(--text-muted)">Last updated: June 2026</p>
+      <Content />
     </div>
   </main>
 </Base>

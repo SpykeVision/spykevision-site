@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "title": "SpykeVision — In-depth projector reviews & measurements",
+    "description": "Independent, measurement-driven projector reviews. Brightness, contrast, ANSI, ADL and lens testing done right."
+  },
+  "hero": {
+    "eyebrow": "Measurement-driven reviews",
+    "heading": "Projector reviews, backed by real data.",
+    "text": "No marketing fluff. Every review is built on real measurements only: brightness, native On/Off & ANSI contrast, color, lens quality and motion. Every number, explained.",
+    "ctaLabel": "Browse reviews"
+  },
+  "headings": {
+    "latest": "Latest reviews",
+    "allReviews": "All reviews →",
+    "comingSoon": "Coming Soon",
+    "why": "Why measurements matter"
+  },
+  "comingSoon": [
+    {
+      "category": "ALR Screen • Fresnel • UST",
+      "title": "FScreen Fresnel Screen 120\" Gen4 — Review",
+      "text": "A 4th-gen fixed-frame Fresnel ALR screen for any lighting condition. Full testing: gain, ambient-light rejection, color shift, viewing angles and uniformity.",
+      "status": "In progress",
+      "image": "/images/cs-fscreen-fresnel.jpg"
+    },
+    {
+      "category": "4K • Triple-Laser • Flagship • UST",
+      "title": "AWOL Aetherion Max — Full Review",
+      "text": "Retail unit in for testing. Lab workup: brightness output, native / ANSI / ADL contrast, anti-RBE and EBL efficiency, lens sharpness and geometry.",
+      "status": "In progress",
+      "image": "/images/cs-awol-aetherion-max.jpg"
+    }
+  ],
+  "whyCards": [
+    {
+      "tag": "Brightness",
+      "color": "accent",
+      "title": "Real lumens",
+      "text": "Real luminous output measured across every zoom and aperture position, in manufacturer-calibrated modes."
+    },
+    {
+      "tag": "Contrast",
+      "color": "orange",
+      "title": "Native, ANSI & ADL",
+      "text": "On/off, checkerboard ANSI, and full ADL curves across the full range — the metrics that actually predict black-level performance."
+    },
+    {
+      "tag": "Optics",
+      "color": "purple",
+      "title": "Lens & geometry",
+      "text": "Sharpness, distortion, uniformity and lens-shift behavior, tested at the extremes."
+    }
+  ]
+}

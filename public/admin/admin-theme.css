@@ -1,0 +1,169 @@
+/* ============================================================
+   SpykeVision admin — Decap CMS skinned to match the site
+   (Apple-inspired light theme: /public/css/style.css tokens)
+   Decap's class names are emotion-generated but keep their
+   component labels (e.g. "css-xxxx-AppHeader"), so we match on
+   substrings. Cosmetic only — if a selector stops matching after
+   a Decap upgrade, the UI just falls back to the default look.
+   ============================================================ */
+
+:root {
+  --sv-bg:        #f2f2f7;
+  --sv-surface:   #ffffff;
+  --sv-surface-2: #f5f5f7;
+  --sv-border:    #e2e2e7;
+  --sv-text:      #1c1c1e;
+  --sv-text-2:    #3a3a3c;
+  --sv-text-3:    #8e8e93;
+  --sv-accent:    #007aff;
+  --sv-accent-dk: #0062cc;
+  --sv-green:     #34c759;
+  --sv-red:       #ff3b30;
+  --sv-radius:    12px;
+  --sv-shadow:    0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
+  --sv-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+             Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Base */
+body {
+  background: var(--sv-bg) !important;
+  font-family: var(--sv-font) !important;
+  color: var(--sv-text);
+  -webkit-font-smoothing: antialiased;
+}
+#nc-root * { font-family: var(--sv-font) !important; }
+
+/* Top header — frosted glass like the site header */
+[class*="AppHeader"] > div,
+header[class*="AppHeader"] {
+  background: rgba(255, 255, 255, 0.8) !important;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--sv-border) !important;
+  box-shadow: none !important;
+}
+[class*="AppHeaderButton"] {
+  color: var(--sv-text-2) !important;
+}
+[class*="AppHeaderButton"]:hover,
+[class*="AppHeaderButton"]:focus {
+  color: var(--sv-accent) !important;
+}
+
+/* Sidebar (collection list) — card look */
+[class*="SidebarContainer"] {
+  background: var(--sv-surface) !important;
+  border: 1px solid var(--sv-border) !important;
+  border-radius: var(--sv-radius) !important;
+  box-shadow: var(--sv-shadow) !important;
+}
+[class*="SidebarNavLink"] {
+  color: var(--sv-text-2) !important;
+  border-radius: 8px !important;
+}
+[class*="SidebarNavLink"]:hover {
+  color: var(--sv-accent) !important;
+  background: var(--sv-surface-2) !important;
+}
+[class*="SidebarNavLink"].sidebar-active,
+[class*="SidebarNavLink"][class*="active"] {
+  color: var(--sv-accent) !important;
+  background: rgba(0, 122, 255, 0.08) !important;
+}
+
+/* Entry cards */
+[class*="ListCard"],
+[class*="GridCard"] {
+  background: var(--sv-surface) !important;
+  border: 1px solid var(--sv-border) !important;
+  border-radius: var(--sv-radius) !important;
+  box-shadow: var(--sv-shadow) !important;
+  overflow: hidden;
+}
+[class*="ListCard"]:hover,
+[class*="GridCard"]:hover {
+  border-color: rgba(0, 122, 255, 0.35) !important;
+}
+
+/* Buttons: primary actions in site blue, radius softened */
+#nc-root button {
+  border-radius: 10px !important;
+}
+#nc-root button[class*="Publish"],
+#nc-root button[class*="Save"],
+#nc-root a[class*="CollectionTopNewButton"],
+#nc-root button[class*="StyledDropdownButton"] {
+  transition: background 0.15s ease;
+}
+a[class*="CollectionTopNewButton"] {
+  background: var(--sv-accent) !important;
+  border-radius: 10px !important;
+}
+a[class*="CollectionTopNewButton"]:hover {
+  background: var(--sv-accent-dk) !important;
+}
+
+/* Editor panes */
+[class*="ControlPaneContainer"] {
+  background: transparent !important;
+}
+[class*="ControlContainer"] input,
+[class*="ControlContainer"] textarea,
+[class*="ControlContainer"] select {
+  font-family: var(--sv-font) !important;
+  border-radius: 8px;
+}
+label[class*="ControlLabel"],
+label[class*="FieldLabel"] {
+  color: var(--sv-text-3) !important;
+  background: transparent !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em;
+}
+/* Active field highlight — blue instead of Decap teal */
+div[class*="ControlContainer"] > div[class*="styles-widget"]:focus-within {
+  border-color: var(--sv-accent) !important;
+}
+
+/* Markdown editor toolbar */
+[class*="ToolbarContainer"] {
+  background: var(--sv-surface-2) !important;
+  border-radius: 10px 10px 0 0 !important;
+  border-color: var(--sv-border) !important;
+}
+
+/* Search input */
+[class*="SearchContainer"] input {
+  background: var(--sv-surface) !important;
+  border: 1px solid var(--sv-border) !important;
+  border-radius: 10px !important;
+}
+
+/* Login screen */
+section[class*="AuthenticationPage"] {
+  background: var(--sv-bg) !important;
+}
+section[class*="AuthenticationPage"] button {
+  background: var(--sv-accent) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--sv-shadow) !important;
+}
+section[class*="AuthenticationPage"] button:hover {
+  background: var(--sv-accent-dk) !important;
+}
+span[class*="AuthenticationPage"] {
+  color: var(--sv-text-3) !important;
+}
+
+/* Media library modal */
+div[class*="ReactModal__Content"] {
+  border-radius: var(--sv-radius) !important;
+  border: 1px solid var(--sv-border) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08), 0 20px 48px rgba(0,0,0,.10) !important;
+}
+
+/* Scrollbars (WebKit) — thin, like macOS */
+#nc-root ::-webkit-scrollbar { width: 8px; height: 8px; }
+#nc-root ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.18); border-radius: 4px; }
+#nc-root ::-webkit-scrollbar-track { background: transparent; }

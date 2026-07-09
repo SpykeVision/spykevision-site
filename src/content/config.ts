@@ -60,4 +60,17 @@ const reviewsRu = defineCollection({
   }),
 });
 
-export const collections = { reviews, 'reviews-ru': reviewsRu };
+// Static pages (About, Privacy, …) — editable prose with a small header block.
+const pages = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),                       // <title> + og
+    description: z.string(),                 // meta description
+    heroTitle: z.string(),                   // big H1 in the article hero
+    centered: z.boolean().default(false),    // center the H1
+    showAuthor: z.boolean().default(false),  // author line under the H1
+    active: z.string().default(''),          // header nav highlight: reviews/about/contact
+  }),
+});
+
+export const collections = { reviews, 'reviews-ru': reviewsRu, pages };

@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "Contact | SpykeVision",
+    "description": "Get in touch with SpykeSIK: review requests, corrections and manufacturer inquiries."
+  },
+  "heading": "Contact",
+  "card": {
+    "name": "SpykeVision",
+    "text": "Want to submit a product for review or have questions about published content? Use the form or reach out directly on AVS Forum.",
+    "activeLabel": "Active on:",
+    "forumLabel": "AVS Forum → SpykeSIK ↗",
+    "forumUrl": "https://www.avsforum.com/members/spykesik.8223142/"
+  },
+  "form": {
+    "emailSubject": "New message from SpykeVision contact form",
+    "nameLabel": "Your name",
+    "namePlaceholder": "Name",
+    "emailLabel": "Your email",
+    "emailPlaceholder": "email@example.com",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Review request / correction / other",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Your message...",
+    "submitLabel": "Send message"
+  }
+}

@@ -1,6 +1,8 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: SpykeVision/spykevision-site
   branch: main
+  base_url: https://sveltia-cms-auth.spykesik.workers.dev
 
 # Enables local CMS editing (safe on prod — only activates on localhost)
 local_backend: true
@@ -12,6 +14,7 @@ public_folder: "/uploads"
 # No editorial_workflow: a single 'draft' toggle controls visibility instead.
 site_url: https://spykevision.com
 display_url: https://spykevision.com
+logo_url: /favicon.svg
 
 collections:
   - name: reviews
@@ -28,10 +31,12 @@ collections:
       - { name: category, label: Category tag (e.g. "4K Laser • Flagship"), widget: string, required: false }
       - { name: summary, label: Summary (card blurb + SEO description), widget: text }
       - { name: cover, label: Cover image, widget: image }
+      - { name: coverCard, label: Card thumbnail (overrides cover on homepage), widget: image, required: false }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
       - { name: readTime, label: Read time (e.g. "18 min read"), widget: string, required: false }
       - { name: extra, label: Extra meta (e.g. "Firmware 1.0.99"), widget: string, required: false }
       - { name: score, label: Overall score (0–10), widget: number, required: false, value_type: float, min: 0, max: 10, step: 0.1 }
+      - { name: badge, label: Card badge (e.g. "NEW" — replaces score on card), widget: string, required: false }
       - { name: draft, label: Draft (hide from site), widget: boolean, default: false }
       - name: pros
         label: Pros
@@ -52,4 +57,230 @@ collections:
           - { name: score, label: Score (0–10), widget: number, value_type: float, min: 0, max: 10, step: 0.1 }
       - { name: verdictTitle, label: Verdict title, widget: string, required: false }
       - { name: verdictText, label: Verdict text, widget: text, required: false }
+      - { name: buyLink, label: Buy link (official store URL), widget: string, required: false }
       - { name: body, label: Article body, widget: markdown }
+
+  - name: reviews-ru
+    label: Reviews (RU)
+    label_singular: Review (RU)
+    folder: src/content/reviews-ru
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: eyebrow, label: Eyebrow (e.g. "In-Depth Review · Part 2"), widget: string, required: false }
+      - { name: category, label: Category tag (e.g. "4K Laser • Flagship"), widget: string, required: false }
+      - { name: summary, label: Summary (card blurb + SEO description), widget: text }
+      - { name: cover, label: Cover image, widget: image }
+      - { name: coverCard, label: Card thumbnail (overrides cover on homepage), widget: image, required: false }
+      - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { name: readTime, label: Read time (e.g. "18 min read"), widget: string, required: false }
+      - { name: extra, label: Extra meta (e.g. "Firmware 1.0.99"), widget: string, required: false }
+      - { name: score, label: Overall score (0–10), widget: number, required: false, value_type: float, min: 0, max: 10, step: 0.1 }
+      - { name: badge, label: Card badge (e.g. "NEW" — replaces score on card), widget: string, required: false }
+      - { name: draft, label: Draft (hide from site), widget: boolean, default: false }
+      - name: pros
+        label: Pros
+        widget: list
+        required: false
+        field: { name: item, label: Pro, widget: string }
+      - name: cons
+        label: Cons
+        widget: list
+        required: false
+        field: { name: item, label: Con, widget: string }
+      - name: ratings
+        label: Ratings
+        widget: list
+        required: false
+        fields:
+          - { name: label, label: Label, widget: string }
+          - { name: score, label: Score (0–10), widget: number, value_type: float, min: 0, max: 10, step: 0.1 }
+      - { name: verdictTitle, label: Verdict title, widget: string, required: false }
+      - { name: verdictText, label: Verdict text, widget: text, required: false }
+      - { name: buyLink, label: Buy link (official store URL), widget: string, required: false }
+      - { name: body, label: Article body, widget: markdown }
+
+  - name: pages
+    label: Pages
+    label_singular: Page
+    folder: src/content/pages
+    create: false
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Browser title (SEO), widget: string }
+      - { name: description, label: Meta description (SEO), widget: text }
+      - { name: heroTitle, label: Page heading (H1), widget: string }
+      - { name: centered, label: Center the heading, widget: boolean, default: false, required: false }
+      - { name: showAuthor, label: Show author line under heading, widget: boolean, default: false, required: false }
+      - { name: active, label: "Highlighted nav item (reviews / about / contact — or empty)", widget: string, required: false, default: "" }
+      - { name: body, label: Page text, widget: markdown }
+
+  - name: site
+    label: Homepage & Contact
+    files:
+      - name: home-en
+        label: Homepage (EN)
+        file: src/data/home.en.json
+        fields:
+          - name: meta
+            label: SEO
+            widget: object
+            fields:
+              - { name: title, label: Browser title, widget: string }
+              - { name: description, label: Meta description, widget: text }
+          - name: hero
+            label: Hero (top block)
+            widget: object
+            fields:
+              - { name: eyebrow, label: Eyebrow (small line above heading), widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: ctaLabel, label: Button label, widget: string }
+          - name: headings
+            label: Section headings
+            widget: object
+            collapsed: true
+            fields:
+              - { name: latest, label: Latest reviews, widget: string }
+              - { name: allReviews, label: "All reviews link", widget: string }
+              - { name: comingSoon, label: Coming Soon, widget: string }
+              - { name: why, label: Why measurements matter, widget: string }
+          - name: comingSoon
+            label: Coming Soon cards
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: category, label: Category tag, widget: string }
+              - { name: title, label: Title, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: status, label: Status (e.g. "In progress"), widget: string }
+              - { name: image, label: Image, widget: image }
+          - name: whyCards
+            label: "Why measurements — cards"
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: tag, label: Tag, widget: string }
+              - { name: color, label: Tag color, widget: select, options: [accent, orange, purple], default: accent }
+              - { name: title, label: Title, widget: string }
+              - { name: text, label: Text, widget: text }
+      - name: home-ru
+        label: Homepage (RU)
+        file: src/data/home.ru.json
+        fields:
+          - name: meta
+            label: SEO
+            widget: object
+            fields:
+              - { name: title, label: Browser title, widget: string }
+              - { name: description, label: Meta description, widget: text }
+          - name: hero
+            label: Hero (top block)
+            widget: object
+            fields:
+              - { name: eyebrow, label: Eyebrow (small line above heading), widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: ctaLabel, label: Button label, widget: string }
+          - name: headings
+            label: Section headings
+            widget: object
+            collapsed: true
+            fields:
+              - { name: latest, label: Latest reviews, widget: string }
+              - { name: allReviews, label: "All reviews link", widget: string }
+              - { name: comingSoon, label: Coming Soon, widget: string }
+              - { name: why, label: Why measurements matter, widget: string }
+          - name: comingSoon
+            label: Coming Soon cards
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: category, label: Category tag, widget: string }
+              - { name: title, label: Title, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: status, label: Status (e.g. "В процессе"), widget: string }
+              - { name: image, label: Image, widget: image }
+          - name: whyCards
+            label: "Why measurements — cards"
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: tag, label: Tag, widget: string }
+              - { name: color, label: Tag color, widget: select, options: [accent, orange, purple], default: accent }
+              - { name: title, label: Title, widget: string }
+              - { name: text, label: Text, widget: text }
+      - name: contact-en
+        label: Contact page (EN)
+        file: src/data/contact.en.json
+        fields:
+          - name: meta
+            label: SEO
+            widget: object
+            fields:
+              - { name: title, label: Browser title, widget: string }
+              - { name: description, label: Meta description, widget: text }
+          - { name: heading, label: Page heading, widget: string }
+          - name: card
+            label: Info card
+            widget: object
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: activeLabel, label: "\"Active on\" label", widget: string }
+              - { name: forumLabel, label: Forum link label, widget: string }
+              - { name: forumUrl, label: Forum link URL, widget: string }
+          - name: form
+            label: Form labels
+            widget: object
+            collapsed: true
+            fields:
+              - { name: emailSubject, label: Email subject (what you receive), widget: string }
+              - { name: nameLabel, label: Name label, widget: string }
+              - { name: namePlaceholder, label: Name placeholder, widget: string }
+              - { name: emailLabel, label: Email label, widget: string }
+              - { name: emailPlaceholder, label: Email placeholder, widget: string }
+              - { name: subjectLabel, label: Subject label, widget: string }
+              - { name: subjectPlaceholder, label: Subject placeholder, widget: string }
+              - { name: messageLabel, label: Message label, widget: string }
+              - { name: messagePlaceholder, label: Message placeholder, widget: string }
+              - { name: submitLabel, label: Submit button, widget: string }
+      - name: contact-ru
+        label: Contact page (RU)
+        file: src/data/contact.ru.json
+        fields:
+          - name: meta
+            label: SEO
+            widget: object
+            fields:
+              - { name: title, label: Browser title, widget: string }
+              - { name: description, label: Meta description, widget: text }
+          - { name: heading, label: Page heading, widget: string }
+          - name: card
+            label: Info card
+            widget: object
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: activeLabel, label: "\"Active on\" label", widget: string }
+              - { name: forumLabel, label: Forum link label, widget: string }
+              - { name: forumUrl, label: Forum link URL, widget: string }
+          - name: form
+            label: Form labels
+            widget: object
+            collapsed: true
+            fields:
+              - { name: emailSubject, label: Email subject (what you receive), widget: string }
+              - { name: nameLabel, label: Name label, widget: string }
+              - { name: namePlaceholder, label: Name placeholder, widget: string }
+              - { name: emailLabel, label: Email label, widget: string }
+              - { name: emailPlaceholder, label: Email placeholder, widget: string }
+              - { name: subjectLabel, label: Subject label, widget: string }
+              - { name: subjectPlaceholder, label: Subject placeholder, widget: string }
+              - { name: messageLabel, label: Message label, widget: string }
+              - { name: messagePlaceholder, label: Message placeholder, widget: string }
+              - { name: submitLabel, label: Submit button, widget: string }

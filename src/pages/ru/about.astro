@@ -1,33 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { getEntry } from 'astro:content';
+
+const page = await getEntry('pages', 'about-ru');
+const { Content } = await page.render();
 ---
-<Base
-  title="О нас и методология | SpykeVision"
-  description="Кто стоит за SpykeVision и как измеряется каждый проектор."
-  active="about"
->
+<Base title={page.data.title} description={page.data.description} active={page.data.active}>
   <main class="wrap">
     <div class="article-hero">
-      <h1 style="text-align:center">Независимые обзоры, прозрачная методология.</h1>
+      <h1 style={page.data.centered ? 'text-align:center' : undefined}>{page.data.heroTitle}</h1>
+      {page.data.showAuthor && <div class="article-meta"><span class="author"><span class="avatar"></span>SpykeSIK</span></div>}
     </div>
 
     <div class="prose">
-      <p>SpykeVision — независимое издание о домашних кинотеатрах, существующее за счёт читателей. Я рецензирую проекторы так, как хотел бы видеть обзоры сам: с реальными измерениями, полной прозрачностью условий тестирования и без маркетинговых приукрашиваний. Если цифра выглядит слишком хорошо или плохо — я объясню почему, и как именно это измерялось.</p>
-
-      <h2>Как я измеряю</h2>
-      <p>Каждый обзор строится на единообразном процессе, чтобы результаты были сопоставимы между продуктами:</p>
-      <ul>
-        <li><strong>Яркость:</strong> измеряется в откалиброванных производителем режимах изображения, по всему диапазону зума и диафрагмы, после термической стабилизации.</li>
-        <li><strong>Нативный контраст:</strong> Full on/off, по каждой позиции зума и диафрагмы.</li>
-        <li><strong>ANSI-контраст:</strong> шаблон 8×8, измеренный как по центру, так и со сдвинутым объективом.</li>
-        <li><strong>ADL-контраст:</strong> по уровням яркости сцены от On/Off до 50% (ANSI).</li>
-        <li><strong>Оптика:</strong> паттерны резкости, дисторсия по лазерному уровню, карты равномерности и поведение сдвига объектива.</li>
-      </ul>
-
-      <div class="note">Тестовый паттерн, прибор и условия задокументированы рядом с каждым графиком — чтобы любой мог воспроизвести измерение. Нашли неточность? Напишите — исправления публикуются открыто.</div>
-
-      <h2>Связаться</h2>
-      <p>Обзоры выходят и на <a href="https://www.avsforum.com" target="_blank" rel="noopener">AVS Forum</a> — там же удобно обсуждать результаты. Хотите прислать продукт на обзор или есть вопросы к материалам? Пишите на форуме или через <a href="/ru/contact/">форму обратной связи</a>.</p>
+      <Content />
     </div>
   </main>
 </Base>
