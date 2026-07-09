@@ -9,3 +9,11 @@ dist/
 
 # ClaudeClaw runtime / secrets — never commit
 .claude/
+
+# Local working notes, drafts and experiments — not part of the site
+.astro-dev.log
+_analysis/
+_doc.txt
+_review_chapters.docx
+check-dble.js
+design-explorations/

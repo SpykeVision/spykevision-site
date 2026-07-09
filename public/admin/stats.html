@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Stats · SpykeVision Admin</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+h1{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.controls a.back{font-size:13px;color:var(--text-3);text-decoration:none;margin-right:6px}
+.controls a.back:hover{color:var(--text)}
+.seg{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.seg button{background:var(--surface);border:none;color:var(--text-2);padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.seg button.on{background:var(--accent);color:#fff}
+.key-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;width:220px}
+.date-input{width:auto;color-scheme:light dark}
+.theme-toggle{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:15px;cursor:pointer}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.tile .v{font-size:26px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile .l{font-size:12px;color:var(--text-3);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.card h2{font-size:14px;font-weight:600;margin:0 0 12px;color:var(--text-2)}
+.card .cv{position:relative;height:260px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:7px 10px;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--text-3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+th.num{text-align:right}
+.msg{color:var(--text-3);font-size:14px;padding:30px 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Site stats</h1>
+  <div class="controls">
+    <a class="back" href="/admin/">← CMS</a>
+    <input class="key-input" id="key" type="password" placeholder="Stats key" autocomplete="off">
+    <div class="seg" id="daysSeg">
+      <button data-d="7">7d</button><button data-d="30" class="on">30d</button><button data-d="90">90d</button>
+    </div>
+    <input class="key-input date-input" id="dFrom" type="date" title="From">
+    <input class="key-input date-input" id="dTo" type="date" title="To">
+    <button class="theme-toggle" id="themeBtn" title="Theme">🌙</button>
+  </div>
+</div>
+
+<div id="content"><p class="msg">Введи stats key — данные подтянутся автоматически.</p></div>
+
+<script>
+/* theme: reuse the site convention (sv-theme + data-theme) */
+(function(){
+  var saved; try{saved=localStorage.getItem('sv-theme');}catch(e){}
+  if(saved) document.documentElement.setAttribute('data-theme',saved);
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',t);
+    try{localStorage.setItem('sv-theme',t);}catch(e){}
+    render();
+  });
+})();
+
+var DATA=null, DAYS=30, RANGE=null; // RANGE = {from,to} overrides DAYS
+
+/* palette: validated for both surfaces (dark picks its own orange step) */
+function pal(){
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  return {
+    blue:'#0a84ff',
+    orange:dark?'#c77300':'#ff9500',
+    ink:getComputedStyle(document.body).getPropertyValue('--text-2').trim()||'#666',
+    grid:dark?'rgba(255,255,255,.07)':'rgba(0,0,0,.06)'
+  };
+}
+
+var charts=[];
+function clearCharts(){charts.forEach(function(c){c.destroy();});charts=[];}
+
+function fetchStats(){
+  var key=document.getElementById('key').value.trim();
+  if(!key)return;
+  try{localStorage.setItem('sv-stats-key',key);}catch(e){}
+  document.getElementById('content').innerHTML='<p class="msg">Загружаю…</p>';
+  var q=RANGE?('from='+RANGE.from+'&to='+RANGE.to):('days='+DAYS);
+  fetch('/api/stats?key='+encodeURIComponent(key)+'&'+q)
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
+    .then(function(j){DATA=j;render();})
+    .catch(function(){document.getElementById('content').innerHTML='<p class="msg">Не пустило (неверный ключ или база ещё не подключена).</p>';});
+}
+
+function n(x){return (x||0).toLocaleString('en-US');}
+function ev(name){var r=(DATA.events||[]).find(function(e){return e.event===name;});return r?r.n:0;}
+
+function render(){
+  if(!DATA)return;
+  clearCharts();
+  var P=pal();
+  var totalUniq=0,totalViews=0;
+  (DATA.perDay||[]).forEach(function(d){totalUniq+=d.uniques;totalViews+=d.views||0;});
+  var topCountry=(DATA.countries||[])[0];
+
+  var html='';
+  html+='<div class="tiles">'
+    +'<div class="tile"><div class="v">'+n(totalUniq)+'</div><div class="l">уникальных · '+(RANGE?(RANGE.from+' — '+RANGE.to):(DAYS+'д'))+' (сумма по дням)</div></div>'
+    +'<div class="tile"><div class="v">'+n(totalViews)+'</div><div class="l">просмотров страниц</div></div>'
+    +'<div class="tile"><div class="v">'+(topCountry?topCountry.country+' · '+n(topCountry.uniques):'—')+'</div><div class="l">топ-страна по уникам</div></div>'
+    +'<div class="tile"><div class="v">'+n(ev('contact_submit'))+'</div><div class="l">писем через контакт-форму</div></div>'
+    +'<div class="tile"><div class="v">'+n(ev('subscribe_submit'))+'</div><div class="l">подписок на рассылку</div></div>'
+    +'</div>';
+  html+='<div class="card"><h2>Посетители по дням</h2><div class="cv" style="height:300px"><canvas id="cDaily"></canvas></div></div>';
+  html+='<div class="grid2">';
+  html+='<div class="card"><h2>Топ страниц (просмотры)</h2><div class="cv"><canvas id="cPages"></canvas></div></div>';
+  html+='<div class="card"><h2>Страны (уникальные)</h2><div class="cv"><canvas id="cGeo"></canvas></div></div>';
+  html+='<div class="card"><h2>Глубина чтения ревью</h2><div class="cv"><canvas id="cDepth"></canvas></div></div>';
+  html+='<div class="card"><h2>События</h2><table><thead><tr><th>Событие</th><th class="num">Кол-во</th></tr></thead><tbody>'
+    +(DATA.events||[]).map(function(e){return '<tr><td>'+e.event+'</td><td class="num">'+n(e.n)+'</td></tr>';}).join('')
+    +'</tbody></table></div>';
+  html+='</div>';
+  html+='<div class="grid2">';
+  html+='<div class="card"><h2>Города</h2><table><thead><tr><th>Город</th><th class="num">Уники</th></tr></thead><tbody>'
+    +(DATA.cities||[]).map(function(c){return '<tr><td>'+c.city+', '+c.country+'</td><td class="num">'+n(c.uniques)+'</td></tr>';}).join('')
+    +'</tbody></table></div>';
+  html+='<div class="card"><h2>Графики в ревью (взаимодействия)</h2><table><thead><tr><th>График</th><th class="num">Кол-во</th></tr></thead><tbody>'
+    +(DATA.charts||[]).map(function(c){return '<tr><td>'+c.meta+'</td><td class="num">'+n(c.n)+'</td></tr>';}).join('')
+    +'</tbody></table></div>';
+  html+='</div>';
+  document.getElementById('content').innerHTML=html;
+
+  Chart.defaults.color=P.ink;
+  Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
+  var gridOpts={color:P.grid,drawTicks:false};
+
+  charts.push(new Chart(document.getElementById('cDaily'),{
+    type:'line',
+    data:{labels:(DATA.perDay||[]).map(function(d){return d.d.slice(5);}),
+      datasets:[
+        {label:'Уникальные',data:(DATA.perDay||[]).map(function(d){return d.uniques;}),borderColor:P.blue,backgroundColor:P.blue,borderWidth:2,pointRadius:2,pointHoverRadius:5,tension:.25},
+        {label:'Просмотры',data:(DATA.perDay||[]).map(function(d){return d.views;}),borderColor:P.orange,backgroundColor:P.orange,borderWidth:2,pointRadius:2,pointHoverRadius:5,tension:.25}
+      ]},
+    options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{boxWidth:10,boxHeight:10,usePointStyle:true}}},
+      scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:gridOpts}}}
+  }));
+
+  function hbar(id,labels,values,color){
+    charts.push(new Chart(document.getElementById(id),{
+      type:'bar',
+      data:{labels:labels,datasets:[{data:values,backgroundColor:color,borderRadius:4,barThickness:14}]},
+      options:{indexAxis:'y',maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{x:{beginAtZero:true,grid:gridOpts},y:{grid:{display:false}}}}
+    }));
+  }
+  hbar('cPages',(DATA.topPages||[]).slice(0,8).map(function(p){return p.path.replace(/\/$/,'')||'/';}),(DATA.topPages||[]).slice(0,8).map(function(p){return p.views;}),P.blue);
+  hbar('cGeo',(DATA.countries||[]).slice(0,8).map(function(c){return c.country;}),(DATA.countries||[]).slice(0,8).map(function(c){return c.uniques;}),P.blue);
+
+  charts.push(new Chart(document.getElementById('cDepth'),{
+    type:'bar',
+    data:{labels:(DATA.readDepth||[]).map(function(r){return r.meta+'%';}),
+      datasets:[{data:(DATA.readDepth||[]).map(function(r){return r.n;}),backgroundColor:P.blue,borderRadius:4,barThickness:34}]},
+    options:{maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:gridOpts}}}
+  }));
+}
+
+document.getElementById('daysSeg').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  DAYS=Number(b.dataset.d);RANGE=null;
+  document.getElementById('dFrom').value='';document.getElementById('dTo').value='';
+  this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});
+  fetchStats();
+});
+function onDate(){
+  var f=document.getElementById('dFrom').value,t=document.getElementById('dTo').value;
+  if(!f)return;
+  RANGE={from:f,to:t||f};
+  document.querySelectorAll('#daysSeg button').forEach(function(x){x.classList.remove('on');});
+  fetchStats();
+}
+document.getElementById('dFrom').addEventListener('change',onDate);
+document.getElementById('dTo').addEventListener('change',onDate);
+document.getElementById('key').addEventListener('change',fetchStats);
+(function(){
+  var k;try{k=localStorage.getItem('sv-stats-key');}catch(e){}
+  if(k){document.getElementById('key').value=k;fetchStats();}
+})();
+</script>
+</body>
+</html>
