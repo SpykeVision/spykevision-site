@@ -7,3 +7,5 @@ compatibility_flags = ["nodejs_compat"]
 binding = "DB"
 database_name = "spykevision-stats"
 database_id = "1aa1014d-65e3-424f-8f8d-0f22a434b678"
+
+# Secrets (STATS_KEY) are set in the dashboard, not here.
