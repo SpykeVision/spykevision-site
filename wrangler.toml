@@ -2,3 +2,8 @@ name = "spykevision"
 pages_build_output_dir = "dist"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "spykevision-stats"
+database_id = "1aa1014d-65e3-424f-8f8d-0f22a434b678"
