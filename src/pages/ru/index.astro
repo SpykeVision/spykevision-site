@@ -2,15 +2,19 @@
 import Base from '../../layouts/Base.astro';
 import Subscribe from '../../components/Subscribe.astro';
 import { getCollection } from 'astro:content';
+import { thumbSrcset, CARD_SIZES, FEATURED_SIZES } from '../../lib/thumbs';
 import home from '../../data/home.ru.json';
 
 const reviews = (await getCollection('reviews-ru'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const ogCover = reviews.find((r) => !r.data.draft)?.data.cover;
 ---
 <Base
   title={home.meta.title}
   description={home.meta.description}
   active="reviews"
+  image={ogCover}
+  alternate={true}
 >
   <section class="hero">
     <div class="wrap">
@@ -29,7 +33,7 @@ const reviews = (await getCollection('reviews-ru'))
           {reviews.slice(0, 6).map((r, i) => (
             <a href={`/ru/reviews/${r.slug}/`} class={`card${i === 0 ? ' featured' : ''}`} data-draft={r.data.draft ? 'true' : null}>
               <div class="card-media">
-                <img src={r.data.coverCard || r.data.cover} alt={r.data.title} />
+                <img src={r.data.coverCard || r.data.cover} alt={r.data.title} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={i === 0 ? 'high' : undefined} srcset={thumbSrcset(r.data.coverCard || r.data.cover)} sizes={i === 0 ? FEATURED_SIZES : CARD_SIZES} />
                 {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
               </div>
               <div class="card-body">
@@ -54,7 +58,7 @@ const reviews = (await getCollection('reviews-ru'))
         {home.comingSoon.map((c) => (
           <a href="#" class="cs-card">
             <div class="cs-media">
-              {c.image && <img src={c.image} alt={c.title} class="cs-img" />}
+              {c.image && <img src={c.image} alt={c.title} class="cs-img" loading="lazy" decoding="async" srcset={thumbSrcset(c.image)} sizes={CARD_SIZES} />}
               <div class="cs-badge">Скоро</div>
             </div>
             <div class="cs-body">

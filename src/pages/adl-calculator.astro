@@ -1,0 +1,122 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  title="ADL Contrast Calculator | SpykeVision"
+  description="Calculate and compare projector ADL contrast curves. Estimate from On/Off + ANSI, or plot known measurement points."
+  active="calculator"
+  alternate={true}
+>
+  <link rel="stylesheet" href="/css/adl-calc.css" slot="head" />
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" slot="head"></script>
+
+  <main class="wrap">
+    <div class="article-hero">
+      <h1>ADL Contrast Calculator<span class="beta-tag">beta</span></h1>
+      <p style="color:var(--text-3);font-size:17px;margin-top:8px">Calculate an approximate ADL contrast curve from a few measurements, or plot known data points and compare multiple projectors.</p>
+    </div>
+
+    <div class="calc-tabs" role="tablist">
+      <button class="calc-tab active" role="tab" aria-selected="true" data-tab="estimate" onclick="switchTab('estimate')">Calculate ADL contrast</button>
+      <button class="calc-tab" role="tab" aria-selected="false" data-tab="manual" onclick="switchTab('manual')">Compare ADL contrast</button>
+    </div>
+
+    <!-- TAB 1: ESTIMATE -->
+    <div class="calc-panel active" id="tab-estimate">
+      <div class="prose" style="margin-bottom:20px">
+        <p>Enter the known contrast measurements. The calculator uses a power-law model to interpolate the full ADL curve from On/Off (100% black) down to the measured ANSI and/or ADL points. More input points = more accurate estimate.</p>
+      </div>
+
+      <div id="estimateBlocks">
+        <!-- filled by JS -->
+      </div>
+      <button class="add-btn" onclick="addEstimateBlock()">+ Add projector</button>
+
+      <div class="calc-actions">
+        <button class="btn" onclick="buildEstimateChart()">Calculate &amp; plot</button>
+        <button class="btn-secondary" onclick="clearChart('estimateChart')">Clear chart</button>
+      </div>
+
+      <div class="chart-wrap" id="estimateWrap">
+        <div class="chart-toolbar">
+          <span class="chart-title-mini">ADL contrast curve</span>
+          <div class="chart-tools">
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('estimateChart', this)">Linear scale</button>
+            <button class="chart-tool" data-xexpand="estimateChart" onclick="toggleXExpand('estimateChart', this)">Expand 0–5%</button>
+            <button class="chart-tool" onclick="savePNG('estimateChart','spykevision-adl-estimate')">⬇ Save PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('estimateWrap','estimateChart', this)">⛶ Expand</button>
+          </div>
+        </div>
+        <div class="chart-canvas-box"><canvas id="estimateChart"></canvas></div>
+      </div>
+
+      <div class="prose" style="margin-top:20px">
+        <h3>How the estimate works</h3>
+        <p>The curve is interpolated in log space directly through every value you enter (On/Off, 1% ADL, 5% ADL, ANSI) so it always passes exactly through your measured points. Gaps between points are interpolated and the tail beyond your last point is extrapolated from the local slope. The result is an estimate; real-world ADL behaviour can deviate, especially on projectors with aggressive dynamic iris.</p>
+      </div>
+    </div>
+
+    <!-- TAB 2: MANUAL -->
+    <div class="calc-panel" id="tab-manual">
+      <div class="prose" style="margin-bottom:20px">
+        <p>Enter the exact measured contrast values for each ADL level. Leave fields blank if not measured; the chart will connect only the points you provide. Add multiple projectors to compare them side by side.</p>
+      </div>
+
+      <div id="manualBlocks">
+        <!-- filled by JS -->
+      </div>
+      <button class="add-btn" onclick="addManualBlock()">+ Add projector</button>
+
+      <div class="calc-actions">
+        <button class="btn" onclick="buildManualChart()">Plot</button>
+        <button class="btn-secondary" onclick="clearChart('manualChart')">Clear chart</button>
+      </div>
+
+      <div class="chart-wrap" id="manualWrap">
+        <div class="chart-toolbar">
+          <span class="chart-title-mini">ADL contrast curve</span>
+          <div class="chart-tools">
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('manualChart', this)">Linear scale</button>
+            <button class="chart-tool" data-xexpand="manualChart" onclick="toggleXExpand('manualChart', this)">Expand 0–5%</button>
+            <button class="chart-tool" onclick="savePNG('manualChart','spykevision-adl-measured')">⬇ Save PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('manualWrap','manualChart', this)">⛶ Expand</button>
+          </div>
+        </div>
+        <div class="chart-canvas-box"><canvas id="manualChart"></canvas></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script is:inline>
+  window.ADL_LS_SUFFIX = '';
+  window.ADL_I18N = {
+    projPlaceholder: 'Projector name',
+    projDefault:     'Projector',
+    eg:              'e.g.',
+    optional:        'Optional',
+    onoffLabel:      'On/Off contrast',
+    onoffHint:       'Full-field on/off (0% ADL)',
+    ansiLabel:       'ANSI contrast',
+    ansiHint:        '50% ADL checkerboard',
+    apl1Label:       '1% ADL contrast',
+    apl5Label:       '5% ADL contrast',
+    contrastWord:    'contrast',
+    estimatedSuffix: ' (estimated)',
+    measuredSuffix:  ' (measured)',
+    crossover:       'Crossover',
+    xTitle:          '% of white (ADL)',
+    yTitle:          'Contrast ratio',
+    logScale:        'Log scale',
+    linearScale:     'Linear scale',
+    fullRange:       'Full range',
+    expandLow:       'Expand 0–5%',
+    expandBtn:       '⛶ Expand',
+    closeBtn:        '✕ Close',
+    plotFirst:       'Plot the chart first.',
+    removeAria:      'Remove projector',
+    ansiWarn:        'ANSI contrast can’t be higher than On/Off contrast — check the values. This projector was skipped.'
+  };
+  </script>
+  <script is:inline src="/js/adl-calc.js"></script>
+</Base>

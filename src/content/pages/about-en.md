@@ -17,7 +17,7 @@ Every review is built on a consistent bench process so results are comparable ac
 - **ADL contrast:** across scene brightness levels from On/Off through 50% (ANSI).
 - **Optics:** sharpness patterns, distortion via laser level, uniformity maps, and lens-shift behavior.
 
-<div class="note">The test pattern, meter, and conditions are documented alongside each chart — so anyone can reproduce a measurement. Spotted something off? Write to me — corrections are published openly.</div>
+<div class="note">The test pattern, meter, and conditions are documented alongside each chart — so anyone can reproduce a measurement. The full bench protocol lives on the [methodology page](/methodology/). Spotted something off? Write to me — corrections are published openly.</div>
 
 ## Get in touch
 

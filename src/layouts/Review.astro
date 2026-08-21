@@ -1,7 +1,9 @@
 ---
 import Base from './Base.astro';
 import Comments from '../components/Comments.astro';
-const { review, headings } = Astro.props;
+import { getCollection } from 'astro:content';
+import { thumbSrcset, CARD_SIZES } from '../lib/thumbs';
+const { review, headings, alternate = false, slug = '' } = Astro.props;
 const ML_ACCOUNT_ID = '2448508';
 const ML_FORM_ID    = '8lzoBZ';
 const isRu = Astro.url.pathname.startsWith('/ru');
@@ -9,7 +11,12 @@ const locale = isRu ? 'ru-RU' : 'en-US';
 const fmtDate = new Date(review.date).toLocaleDateString(locale, { year: 'numeric', month: 'long' });
 const toc = (headings || []).filter((h) => h.depth === 2);
 const meta = [fmtDate, review.readTime, review.extra].filter(Boolean);
-const cmsEditUrl = `/admin/#/collections/reviews/entries/${review.slug || ''}`;
+const cmsEditUrl = `/admin/#/collections/reviews/entries/${slug || review.slug || ''}`;
+const reviewsBase = isRu ? '/ru/reviews/' : '/reviews/';
+const related = (await getCollection(isRu ? 'reviews-ru' : 'reviews'))
+  .filter((r) => !r.data.draft && r.slug !== slug)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 2);
 const t = {
   inThisReview: isRu ? 'В этом обзоре' : 'In this review',
   whatsGreat:   isRu ? 'Что понравилось' : "What's great",
@@ -20,17 +27,35 @@ const t = {
   officialPage: isRu ? 'Официальная страница →' : 'Official page →',
   subTitle:     isRu ? 'Новые обзоры на почту' : 'New reviews in your inbox',
   subDesc:      isRu ? 'Когда выйдет новый обзор — узнаете первыми. Без спама, отписка в один клик.' : "When a new review drops — you'll know. No spam, unsubscribe any time.",
+  moreReviews:  isRu ? 'Ещё обзоры' : 'More reviews',
+  allReviews:   isRu ? 'Все обзоры' : 'All reviews',
+  draftTitle:   isRu ? 'Ещё не опубликовано' : 'Not published yet',
+  draftText:    isRu ? 'Этот обзор пока в черновиках и не опубликован.' : "This review is still a draft and hasn't been published.",
+  draftHome:    isRu ? '← На главную' : '← Back to home',
+  draftBanner:  isRu ? 'Черновик — не виден посетителям' : 'Draft — not visible to visitors',
+  draftEdit:    isRu ? 'Открыть в CMS →' : 'Edit in CMS →',
 };
 ---
-<Base title={`${review.title} | SpykeVision`} description={review.summary} active="reviews">
+<Base
+  title={`${review.title} | SpykeVision`}
+  description={review.summary}
+  active="reviews"
+  type="article"
+  image={review.cover}
+  noindex={review.draft}
+  alternate={alternate}
+  reviewAssets={true}
+>
+  <!-- Hero cover is a CSS background — preload it so LCP doesn't wait for stylesheet parse -->
+  {review.cover && <link slot="head" rel="preload" as="image" href={review.cover} fetchpriority="high" />}
   <!-- Draft overlay: shown to non-preview visitors when article is a draft -->
   {review.draft && (
     <div id="draftOverlay" class="draft-overlay">
       <div class="draft-overlay-box">
         <div class="draft-overlay-icon">🔒</div>
-        <h2>Not published yet</h2>
-        <p>This review is still a draft and hasn't been published.</p>
-        <a href="/" class="btn">← Back to home</a>
+        <h2>{t.draftTitle}</h2>
+        <p>{t.draftText}</p>
+        <a href={isRu ? '/ru/' : '/'} class="btn">{t.draftHome}</a>
       </div>
     </div>
   )}
@@ -38,8 +63,8 @@ const t = {
   <!-- Draft banner: shown in preview mode when article is a draft -->
   {review.draft && (
     <div id="draftBanner" class="draft-banner" style="display:none">
-      <span>Draft — not visible to visitors</span>
-      <a href={cmsEditUrl} class="draft-banner-edit">Edit in CMS →</a>
+      <span>{t.draftBanner}</span>
+      <a href={cmsEditUrl} class="draft-banner-edit">{t.draftEdit}</a>
     </div>
   )}
 
@@ -129,6 +154,31 @@ const t = {
       )}
     </div>
   </main>
+
+  {!review.draft && related.length > 0 && (
+    <section class="section wrap related-reviews">
+      <div class="section-head"><h2>{t.moreReviews}</h2><a href={reviewsBase}>{t.allReviews}</a></div>
+      <div class="grid">
+        {related.map((r) => (
+          <a href={`${reviewsBase}${r.slug}/`} class="card">
+            <div class="card-media">
+              <img src={r.data.coverCard || r.data.cover} alt={r.data.title} loading="lazy" decoding="async" srcset={thumbSrcset(r.data.coverCard || r.data.cover)} sizes={CARD_SIZES} />
+              {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
+            </div>
+            <div class="card-body">
+              {r.data.category && <span class="card-cat">{r.data.category}</span>}
+              <h3>{r.data.title}</h3>
+              <p>{r.data.summary}</p>
+              <div class="card-meta">
+                <span class="author"><span class="avatar"></span>SpykeSIK</span>
+                <span>•</span><span>{new Date(r.data.date).toLocaleDateString(locale, { year: 'numeric', month: 'short' })}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 
   {!review.draft && <Comments title={review.title} />}
 

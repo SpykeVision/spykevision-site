@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { thumbSrcset, CARD_SIZES } from '../../lib/thumbs';
 import { getCollection } from 'astro:content';
 
 // Include drafts — hidden from public by CSS/JS, visible to owner in preview mode.
@@ -10,6 +11,7 @@ const reviews = (await getCollection('reviews'))
   title="Reviews | SpykeVision"
   description="Every measurement-driven projector review on SpykeVision."
   active="reviews"
+  alternate={true}
 >
   <main class="wrap">
     <div class="article-hero">
@@ -23,7 +25,7 @@ const reviews = (await getCollection('reviews'))
         {reviews.map((r) => (
           <a href={`/reviews/${r.slug}/`} class="card" data-draft={r.data.draft ? 'true' : null}>
             <div class="card-media">
-              <img src={r.data.cover} alt={r.data.title} />
+              <img src={r.data.cover} alt={r.data.title} loading="lazy" decoding="async" srcset={thumbSrcset(r.data.cover)} sizes={CARD_SIZES} />
               {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
             </div>
             <div class="card-body">

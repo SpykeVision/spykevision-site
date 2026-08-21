@@ -3,3 +3,6 @@
 /index.html        /                          301
 /about.html        /about/                    301
 /contact.html      /contact/                  301
+/screen-brightness.html /adl-calculator/     301
+/adl-calculator.html    /adl-calculator/     301
+/adl-calculator-ru.html /ru/adl-calculator/  301

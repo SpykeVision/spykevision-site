@@ -1,14 +1,28 @@
 ---
 const USDT_ADDRESS = 'TUgTn5FUd4RUJWTLcu5YfZbcTQXjJPiCih';
 const BOOSTY_URL   = 'https://boosty.to/spykevision';
+const isRu = Astro.url.pathname.startsWith('/ru');
+const t = {
+  ariaModal:  isRu ? 'Способы поддержки' : 'Support options',
+  ariaClose:  isRu ? 'Закрыть' : 'Close',
+  title:      isRu ? 'Поддержите независимые обзоры' : 'Support independent reviews',
+  sub:        isRu ? 'Без спонсоров и рекламы — сайт существует благодаря читателям.' : 'No sponsors, no ads agenda — just readers keeping this going.',
+  boostyDesc: isRu ? 'Российские карты, МИР, СБП — для читателей из России и СНГ.' : 'Russian cards, МИР, SBP — for readers from Russia and CIS.',
+  boostyBtn:  isRu ? 'Поддержать на Boosty →' : 'Donate on Boosty →',
+  usdtDesc:   isRu ? 'Отправьте любую сумму на кошелёк ниже.' : 'Send any amount to the wallet address below.',
+  copyBtn:    isRu ? 'Скопировать адрес' : 'Copy address',
+  copied:     isRu ? 'Скопировано ✓' : 'Copied ✓',
+  cardDesc:   isRu ? 'Visa, Mastercard, Apple Pay — скоро.' : 'Visa, Mastercard, Apple Pay — coming soon.',
+  soon:       isRu ? 'Скоро' : 'Coming soon',
+};
 ---
 
 <div class="donate-backdrop" id="donateBackdrop" aria-hidden="true"></div>
 
-<dialog class="donate-modal" id="donateModal" aria-label="Support options">
-  <button class="donate-close" id="donateClose" aria-label="Close">✕</button>
-  <h2 class="donate-title">Support independent reviews</h2>
-  <p class="donate-sub">No sponsors, no ads agenda — just readers keeping this going.</p>
+<dialog class="donate-modal" id="donateModal" aria-label={t.ariaModal}>
+  <button class="donate-close" id="donateClose" aria-label={t.ariaClose}>✕</button>
+  <h2 class="donate-title">{t.title}</h2>
+  <p class="donate-sub">{t.sub}</p>
 
   <div class="donate-options">
 
@@ -20,9 +34,9 @@ const BOOSTY_URL   = 'https://boosty.to/spykevision';
       <div class="donate-card-body">
         <strong>Boosty</strong>
         <span class="donate-tag">RU / CIS</span>
-        <p>Russian cards, МИР, SBP — for readers from Russia and CIS.</p>
+        <p>{t.boostyDesc}</p>
       </div>
-      <a href={BOOSTY_URL} target="_blank" rel="noopener" class="donate-action btn-boosty">Donate on Boosty →</a>
+      <a href={BOOSTY_URL} target="_blank" rel="noopener" class="donate-action btn-boosty">{t.boostyBtn}</a>
     </div>
 
     <!-- USDT -->
@@ -33,10 +47,10 @@ const BOOSTY_URL   = 'https://boosty.to/spykevision';
       <div class="donate-card-body">
         <strong>USDT</strong>
         <span class="donate-tag">TRC-20 · Worldwide</span>
-        <p>Send any amount to the wallet address below.</p>
+        <p>{t.usdtDesc}</p>
         <code class="donate-address" id="usdtAddr">{USDT_ADDRESS}</code>
       </div>
-      <button class="donate-action btn-usdt" id="copyUsdt">Copy address</button>
+      <button class="donate-action btn-usdt" id="copyUsdt" data-copied-label={t.copied}>{t.copyBtn}</button>
     </div>
 
     <!-- Payoneer (stub) -->
@@ -47,9 +61,9 @@ const BOOSTY_URL   = 'https://boosty.to/spykevision';
       <div class="donate-card-body">
         <strong>Card / PayPal</strong>
         <span class="donate-tag">International</span>
-        <p>Visa, Mastercard, Apple Pay — coming soon.</p>
+        <p>{t.cardDesc}</p>
       </div>
-      <span class="donate-action btn-soon">Coming soon</span>
+      <span class="donate-action btn-soon">{t.soon}</span>
     </div>
 
   </div>
@@ -163,9 +177,10 @@ const BOOSTY_URL   = 'https://boosty.to/spykevision';
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 
   copy.addEventListener('click', function () {
+    var original = copy.textContent;
     navigator.clipboard.writeText(addr.textContent.trim()).then(function () {
-      copy.textContent = 'Copied ✓';
-      setTimeout(function () { copy.textContent = 'Copy address'; }, 2000);
+      copy.textContent = copy.dataset.copiedLabel || 'Copied ✓';
+      setTimeout(function () { copy.textContent = original; }, 2000);
     });
   });
 })();

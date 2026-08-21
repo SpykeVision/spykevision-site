@@ -1,0 +1,93 @@
+.calc-tabs { display:flex; gap:4px; margin-bottom:18px; background:var(--surface-2); border-radius:var(--radius-sm); padding:4px; }
+.calc-tab { flex:1; padding:10px; border:none; background:none; border-radius:10px; font-size:15px; font-weight:600; color:var(--text-3); cursor:pointer; transition:.15s; font-family:var(--font); }
+.calc-tab:hover:not(.active) { color:var(--text); }
+.calc-tab.active { background:var(--surface); color:var(--text); box-shadow:var(--shadow); }
+
+.calc-panel { display:none; }
+.calc-panel.active { display:block; }
+
+/* Fields flow into as many columns as fit — 4 estimate fields sit on one row
+   on desktop, the 9 manual fields wrap into 2 rows instead of 5. */
+.calc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px 14px; }
+@media(max-width:640px){ .calc-grid { grid-template-columns:1fr 1fr; } }
+
+.calc-field { display:flex; flex-direction:column; gap:5px; }
+.calc-field label { font-size:13px; font-weight:600; color:var(--text-2); line-height:1.3; }
+.calc-field input { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:9px 12px; font-size:16px; color:var(--text); font-family:var(--font);
+  transition:border-color .15s, box-shadow .15s; }
+.calc-field input:hover:not(:focus) { border-color:var(--text-3); }
+.calc-field input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,122,255,.15); }
+.calc-field input::-webkit-outer-spin-button,
+.calc-field input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+.calc-field input[type=number] { -moz-appearance:textfield; appearance:textfield; }
+.calc-field .hint { font-size:11px; color:var(--text-3); line-height:1.35; }
+/* Manual tab: every field carries the same "Optional" hint — the intro already
+   says blanks are fine, so hide the repetition to keep the block tight. */
+#tab-manual .calc-field .hint { display:none; }
+
+.projector-block { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:16px 18px 18px; margin-bottom:12px; border-left:4px solid var(--accent); position:relative;
+  transition:box-shadow .2s; }
+.projector-block:focus-within { box-shadow:var(--shadow-lg); }
+.projector-block .color-swatch { width:16px; height:16px; border-radius:50%; display:inline-block; margin-right:8px; vertical-align:middle; }
+.projector-block .remove-btn { position:absolute; top:6px; right:6px; background:none; border:none;
+  color:var(--text-3); font-size:20px; cursor:pointer; line-height:1; padding:12px 14px; border-radius:6px; }
+.projector-block .remove-btn:hover { background:var(--surface-2); color:var(--red); }
+.proj-name-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.proj-name-row input { flex:1; max-width:340px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:7px 12px; font-size:15px; font-weight:600; color:var(--text); font-family:var(--font); }
+.proj-name-row input:hover:not(:focus) { border-color:var(--text-3); }
+.proj-name-row input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,122,255,.15); }
+
+.add-btn { display:flex; align-items:center; gap:8px; background:none; border:2px dashed var(--border);
+  border-radius:var(--radius); padding:10px 20px; color:var(--text-3); font-size:14px; font-weight:600;
+  cursor:pointer; width:100%; justify-content:center; transition:.15s; margin-bottom:16px; }
+.add-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(0,122,255,.04); }
+[data-theme="dark"] .add-btn:hover { background:rgba(10,132,255,.10); }
+.add-btn:active { transform:scale(.99); }
+
+.chart-wrap { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; margin-top:8px; }
+[data-theme="dark"] .chart-wrap { background:#000000; border:1px solid var(--border); }
+.chart-toolbar { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+.chart-title-mini { font-size:14px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; }
+.chart-tools { display:flex; gap:8px; flex-wrap:wrap; }
+.chart-tool { background:var(--surface-2); border:1px solid var(--border); border-radius:999px;
+  padding:7px 14px; font-size:13px; font-weight:600; color:var(--text-2); cursor:pointer; font-family:var(--font); transition:.15s; white-space:nowrap; }
+.chart-tool:hover { background:var(--border); color:var(--text); }
+.chart-tool:active { transform:scale(.97); }
+.chart-tool.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.chart-canvas-box { position:relative; width:100%; height:440px; }
+.chart-canvas-box canvas { position:absolute; inset:0; width:100% !important; height:100% !important; }
+.chart-wrap.expanded {
+  position:fixed; inset:0; z-index:300; margin:0; border-radius:0; padding:20px 24px;
+  display:flex; flex-direction:column;
+}
+.chart-wrap.expanded .chart-canvas-box { flex:1; height:auto; }
+body.no-scroll { overflow:hidden; }
+@media (max-width:760px){
+  .chart-wrap { padding:16px; }
+  .chart-canvas-box { height:320px; }
+  .chart-title-mini { display:none; }
+  .chart-tools { width:100%; justify-content:space-between; }
+  .chart-tool { padding:8px 12px; flex:1; text-align:center; }
+}
+
+.calc-actions { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0 8px; }
+.btn-secondary { display:inline-flex; align-items:center; gap:6px; background:var(--surface);
+  color:var(--text-2); border:1px solid var(--border); padding:11px 22px; border-radius:999px;
+  font-size:15px; font-weight:600; cursor:pointer; transition:.15s; font-family:var(--font); }
+.btn-secondary:hover { background:var(--surface-2); color:var(--text); }
+.btn-secondary:active { transform:scale(.98); }
+
+.section-label { font-size:13px; font-weight:700; color:var(--text-3); text-transform:uppercase;
+  letter-spacing:.05em; margin:16px 0 10px; }
+
+.calc-field input.input-invalid { border-color:var(--red); box-shadow:0 0 0 3px rgba(255,59,48,.12); }
+.calc-warn { color:var(--red); font-size:13px; font-weight:600; margin-top:12px; }
+
+/* Page-level tightening — this stylesheet loads only on the calculator pages.
+   `main` prefix keeps these winning over style.css regardless of load order. */
+main .article-hero { padding:32px 0 6px; }
+main .article-hero h1 { font-size:30px; letter-spacing:-.02em; }
+main .article-hero p { font-size:15px !important; max-width:640px; }

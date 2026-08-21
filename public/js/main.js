@@ -124,6 +124,7 @@
     var img = fig.querySelector('img');
     if (!img) return;
     var cap = fig.querySelector('figcaption');
+    img.dataset.lbIdx = String(allFigData.length);
     allFigData.push({ src: img.src, caption: cap ? cap.textContent : '' });
   });
 
@@ -214,6 +215,8 @@
       btn.setAttribute('aria-label', 'Image ' + (i + 1));
       if (origImg) {
         var tImg = document.createElement('img');
+        tImg.loading = 'lazy';
+        tImg.decoding = 'async';
         tImg.src = origImg.src;
         tImg.alt = origImg.alt || '';
         btn.appendChild(tImg);
@@ -237,12 +240,8 @@
       if (mainImg) {
         mainImg.addEventListener('click', function (e) {
           e.stopPropagation();
-          var src = figs[carCur].querySelector('img').src;
-          var lbIdx = 0;
-          for (var j = 0; j < allFigData.length; j++) {
-            if (allFigData[j].src === src) { lbIdx = j; break; }
-          }
-          openLb(lbIdx);
+          var oi = figs[carCur].querySelector('img');
+          openLb(parseInt((oi && oi.dataset.lbIdx) || '0', 10));
         });
       }
 
@@ -285,12 +284,7 @@
         if (!img) return;
         img.addEventListener('click', function (e) {
           e.stopPropagation();
-          var src = img.src;
-          var idx = 0;
-          for (var j = 0; j < allFigData.length; j++) {
-            if (allFigData[j].src === src) { idx = j; break; }
-          }
-          openLb(idx);
+          openLb(parseInt(img.dataset.lbIdx || '0', 10));
         });
       });
     }
@@ -305,7 +299,8 @@
     var innerHtml = Array.prototype.filter.call(inlineToc.children, function (el) {
       return el.tagName !== 'H4';
     }).map(function (el) { return el.outerHTML; }).join('');
-    floatToc.innerHTML = '<h4>In this review</h4>' + innerHtml;
+    var tocHeading = document.documentElement.lang === 'ru' ? 'В этом обзоре' : 'In this review';
+    floatToc.innerHTML = '<h4>' + tocHeading + '</h4>' + innerHtml;
     document.body.appendChild(floatToc);
 
     // Show floating nav once the inline TOC scrolls out of view
@@ -374,4 +369,28 @@
   if (btnBottom) btnBottom.addEventListener('click', function () {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   });
+})();
+
+// Reading progress bar — accent line on the header's bottom edge, article pages only.
+// Progress tracks the article body (ends at 100% when the article is read, not the footer).
+(function () {
+  var article = document.querySelector('.article-page');
+  var header = document.querySelector('.site-header');
+  if (!article || !header) return;
+  var bar = document.createElement('div');
+  bar.className = 'read-progress';
+  header.appendChild(bar);
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var end = article.offsetTop + article.offsetHeight - window.innerHeight;
+    var y = window.scrollY || document.documentElement.scrollTop;
+    var p = end > 0 ? Math.min(1, Math.max(0, y / end)) : 1;
+    bar.style.transform = 'scaleX(' + p + ')';
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
 })();

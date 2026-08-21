@@ -5,7 +5,7 @@ import { getEntry } from 'astro:content';
 const page = await getEntry('pages', 'about-ru');
 const { Content } = await page.render();
 ---
-<Base title={page.data.title} description={page.data.description} active={page.data.active}>
+<Base title={page.data.title} description={page.data.description} active={page.data.active} alternate={true}>
   <main class="wrap">
     <div class="article-hero">
       <h1 style={page.data.centered ? 'text-align:center' : undefined}>{page.data.heroTitle}</h1>

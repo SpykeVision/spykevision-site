@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro';
+import Base from '../../layouts/Base.astro';
 import { getEntry } from 'astro:content';
 
-const page = await getEntry('pages', 'about-en');
+const page = await getEntry('pages', 'methodology-ru');
 const { Content } = await page.render();
 ---
 <Base title={page.data.title} description={page.data.description} active={page.data.active} alternate={true}>

@@ -8,10 +8,11 @@ const { title } = Astro.props;
 const pageUrl = Astro.url.href;
 const pageId  = Astro.url.pathname;
 const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
+const isRu = Astro.url.pathname.startsWith('/ru');
 ---
 {enabled && (
   <section class="comments article-page wrap">
-    <h2 class="comments-title">Comments</h2>
+    <h2 class="comments-title">{isRu ? 'Комментарии' : 'Comments'}</h2>
     <div
       id="cusdis_thread"
       data-host="https://cusdis.com"

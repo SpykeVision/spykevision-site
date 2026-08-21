@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Калькулятор ADL-контраста | SpykeVision</title>
+  <meta name="description" content="Рассчитайте и сравните кривые ADL-контраста проекторов. Оцените по On/Off + ANSI или постройте по известным точкам измерений.">
+  <link rel="canonical" href="https://spykevision.com/adl-calculator-ru.html">
+  <link rel="alternate" hreflang="en" href="https://spykevision.com/adl-calculator.html">
+  <link rel="alternate" hreflang="ru" href="https://spykevision.com/adl-calculator-ru.html">
+  <link rel="alternate" hreflang="x-default" href="https://spykevision.com/adl-calculator.html">
+  <meta property="og:site_name" content="SpykeVision">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Калькулятор ADL-контраста | SpykeVision">
+  <meta property="og:description" content="Рассчитайте и сравните кривые ADL-контраста проекторов. Оцените по On/Off + ANSI или постройте по известным точкам измерений.">
+  <meta property="og:url" content="https://spykevision.com/adl-calculator-ru.html">
+  <meta property="og:locale" content="ru_RU">
+  <meta name="twitter:card" content="summary">
+  <script>try{var t=localStorage.getItem('sv-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/css/adl-calc.css">
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+    <span class="theme-icon">☀️</span>
+    <span class="theme-label">Light</span>
+  </button>
+
+  <header class="site-header">
+    <div class="wrap nav">
+      <a href="/ru/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
+      <button class="nav-toggle" aria-label="Меню" aria-expanded="false"><span></span></button>
+      <ul class="nav-links">
+        <li><a href="/ru/reviews/">Обзоры</a></li>
+        <li><a href="/ru/#coming-soon">Скоро</a></li>
+        <li><a href="/adl-calculator-ru.html" class="active">Калькулятор ADL<span class="beta-tag hot-tag">hot</span></a></li>
+        <li><a href="/ru/contact/">Контакты</a></li>
+        <li><a href="/ru/about/">О нас</a></li>
+        <li class="lang-dropdown-wrap">
+          <button class="lang-dropdown-btn" aria-haspopup="true" aria-expanded="false" id="langDropBtn">
+            <svg viewBox="0 0 30 20" width="22" height="15" class="flag-svg" aria-hidden="true">
+              <rect width="30" height="6.67" fill="#fff"/>
+              <rect y="6.67" width="30" height="6.67" fill="#0039A6"/>
+              <rect y="13.33" width="30" height="6.67" fill="#D52B1E"/>
+            </svg>
+            <svg class="lang-chevron" viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          </button>
+          <ul class="lang-dropdown-menu" role="menu">
+            <li role="menuitem"><a href="/adl-calculator.html"><svg viewBox="0 0 30 20" width="22" height="15" class="flag-svg" aria-hidden="true"><rect width="30" height="20" fill="#B22234"/><rect y="1.54" width="30" height="1.54" fill="#fff"/><rect y="4.62" width="30" height="1.54" fill="#fff"/><rect y="7.69" width="30" height="1.54" fill="#fff"/><rect y="10.77" width="30" height="1.54" fill="#fff"/><rect y="13.85" width="30" height="1.54" fill="#fff"/><rect y="16.92" width="30" height="1.54" fill="#fff"/><rect width="12" height="10.77" fill="#3C3B6E"/></svg> English</a></li>
+            <li role="menuitem"><a href="/adl-calculator-ru.html" class="lang-active"><svg viewBox="0 0 30 20" width="22" height="15" class="flag-svg" aria-hidden="true"><rect width="30" height="6.67" fill="#fff"/><rect y="6.67" width="30" height="6.67" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/></svg> Русский</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </header>
+  <script>
+  (function () {
+    var btn = document.getElementById('langDropBtn');
+    var menu = btn && btn.closest('.lang-dropdown-wrap').querySelector('.lang-dropdown-menu');
+    if (!btn || !menu) return;
+    function open()  { menu.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+    function close() { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+    btn.addEventListener('click', function(e) { e.stopPropagation(); menu.classList.contains('open') ? close() : open(); });
+    document.addEventListener('click', close);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
+  })();
+  </script>
+
+  <main class="wrap">
+    <div class="article-hero">
+      <h1>Калькулятор ADL-контраста<span class="beta-tag">beta</span></h1>
+      <p style="color:var(--text-3);font-size:17px;margin-top:8px">Рассчитайте приблизительный ADL контраст по нескольким измерениям или постройте график по уже известным замерам и сравните несколько проекторов.</p>
+    </div>
+
+    <div class="calc-tabs" role="tablist">
+      <button class="calc-tab active" role="tab" aria-selected="true" role="tab" data-tab="estimate" onclick="switchTab('estimate')">Рассчитать ADL контраст</button>
+      <button class="calc-tab" role="tab" aria-selected="false" role="tab" data-tab="manual" onclick="switchTab('manual')">Сравнить ADL контраст</button>
+    </div>
+
+    <!-- TAB 1: ESTIMATE -->
+    <div class="calc-panel active" id="tab-estimate">
+      <div class="prose" style="margin-bottom:20px">
+        <p>Введите известные значения контраста. Калькулятор использует степенную модель для интерполяции полной кривой ADL от On/Off (100% чёрного) до измеренных значений ANSI и/или ADL. Чем больше точек — тем точнее оценка.</p>
+      </div>
+
+      <div id="estimateBlocks">
+        <!-- filled by JS -->
+      </div>
+      <button class="add-btn" onclick="addEstimateBlock()">+ Добавить проектор</button>
+
+      <div class="calc-actions">
+        <button class="btn" onclick="buildEstimateChart()">Рассчитать и построить</button>
+        <button class="btn-secondary" onclick="clearChart('estimateChart')">Очистить график</button>
+      </div>
+
+      <div class="chart-wrap" id="estimateWrap">
+        <div class="chart-toolbar">
+          <span class="chart-title-mini">Кривая ADL-контраста</span>
+          <div class="chart-tools">
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('estimateChart', this)">Линейная шкала</button>
+            <button class="chart-tool" data-xexpand="estimateChart" onclick="toggleXExpand('estimateChart', this)">Расширить 0–5%</button>
+            <button class="chart-tool" onclick="savePNG('estimateChart','spykevision-adl-estimate')">⬇ Сохранить PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('estimateWrap','estimateChart', this)">⛶ Развернуть</button>
+          </div>
+        </div>
+        <div class="chart-canvas-box"><canvas id="estimateChart"></canvas></div>
+      </div>
+
+      <div class="prose" style="margin-top:20px">
+        <h3>Как работает оценка</h3>
+        <p>Кривая интерполируется в логарифмическом пространстве через каждое введённое значение (On/Off, 1% ADL, 5% ADL, ANSI) и точно проходит через все измеренные точки. Промежутки между точками интерполируются, а хвост за последней точкой экстраполируется по локальному наклону. Результат является оценкой; реальное поведение ADL может отличаться, особенно у проекторов с агрессивной динамической диафрагмой.</p>
+      </div>
+    </div>
+
+    <!-- TAB 2: MANUAL -->
+    <div class="calc-panel" id="tab-manual">
+      <div class="prose" style="margin-bottom:20px">
+        <p>Введите точные измеренные значения контраста для каждого уровня ADL. Оставьте поля пустыми, если измерение не выполнялось; график соединит только введённые точки. Добавьте несколько проекторов для сравнения.</p>
+      </div>
+
+      <div id="manualBlocks">
+        <!-- filled by JS -->
+      </div>
+      <button class="add-btn" onclick="addManualBlock()">+ Добавить проектор</button>
+
+      <div class="calc-actions">
+        <button class="btn" onclick="buildManualChart()">Построить</button>
+        <button class="btn-secondary" onclick="clearChart('manualChart')">Очистить график</button>
+      </div>
+
+      <div class="chart-wrap" id="manualWrap">
+        <div class="chart-toolbar">
+          <span class="chart-title-mini">Кривая ADL-контраста</span>
+          <div class="chart-tools">
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('manualChart', this)">Линейная шкала</button>
+            <button class="chart-tool" data-xexpand="manualChart" onclick="toggleXExpand('manualChart', this)">Расширить 0–5%</button>
+            <button class="chart-tool" onclick="savePNG('manualChart','spykevision-adl-measured')">⬇ Сохранить PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('manualWrap','manualChart', this)">⛶ Развернуть</button>
+          </div>
+        </div>
+        <div class="chart-canvas-box"><canvas id="manualChart"></canvas></div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a href="/ru/" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><path id="bl" d="M29 16 L22.5 27.26 L18 19.46 Z"/></defs><use href="#bl" fill="#0a84ff"/><use href="#bl" transform="rotate(60 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(120 16 16)" fill="#ff9500"/><use href="#bl" transform="rotate(180 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(240 16 16)" fill="#0a84ff"/><use href="#bl" transform="rotate(300 16 16)" fill="#0a84ff"/></svg><span class="wm">Spyke<span class="v">Vision</span><span class="beta-tag">beta</span></span></a>
+      <nav class="footer-links">
+        <a href="/ru/reviews/">Обзоры</a>
+        <a href="/adl-calculator-ru.html">Калькулятор ADL<span class="beta-tag hot-tag">hot</span></a>
+        <a href="/ru/contact/">Контакты</a>
+        <a href="/ru/about/">О нас</a>
+      </nav>
+      <p class="copyright">© 2026 SpykeVision. Независимое издание.</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+  window.ADL_LS_SUFFIX = '-ru';
+  window.ADL_I18N = {
+    projPlaceholder: 'Название проектора',
+    projDefault:     'Проектор',
+    eg:              'напр.',
+    optional:        'Необязательно',
+    onoffLabel:      'On/Off контраст',
+    onoffHint:       'Полноэкранный On/Off (0% ADL)',
+    ansiLabel:       'ANSI контраст',
+    ansiHint:        'Шахматная доска 50% ADL',
+    apl1Label:       'Контраст при 1% ADL',
+    apl5Label:       'Контраст при 5% ADL',
+    contrastWord:    'контраст',
+    estimatedSuffix: ' (оценка)',
+    measuredSuffix:  ' (измеренные)',
+    crossover:       'Пересечение',
+    xTitle:          '% белого (ADL)',
+    yTitle:          'Контраст',
+    logScale:        'Лог. шкала',
+    linearScale:     'Линейная шкала',
+    fullRange:       'Полный диапазон',
+    expandLow:       'Расширить 0\u20135%',
+    expandBtn:       '\u26f6 Развернуть',
+    closeBtn:        '\u2715 Закрыть',
+    plotFirst:       'Сначала постройте график.',
+    removeAria:      'Удалить проектор',
+    ansiWarn:        'ANSI контраст не может быть выше On/Off контраста \u2014 проверьте значения. Этот проектор пропущен.'
+  };
+  </script>
+  <script src="/js/adl-calc.js"></script>
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "92363d386413401286d548d138515fea"}'></script><!-- End Cloudflare Web Analytics -->
+<script defer src="/js/metrics.js"></script>
+</body>
+</html>

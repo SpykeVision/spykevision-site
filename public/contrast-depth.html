@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="0;url=/adl-calculator.html">
+<script>
+// Hidden until launch: redirect on prod, but allow local preview (file:// or localhost).
+if(location.protocol!=='file:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1')
+  location.replace('/adl-calculator/');
+</script>
 <title>Contrast Depth Simulation · SpykeVision</title>
 <link rel="stylesheet" href="/css/style.css">
 <style>
@@ -132,9 +136,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
     <ul class="nav-links">
       <li><a href="/reviews/">Reviews</a></li>
       <li><a href="/#coming-soon">Coming Soon</a></li>
-      <li><a href="/adl-calculator.html">ADL Calculator<span class="beta-tag">beta</span></a></li>
+      <li><a href="/adl-calculator/">ADL Calculator<span class="beta-tag">beta</span></a></li>
       <li><a href="/contrast-depth.html" class="active">Contrast Depth<span class="beta-tag">beta</span></a></li>
-      <li><a href="/screen-brightness.html">Brightness &amp; CR<span class="beta-tag">beta</span></a></li>
+      <li><a href="/adl-calculator/">Brightness &amp; CR<span class="beta-tag">beta</span></a></li>
       <li><a href="/contact/">Contact</a></li>
       <li><a href="/about/">About</a></li>
     </ul>
@@ -155,6 +159,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
   One frame at different projector contrast ratios. The math is honest: sRGB → linear light →
   raise the black floor to 1/CR of peak white → back to sRGB. Drag the divider;
   turn up “Boost” to emulate how the eye perceives it in a dark room.
+  The verdict scores the difference in JND (PQ / Barten sensitivity curve) from your
+  peak brightness, scene ADL and the scatter inside the eye itself — so the same CR gap
+  weighs more in dark scenes, exactly as your eye does it.
 </p>
 
 <div class="pickers">
@@ -203,8 +210,13 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
       <button class="gamma-btn" data-g="bt1886">BT.1886</button>
     </div>
     <button class="gamma-btn sel" id="cropBars" style="display:none">exclude black bars</button>
+    <span class="scene-label" style="margin-left:8px">Peak white</span>
+    <span class="cr-field" style="margin:0;padding:4px 10px;display:inline-flex;width:auto">
+      <input class="cr-input" id="nitsInput" type="number" min="5" max="2000" value="100" style="width:52px;font-size:14px">
+      <span class="cr-suffix" style="font-size:12px">nits</span>
+    </span>
     <span class="scene-chip" id="sceneCap">eye: —</span>
-    <span class="scene-note">approx. pupil adaptation model</span>
+    <span class="scene-note">Stiles–Holladay intraocular scatter model</span>
   </div>
   <div id="pixelInfo" style="font-size:11px;color:#888;margin-top:4px;display:none">hover over image to inspect pixel</div>
 </div>
@@ -212,7 +224,10 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
 <div class="boost-card">
   <div class="boost-top">
     <span class="boost-name">Difference boost</span>
-    <span class="boost-badge">×<span id="boostVal">1</span></span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="gamma-btn sel" id="autoBoost" title="Sets boost from scene ADL — emulates the exposure gain of a dark-adapted eye">Auto: dark room</button>
+      <span class="boost-badge" id="boostBadge">×<span id="boostVal">1</span></span>
+    </div>
   </div>
   <input type="range" id="boostSlider" min="1" max="30" step="1" value="1">
   <div class="boost-desc" id="boostDesc">×1 — exact simulation, as seen on a phone/monitor screen.</div>
@@ -333,15 +348,30 @@ function refreshADL(){
   document.getElementById('adlVal').textContent=adlStr;
   const cb=document.getElementById('cropBars');
   if(cb)cb.style.display=barsFound?'inline-flex':'none';
+  applyAutoBoost();   // dark-room view by default (no-op once slider touched)
   drawCompare();
 }
-// Eye adaptation threshold: up to what CR is black still distinguishable at a given ADL.
-// Power-law model, anchored at ANSI 50% → ~1000:1. APPROXIMATION, not peer-reviewed.
-function crMaxForADL(adl){
-  const a=Math.max(adl,0.003);            // guard against divide-by-zero in the void
-  return Math.min(500000, 1000*Math.pow(0.5/a, 1.2));
-}
+// ── Perception core (see _analysis/perception-core.js for the tested prototype) ──
+// PQ / SMPTE ST 2084 — Dolby's encoding of the Barten contrast-sensitivity curve.
+// One 12-bit PQ code step ≈ 1 JND (just-noticeable difference) from 0.0001 to 10 000 nits.
+const PQ_M1=2610/16384, PQ_M2=(2523/4096)*128;
+const PQ_C1=3424/4096, PQ_C2=(2413/4096)*32, PQ_C3=(2392/4096)*32;
+function pqCurve(L){const y=Math.pow(Math.max(L,0)/10000,PQ_M1);
+  return Math.pow((PQ_C1+PQ_C2*y)/(1+PQ_C3*y),PQ_M2);}
+function jndCodes(L1,L2){return Math.abs(pqCurve(L1)-pqCurve(L2))*4096;}
+
+// Intraocular veiling glare (Stiles–Holladay): bright picture content scatters
+// inside the eye and fogs the shadows. K calibrated so the in-frame ceiling is
+// ~1000:1 at ADL 50% (the classic ANSI anchor). L_DARK = residual dark-room
+// floor of vision. All luminances in nits.
+const K_VEIL=0.002, L_DARK=0.0002;
+let Lpeak=100; // projector peak white on screen, nits (user input)
+function eyeVeil(adl){return K_VEIL*adl*Lpeak+L_DARK;}
+// What the eye actually receives from a black floor: floor + its own scatter.
+function perceivedFloor(cr,adl){return Lpeak/cr+eyeVeil(adl);}
+function crEyeCeiling(adl){return Lpeak/eyeVeil(adl);}
 function render(cr,boost){
+  if(viewMode==='real')return renderReal(cr);
   const k=cr+'_'+boost;if(cache[k])return cache[k];
   const n=srcPixels.length,out=new Uint8ClampedArray(n);
   const floor=Math.min(boost/cr,1),scale=1-floor;
@@ -353,9 +383,59 @@ function render(cr,boost){
   }
   cache[k]=out;return out;
 }
+
+// "Real dark room": what the adapted eye makes of the projected image.
+// 1. Projector output in absolute nits (black floor from CR, peak from Lpeak).
+// 2. + uniform intraocular veil (Stiles–Holladay, from scene ADL).
+// 3. Photoreceptor response r = Y^n/(Y^n+σ^n) (Naka–Rushton, n=0.9) with
+//    INCOMPLETE adaptation anchored to peak white: σ = Lpeak·max(0.3, 4·ADL).
+//    Film viewing keeps the eye tied to recent highlights, so a dark scene
+//    stays dark (details emerge) instead of auto-exposing to mid-gray.
+// 4. Mesopic desaturation: color drains below ~3 nits, gone by ~0.03 (rods).
+// Normalized so peak white maps to monitor white. Approximation of appearance,
+// not colorimetry — the verdict's JND number stays the honest judge.
+const NR_N=0.9;
+function renderReal(cr){
+  const k='real_'+cr+'_'+Lpeak+'_'+frameADL.toFixed(5);if(cache[k])return cache[k];
+  if(Object.keys(cache).length>24)for(const kk in cache)delete cache[kk]; // scrubbing the nits field must not eat RAM
+  const n=srcPixels.length,out=new Uint8ClampedArray(n);
+  const floor=1/cr,scale=1-floor;
+  const veilU=eyeVeil(frameADL);
+  const sig=Math.pow(Lpeak*Math.max(0.3,4*frameADL),NR_N);
+  const rW=Math.pow(Lpeak+veilU,NR_N);
+  const wNorm=rW/(rW+sig);                     // response at peak white
+  const LOG_LO=Math.log10(0.03),LOG_HI=Math.log10(3);
+  for(let i=0;i<n;i+=4){
+    const lr=dec[srcPixels[i]]*scale+floor,
+          lg=dec[srcPixels[i+1]]*scale+floor,
+          lb=dec[srcPixels[i+2]]*scale+floor;
+    const Yrel=0.2126*lr+0.7152*lg+0.0722*lb;
+    const Ye=Yrel*Lpeak+veilU;                 // nits at the retina
+    const rp=Math.pow(Ye,NR_N);
+    const Ld=(rp/(rp+sig))/wNorm;              // display-relative response
+    // Chromaticity ratios; softly compressed so the response lift can't blow
+    // a saturated channel past white (neon artifacts), and partially drained
+    // in the mesopic range (rods see little color — but never fully gray).
+    const rr=lr/Yrel,rg=lg/Yrel,rb=lb/Yrel;
+    let m=(Math.log10(Ye)-LOG_LO)/(LOG_HI-LOG_LO);m=m<0?0:m>1?1:m;
+    // Chroma confidence: near black the source chroma is mostly JPEG noise and
+    // the eye has no color vision there anyway — fade ratios to neutral below ~1 nit.
+    const w=Ye/(Ye+0.25);
+    let cf=(0.35+0.65*m)*w;                    // mesopic desaturation, capped
+    const mx=Math.max(rr,rg,rb);
+    if(Ld*(1+(mx-1)*cf)>1&&mx>1)cf=Math.min(cf,(1/Ld-1)/(mx-1)); // gamut guard
+    out[i]  =encByte(Ld*(1+(rr-1)*cf));
+    out[i+1]=encByte(Ld*(1+(rg-1)*cf));
+    out[i+2]=encByte(Ld*(1+(rb-1)*cf));
+    out[i+3]=255;
+  }
+  cache[k]=out;return out;
+}
 function put(cv,px){cv.getContext('2d').putImageData(new ImageData(px,W,H),0,0);}
 
-let crLeft=500,crRight=10000,boost=1,dividerPct=50;
+// viewMode 'boost' = simple linear floor lift (default — shows the CR difference
+// plainly). 'real' = dormant Naka–Rushton appearance render, kept for later.
+let crLeft=500,crRight=10000,boost=1,dividerPct=50,viewMode='boost';
 
 const outer=document.getElementById('compareOuter'),cvLeft=document.getElementById('cvLeft'),
   cvRight=document.getElementById('cvRight'),divLine=document.getElementById('divLine'),
@@ -377,7 +457,7 @@ window.addEventListener('touchmove',e=>{if(drag)setDivider(evX(e));},{passive:tr
 window.addEventListener('mouseup',()=>drag=false);
 window.addEventListener('touchend',()=>drag=false);
 
-function fmt(cr){return cr.toLocaleString('en')+':1'+(boost>1?' ×'+boost:'');}
+function fmt(cr){return cr.toLocaleString('en')+':1'+(viewMode==='boost'&&boost>1?' ×'+boost:'');}
 function drawCompare(){
   if(!srcPixels)return;
   put(cvLeft,render(crLeft,boost));put(cvRight,render(crRight,boost));
@@ -406,6 +486,8 @@ function drawCompare(){
 function labL(Y){const f=Y>0.008856?Math.cbrt(Y):7.787*Y+16/116;return 116*f-16;}
 function fmtFloor(cr){const v=100/cr;return v>=0.01?v.toFixed(2)+'%':v.toFixed(4)+'%';}
 
+function fmtNits(v){return v>=1?v.toPrecision(3):v>=0.01?v.toFixed(3):v.toFixed(4);}
+
 function updateVerdict(){
   const lo=Math.min(crLeft,crRight),hi=Math.max(crLeft,crRight);
   const vT=document.getElementById('vTitle'),vP=document.getElementById('vPill'),
@@ -413,7 +495,7 @@ function updateVerdict(){
         sCap=document.getElementById('sceneCap');
 
   const adl=frameADL;
-  const cap=crMaxForADL(adl);               // max perceivable CR at this ADL
+  const cap=crEyeCeiling(adl);              // in-frame ceiling from eye scatter
   sCap.textContent='eye resolves up to ~'+Math.round(cap).toLocaleString('en')+':1';
 
   if(lo===hi){
@@ -424,23 +506,23 @@ function updateVerdict(){
     return;
   }
 
-  // Model: perceived improvement = how many "stops" (log2) of contrast the eye
-  // actually gains — but capped: contrast beyond the ADL adaptation limit isn't
-  // resolved, so we clamp both values to the cap before comparing.
-  const eLo=Math.min(lo,cap), eHi=Math.min(hi,cap);
-  const stops=Math.log2(eHi/eLo);           // ≥0 perceived stops of deeper black
-  const pct=Math.max(2,Math.min(100,stops/4*100));
+  // Model: both black floors in absolute nits + the eye's own veiling glare at
+  // this ADL, then their perceptual distance in JND (PQ/Barten). The ceiling
+  // emerges naturally: once both floors sink below the veil, ΔJND → 0.
+  // Dark scenes (low ADL → thin veil) automatically weigh the difference more.
+  const fLo=perceivedFloor(lo,adl), fHi=perceivedFloor(hi,adl);
+  const dJ=jndCodes(fLo,fHi);
+  const pct=Math.max(2,Math.min(100,dJ/200*100));
   let tier,color,note;
-  if(stops>=2.5){tier='Big leap';color='var(--green)';
-    note='Clearly visible even with imperfect room darkening.';}
-  else if(stops>=1.3){tier='Noticeable gain';color='var(--green)';
+  if(dJ>=150){tier='Big leap';color='var(--green)';
+    note='Clearly visible in a dark room — and hard to miss on dark scenes.';}
+  else if(dJ>=40){tier='Noticeable gain';color='var(--green)';
     note='Well visible in a dark room on dark scenes.';}
-  else if(stops>=0.6){tier='Small gain';color='var(--orange)';
-    note='Perceptible but subtle — mostly in the darkest parts of the frame.';}
+  else if(dJ>=10){tier='Subtle gain';color='var(--orange)';
+    note='Perceptible in the darkest scenes if you look for it.';}
   else{tier='Barely noticeable';color='var(--text-3)';
-    note=(hi>cap && lo>=cap*0.999)
-      ? 'Both contrast ratios exceed what the eye resolves at ADL '+(adl*100).toFixed(1)+'% — '+
-        'at this scene brightness black has already hit the pupil threshold, so the gain is invisible.'
+    note=(hi>cap)
+      ? 'At ADL '+(adl*100).toFixed(1)+'% the scatter inside your own eye fogs the shadows above both black floors — the gain is invisible in this frame.'
       : 'The gap is too small — the eye does not register it.';}
 
   vT.textContent=lo.toLocaleString('en')+':1  →  '+hi.toLocaleString('en')+':1';
@@ -448,12 +530,13 @@ function updateVerdict(){
   vF.style.width=pct+'%';vF.style.background=color;
 
   const capMsg=(hi>cap)
-    ? ' But at this brightness the eye only adapts up to ~<b>'+Math.round(cap).toLocaleString('en')+
-      ':1</b>, so any gain above that threshold goes unread.'
-    : ' Both values are within what is distinguishable at this scene brightness.';
-  vX.innerHTML='The black floor drops from <b>'+fmtFloor(lo)+'</b> to <b>'+fmtFloor(hi)+
-    '</b> of white — that is <b>'+stops.toFixed(1)+'</b> stops of deeper black, '+
-    'adjusted for scene brightness.'+capMsg+' '+note;
+    ? ' At this scene brightness the eye resolves up to ~<b>'+Math.round(cap).toLocaleString('en')+
+      ':1</b> — gains beyond that sink under intraocular scatter.'
+    : ' Both floors are above the eye’s scatter veil at this scene brightness.';
+  vX.innerHTML='Black floor: <b>'+fmtFloor(lo)+'</b> → <b>'+fmtFloor(hi)+'</b> of white'+
+    ' (at '+Lpeak+' nits peak: <b>'+fmtNits(Lpeak/lo)+'</b> → <b>'+fmtNits(Lpeak/hi)+'</b> nits).'+
+    ' As the eye perceives them — incl. its own scatter — they are <b>'+
+    (dJ<1?'<1':Math.round(dJ))+' JND</b> apart.'+capMsg+' '+note;
 }
 
 // presets + inputs
@@ -487,6 +570,15 @@ function onInput(inp,isLeft){
 inpLeft.addEventListener('input',()=>onInput(inpLeft,true));
 inpRight.addEventListener('input',()=>onInput(inpRight,false));
 
+// peak white (nits) — converts CR into absolute floors for the JND verdict
+const nitsInp=document.getElementById('nitsInput');
+nitsInp.addEventListener('input',()=>{
+  const v=parseFloat(nitsInp.value);
+  if(!v||v<5)return;
+  Lpeak=Math.min(v,2000);
+  drawCompare();   // the real-view render depends on absolute nits
+});
+
 // boost
 const bs=document.getElementById('boostSlider'),bv=document.getElementById('boostVal'),bd=document.getElementById('boostDesc');
 const BD={1:'×1 — exact simulation, as seen on a phone/monitor screen.',
@@ -495,11 +587,35 @@ const BD={1:'×1 — exact simulation, as seen on a phone/monitor screen.',
   15:'×15 — strong exaggeration. Shows WHERE contrast is lost, not realistic.',
   30:'×30 — maximum. Structure of the difference only, not physically accurate.'};
 function updFill(){bs.style.setProperty('--fill',((boost-1)/29*100)+'%');}
+function setBoost(v,desc){
+  boost=v;bs.value=v;bv.textContent=v;updFill();
+  if(desc){bd.textContent=desc;}
+  else{const steps=[1,3,7,15,30];const cl=steps.reduce((a,b)=>Math.abs(b-boost)<Math.abs(a-boost)?b:a);
+    bd.textContent=BD[cl];}
+  drawCompare();
+}
+// Manual slider move takes over; the Auto button hands control back.
+let boostAuto=true;
 bs.addEventListener('input',()=>{
-  boost=+bs.value;bv.textContent=boost;updFill();
-  const steps=[1,3,7,15,30];const cl=steps.reduce((a,b)=>Math.abs(b-boost)<Math.abs(a-boost)?b:a);
-  bd.textContent=BD[cl];drawCompare();
+  boostAuto=false;
+  document.getElementById('autoBoost').classList.remove('sel');
+  setBoost(+bs.value);
 });
+
+// Auto boost (Manual-boost mode only): partial dark adaptation — sublinear
+// gain, sqrt of the mid-gray ratio (a dark scene stays dark, details emerge).
+function applyAutoBoost(){
+  if(viewMode!=='boost'||!boostAuto)return;
+  document.getElementById('autoBoost').classList.add('sel');
+  const g=Math.max(1,Math.min(30,Math.round(Math.sqrt(0.18/Math.max(frameADL,0.002)))));
+  boost=g;bs.value=g;bv.textContent=g;updFill();
+  bd.textContent='×'+g+' — auto from scene ADL '+(frameADL*100).toFixed(1)+
+    '%: the exposure gain of an eye adapted to this scene in a dark room. Move the slider for manual control (×1 = exact monitor view).';
+}
+document.getElementById('autoBoost').addEventListener('click',()=>{
+  boostAuto=true;applyAutoBoost();drawCompare();
+});
+
 
 // theme
 const tBtn=document.getElementById('themeBtn');

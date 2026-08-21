@@ -9,7 +9,9 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content, headings } = await entry.render();
+// hreflang only when the EN twin exists at the mirrored URL
+const hasEn = (await getCollection('reviews')).some((r) => r.slug === entry.slug);
 ---
-<Review review={entry.data} headings={headings} lang="ru">
+<Review review={entry.data} slug={entry.slug} headings={headings} lang="ru" alternate={hasEn}>
   <Content />
 </Review>

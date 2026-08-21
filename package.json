@@ -6,12 +6,18 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "prebuild": "node scripts/gen-thumbs.mjs",
+    "predev": "node scripts/gen-thumbs.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.18",
     "@aws-sdk/client-s3": "^3.600.0",
     "@aws-sdk/s3-request-presigner": "^3.600.0",
     "astro": "^4.16.18"
+  },
+  "devDependencies": {
+    "image-size": "^2.0.2",
+    "sharp": "^0.35.3"
   }
 }

@@ -1,0 +1,122 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Калькулятор ADL-контраста | SpykeVision"
+  description="Рассчитайте и сравните кривые ADL-контраста проекторов. Оцените по On/Off + ANSI или постройте по известным точкам измерений."
+  active="calculator"
+  alternate={true}
+>
+  <link rel="stylesheet" href="/css/adl-calc.css" slot="head" />
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" slot="head"></script>
+
+  <main class="wrap">
+    <div class="article-hero">
+      <h1>Калькулятор ADL-контраста<span class="beta-tag">beta</span></h1>
+      <p style="color:var(--text-3);font-size:17px;margin-top:8px">Рассчитайте приблизительный ADL контраст по нескольким измерениям или постройте график по уже известным замерам и сравните несколько проекторов.</p>
+    </div>
+
+    <div class="calc-tabs" role="tablist">
+      <button class="calc-tab active" role="tab" aria-selected="true" data-tab="estimate" onclick="switchTab('estimate')">Рассчитать ADL контраст</button>
+      <button class="calc-tab" role="tab" aria-selected="false" data-tab="manual" onclick="switchTab('manual')">Сравнить ADL контраст</button>
+    </div>
+
+    <!-- TAB 1: ESTIMATE -->
+    <div class="calc-panel active" id="tab-estimate">
+      <div class="prose" style="margin-bottom:20px">
+        <p>Введите известные значения контраста. Калькулятор использует степенную модель для интерполяции полной кривой ADL от On/Off (100% чёрного) до измеренных значений ANSI и/или ADL. Чем больше точек — тем точнее оценка.</p>
+      </div>
+
+      <div id="estimateBlocks">
+        <!-- filled by JS -->
+      </div>
+      <button class="add-btn" onclick="addEstimateBlock()">+ Добавить проектор</button>
+
+      <div class="calc-actions">
+        <button class="btn" onclick="buildEstimateChart()">Рассчитать и построить</button>
+        <button class="btn-secondary" onclick="clearChart('estimateChart')">Очистить график</button>
+      </div>
+
+      <div class="chart-wrap" id="estimateWrap">
+        <div class="chart-toolbar">
+          <span class="chart-title-mini">Кривая ADL-контраста</span>
+          <div class="chart-tools">
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('estimateChart', this)">Линейная шкала</button>
+            <button class="chart-tool" data-xexpand="estimateChart" onclick="toggleXExpand('estimateChart', this)">Расширить 0–5%</button>
+            <button class="chart-tool" onclick="savePNG('estimateChart','spykevision-adl-estimate')">⬇ Сохранить PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('estimateWrap','estimateChart', this)">⛶ Развернуть</button>
+          </div>
+        </div>
+        <div class="chart-canvas-box"><canvas id="estimateChart"></canvas></div>
+      </div>
+
+      <div class="prose" style="margin-top:20px">
+        <h3>Как работает оценка</h3>
+        <p>Кривая интерполируется в логарифмическом пространстве через каждое введённое значение (On/Off, 1% ADL, 5% ADL, ANSI) и точно проходит через все измеренные точки. Промежутки между точками интерполируются, а хвост за последней точкой экстраполируется по локальному наклону. Результат является оценкой; реальное поведение ADL может отличаться, особенно у проекторов с агрессивной динамической диафрагмой.</p>
+      </div>
+    </div>
+
+    <!-- TAB 2: MANUAL -->
+    <div class="calc-panel" id="tab-manual">
+      <div class="prose" style="margin-bottom:20px">
+        <p>Введите точные измеренные значения контраста для каждого уровня ADL. Оставьте поля пустыми, если измерение не выполнялось; график соединит только введённые точки. Добавьте несколько проекторов для сравнения.</p>
+      </div>
+
+      <div id="manualBlocks">
+        <!-- filled by JS -->
+      </div>
+      <button class="add-btn" onclick="addManualBlock()">+ Добавить проектор</button>
+
+      <div class="calc-actions">
+        <button class="btn" onclick="buildManualChart()">Построить</button>
+        <button class="btn-secondary" onclick="clearChart('manualChart')">Очистить график</button>
+      </div>
+
+      <div class="chart-wrap" id="manualWrap">
+        <div class="chart-toolbar">
+          <span class="chart-title-mini">Кривая ADL-контраста</span>
+          <div class="chart-tools">
+            <button class="chart-tool" data-scale="log" onclick="toggleScale('manualChart', this)">Линейная шкала</button>
+            <button class="chart-tool" data-xexpand="manualChart" onclick="toggleXExpand('manualChart', this)">Расширить 0–5%</button>
+            <button class="chart-tool" onclick="savePNG('manualChart','spykevision-adl-measured')">⬇ Сохранить PNG</button>
+            <button class="chart-tool" onclick="toggleExpand('manualWrap','manualChart', this)">⛶ Развернуть</button>
+          </div>
+        </div>
+        <div class="chart-canvas-box"><canvas id="manualChart"></canvas></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script is:inline>
+  window.ADL_LS_SUFFIX = '-ru';
+  window.ADL_I18N = {
+    projPlaceholder: 'Название проектора',
+    projDefault:     'Проектор',
+    eg:              'напр.',
+    optional:        'Необязательно',
+    onoffLabel:      'On/Off контраст',
+    onoffHint:       'Полноэкранный On/Off (0% ADL)',
+    ansiLabel:       'ANSI контраст',
+    ansiHint:        'Шахматная доска 50% ADL',
+    apl1Label:       'Контраст при 1% ADL',
+    apl5Label:       'Контраст при 5% ADL',
+    contrastWord:    'контраст',
+    estimatedSuffix: ' (оценка)',
+    measuredSuffix:  ' (измеренные)',
+    crossover:       'Пересечение',
+    xTitle:          '% белого (ADL)',
+    yTitle:          'Контраст',
+    logScale:        'Лог. шкала',
+    linearScale:     'Линейная шкала',
+    fullRange:       'Полный диапазон',
+    expandLow:       'Расширить 0–5%',
+    expandBtn:       '⛶ Развернуть',
+    closeBtn:        '✕ Закрыть',
+    plotFirst:       'Сначала постройте график.',
+    removeAria:      'Удалить проектор',
+    ansiWarn:        'ANSI контраст не может быть выше On/Off контраста — проверьте значения. Этот проектор пропущен.'
+  };
+  </script>
+  <script is:inline src="/js/adl-calc.js"></script>
+</Base>

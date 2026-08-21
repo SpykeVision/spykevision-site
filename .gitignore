@@ -17,3 +17,12 @@ _doc.txt
 _review_chapters.docx
 check-dble.js
 design-explorations/
+
+# Generated image thumbnails (rebuilt by scripts/gen-thumbs.mjs)
+public/thumbs/
+
+# Unrelated local exercise — not part of the site
+kibana-training/
+
+# Unpublished draft reviews — repo is public, drafts build as real pages
+src/content/reviews/aetherion-max.md
