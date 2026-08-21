@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { v } from '../lib/assetVersion';
 ---
 <Base
   title="ADL Contrast Calculator | SpykeVision"
@@ -7,7 +8,7 @@ import Base from '../layouts/Base.astro';
   active="calculator"
   alternate={true}
 >
-  <link rel="stylesheet" href="/css/adl-calc.css" slot="head" />
+  <link rel="stylesheet" href={v("/css/adl-calc.css")} slot="head" />
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" slot="head"></script>
 
   <main class="wrap">
@@ -118,5 +119,5 @@ import Base from '../layouts/Base.astro';
     ansiWarn:        'ANSI contrast can’t be higher than On/Off contrast — check the values. This projector was skipped.'
   };
   </script>
-  <script is:inline src="/js/adl-calc.js"></script>
+  <script is:inline src={v("/js/adl-calc.js")}></script>
 </Base>

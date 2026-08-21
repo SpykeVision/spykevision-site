@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Donate from '../components/Donate.astro';
+import { v } from '../lib/assetVersion';
 const {
   title, description, active, theme = 'light',
   image,            // og:image — site-relative path (e.g. review cover)
@@ -48,7 +49,7 @@ const ruPath = isRu ? Astro.url.pathname : (Astro.url.pathname === '/' ? '/ru/' 
   <!-- Apply stored theme before first paint to avoid a light-theme flash -->
   <script is:inline>try{var t=localStorage.getItem('sv-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
   <slot name="head" />
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href={v("/css/style.css")} />
   <link rel="alternate" type="application/rss+xml" title="SpykeVision Reviews" href="/rss.xml" />
   {reviewAssets && (
     <>
@@ -81,16 +82,16 @@ const ruPath = isRu ? Astro.url.pathname : (Astro.url.pathname === '/' ? '/ru/' 
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
   </button>
 
-  <script is:inline src="/js/main.js"></script>
+  <script is:inline src={v("/js/main.js")}></script>
   {reviewAssets && (
     <>
-      <script is:inline src="/js/compare.js"></script>
-      <script is:inline src="/js/charts-tnm.js"></script>
-      <script is:inline src="/js/charts-tnm-cards.js"></script>
-      <script is:inline src="/js/enh-compare.js"></script>
+      <script is:inline src={v("/js/compare.js")}></script>
+      <script is:inline src={v("/js/charts-tnm.js")}></script>
+      <script is:inline src={v("/js/charts-tnm-cards.js")}></script>
+      <script is:inline src={v("/js/enh-compare.js")}></script>
     </>
   )}
-  <script is:inline defer src="/js/metrics.js"></script>
+  <script is:inline defer src={v("/js/metrics.js")}></script>
   <!-- Cloudflare Web Analytics --><script is:inline defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "92363d386413401286d548d138515fea"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
