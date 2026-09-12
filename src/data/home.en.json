@@ -17,13 +17,6 @@
   },
   "comingSoon": [
     {
-      "category": "ALR Screen • Fresnel • UST",
-      "title": "FScreen Fresnel Screen 120\" Gen4 — Review",
-      "text": "A 4th-gen fixed-frame Fresnel ALR screen for any lighting condition. Full testing: gain, ambient-light rejection, color shift, viewing angles and uniformity.",
-      "status": "In progress",
-      "image": "/images/cs-fscreen-fresnel.jpg"
-    },
-    {
       "category": "4K • Triple-Laser • Flagship • UST",
       "title": "AWOL Aetherion Max — Full Review",
       "text": "Retail unit in for testing. Lab workup: brightness output, native / ANSI / ADL contrast, anti-RBE and EBL efficiency, lens sharpness and geometry.",
@@ -36,6 +29,13 @@
       "text": "The first 4K/120 Hz UST lineup, built around Dynamic Dual Iris and rated at 5,700 ISO lumens. Unit booked for testing: brightness, native / ANSI / ADL contrast, iris behaviour, cadence integrity at 120 Hz and lens geometry.",
       "status": "Announced",
       "image": "/images/cs-xgimi-aura-3.jpg"
+    },
+    {
+      "category": "ALR Screen • Fresnel • UST",
+      "title": "FScreen Fresnel Screen 120\" Gen4 — Review",
+      "text": "A 4th-gen fixed-frame Fresnel ALR screen for any lighting condition. Full testing: gain, ambient-light rejection, color shift, viewing angles and uniformity.",
+      "status": "Announced",
+      "image": "/images/cs-fscreen-fresnel.jpg"
     }
   ],
   "whyCards": [

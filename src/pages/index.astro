@@ -60,7 +60,7 @@ const ogCover = reviews.find((r) => !r.data.draft)?.data.cover;
           <a href="#" class="cs-card">
             <div class="cs-media">
               {c.image && <img src={c.image} alt={c.title} class="cs-img" loading="lazy" decoding="async" srcset={thumbSrcset(c.image)} sizes={CARD_SIZES} />}
-              <div class="cs-badge">Coming soon</div>
+              <div class="cs-badge">{c.status}</div>
             </div>
             <div class="cs-body">
               <span class="card-cat">{c.category}</span>
@@ -68,7 +68,6 @@ const ogCover = reviews.find((r) => !r.data.draft)?.data.cover;
               <p>{c.text}</p>
               <div class="card-meta">
                 <span class="author"><span class="avatar"></span>SpykeSIK</span>
-                <span>•</span><span>{c.status}</span>
               </div>
             </div>
           </a>
