@@ -25,7 +25,8 @@ import { v } from '../../lib/assetVersion';
     <!-- TAB 1: ESTIMATE -->
     <div class="calc-panel active" id="tab-estimate">
       <div class="prose" style="margin-bottom:20px">
-        <p>Введите известные значения контраста. Калькулятор использует степенную модель для интерполяции полной кривой ADL от On/Off (100% чёрного) до измеренных значений ANSI и/или ADL. Чем больше точек — тем точнее оценка.</p>
+        <p><strong>Что это.</strong> Паспортный контраст On/Off измеряют на полностью чёрном кадре — ситуации, которой в реальном контенте не бывает. ADL-контраст показывает, что происходит, когда на экране появляется свет: 1% белого, 5%, 50%. Смотрите вы именно эту кривую, а не цифру из спецификации.</p>
+        <p>Для оценки достаточно On/Off и ANSI. Добавите замеры при 1% и 5% — кривая станет точнее. Не знаете, с чего начать — нажмите <strong>Пример</strong>: там две реальные измеренные кривые из <a href="/ru/reviews/titan-noir-max-cards/">подробного обзора Titan Noir Max</a>.</p>
       </div>
 
       <div id="estimateBlocks">
@@ -35,7 +36,8 @@ import { v } from '../../lib/assetVersion';
 
       <div class="calc-actions">
         <button class="btn" onclick="buildEstimateChart()">Рассчитать и построить</button>
-        <button class="btn-secondary" onclick="clearChart('estimateChart')">Очистить график</button>
+        <button class="btn-secondary" onclick="loadExample('estimate')">Пример</button>
+        <button class="btn-secondary" onclick="resetCalc('estimate')">Очистить график</button>
       </div>
 
       <div class="chart-wrap" id="estimateWrap">
@@ -61,6 +63,7 @@ import { v } from '../../lib/assetVersion';
     <div class="calc-panel" id="tab-manual">
       <div class="prose" style="margin-bottom:20px">
         <p>Введите точные измеренные значения контраста для каждого уровня ADL. Оставьте поля пустыми, если измерение не выполнялось; график соединит только введённые точки. Добавьте несколько проекторов для сравнения.</p>
+        <p>Нажмите <strong>Пример</strong> — три реальные измеренные кривые из <a href="/ru/reviews/titan-noir-max-cards/">подробного обзора Titan Noir Max</a>: зум 1.0×, 1.5× и 2.0×.</p>
       </div>
 
       <div id="manualBlocks">
@@ -70,7 +73,8 @@ import { v } from '../../lib/assetVersion';
 
       <div class="calc-actions">
         <button class="btn" onclick="buildManualChart()">Построить</button>
-        <button class="btn-secondary" onclick="clearChart('manualChart')">Очистить график</button>
+        <button class="btn-secondary" onclick="loadExample('manual')">Пример</button>
+        <button class="btn-secondary" onclick="resetCalc('manual')">Очистить график</button>
       </div>
 
       <div class="chart-wrap" id="manualWrap">
@@ -116,6 +120,7 @@ import { v } from '../../lib/assetVersion';
     closeBtn:        '✕ Закрыть',
     plotFirst:       'Сначала постройте график.',
     removeAria:      'Удалить проектор',
+    demoNames:       ['Titan Noir Max · зум 1.0×', 'Titan Noir Max · зум 1.5×', 'Titan Noir Max · зум 2.0×'],
     ansiWarn:        'ANSI контраст не может быть выше On/Off контраста — проверьте значения. Этот проектор пропущен.'
   };
   </script>

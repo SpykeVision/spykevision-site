@@ -204,6 +204,8 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
   <div class="scene-row">
     <span class="scene-label">Scene brightness (ADL)</span>
     <span class="adl-val" id="adlVal">—</span>
+    <span class="scene-label" style="margin-left:14px">Brightest spot</span>
+    <span class="adl-val" id="peakVal" title="Brightest small area of the frame, measured on max(R,G,B) over ~0.01% of the picture. This — not ADL — is what laser/iris dimming reacts to: below ~50% it engages, above it shuts off.">—</span>
     <div class="gamma-sel" id="gammaSel">
       <button class="gamma-btn" data-g="g22">γ2.2</button>
       <button class="gamma-btn sel" data-g="g24">γ2.4</button>
@@ -332,6 +334,32 @@ function computeADL(px,dt,reg){
   }
   return n?sum/n:0;
 }
+// Brightest real element: 99.9th percentile of scene luma over the same region.
+// Percentile, not max — one clipped pixel or a subtitle dot would otherwise decide the number.
+// Uses max(R,G,B), not luma: dimming detectors watch the panel drive, so a saturated blue
+// HUD or an orange window trips them even though its luma is low. Averaged over a small
+// spot (~0.01% of the frame) so a single clipped pixel or a subtitle dot cannot decide it.
+// Fitted against the 28 Titan DBLE scenes: dimming engages below ~50%, blocks above.
+function computeSpot(px,dt,reg){
+  const x0=reg?reg.x0:0,x1=reg?reg.x1:W-1,y0=reg?reg.y0:0,y1=reg?reg.y1:H-1;
+  const w=x1-x0+1,h=y1-y0+1;
+  const k=Math.max(1,Math.round(Math.sqrt(0.0001*w*h)));
+  const bw=Math.floor(w/k),bh=Math.floor(h/k);
+  let best=0;
+  for(let by=0;by<bh;by++){
+    for(let bx=0;bx<bw;bx++){
+      let sum=0;
+      for(let y=0;y<k;y++){
+        let o=((y0+by*k+y)*W+(x0+bx*k))*4;
+        for(let x=0;x<k;x++,o+=4) sum+=dt[Math.max(px[o],px[o+1],px[o+2])];
+      }
+      const v=sum/(k*k);
+      if(v>best)best=v;
+    }
+  }
+  return best;
+}
+
 // Signal luma: BT.709 weights applied to raw sRGB values (no gamma decode)
 const decLin=new Float32Array(256);
 for(let i=0;i<256;i++)decLin[i]=i/255;
@@ -346,6 +374,8 @@ function refreshADL(){
     adlStr+='  [crop: y='+reg.y0+'–'+reg.y1+', x='+reg.x0+'–'+reg.x1+']';
   }
   document.getElementById('adlVal').textContent=adlStr;
+  const pk=computeSpot(srcPixels,getDecTable(),reg);
+  document.getElementById('peakVal').textContent=(pk*100).toFixed(1)+'%'+(pk<=0.498?'  ✓ dims':'  ✗ blocked');
   const cb=document.getElementById('cropBars');
   if(cb)cb.style.display=barsFound?'inline-flex':'none';
   applyAutoBoost();   // dark-room view by default (no-op once slider touched)

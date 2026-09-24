@@ -277,5 +277,17 @@
         '⟷ ' + (caption || ((labelBefore || 'Before') + ' vs ' + (labelAfter || 'After'))),
     });
   </script>
+  <script>
+    // Decap edits markdown as text, so photo galleries get their own visual editor.
+    var galleryLink = document.createElement('a');
+    galleryLink.href = '/admin/gallery.html';
+    galleryLink.textContent = 'Галереи';
+    galleryLink.title = 'Перетаскивать фото между разделами, назначать обложку';
+    galleryLink.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:9999;' +
+      'padding:9px 16px;border-radius:999px;background:#ffb020;color:#17181d;' +
+      'font:600 13px/1 -apple-system,system-ui,sans-serif;text-decoration:none;' +
+      'box-shadow:0 6px 20px rgba(0,0,0,.28)';
+    document.body.appendChild(galleryLink);
+  </script>
 </body>
 </html>

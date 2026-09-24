@@ -6,6 +6,18 @@
 var L = window.ADL_I18N || {};
 var LS = window.ADL_LS_SUFFIX || '';
 
+// Saved-state key prefix. Bumped to v2 when the blocks stopped being pre-filled
+// with "Projector 1" and placeholder contrast numbers: anyone who used the old
+// calculator had that junk sitting in localStorage and it would be restored on
+// every visit forever. A new prefix retires it in one go; the old keys are
+// deleted on first load so they don't linger.
+var KEY = 'sv-calc2-';
+try {
+  ['sv-calc-estimate', 'sv-calc-manual', 'sv-calc-tab'].forEach(function (k) {
+    localStorage.removeItem(k); localStorage.removeItem(k + '-ru');
+  });
+} catch (e) {}
+
 // ── Palette (matches review charts) ──────────────────────────────────────
 var COLORS = [
   '#0a84ff','#ff9500','#34c759','#ff3b30','#af52de',
@@ -20,7 +32,7 @@ function switchTab(name) {
     t.setAttribute('aria-selected', on ? 'true' : 'false');
   });
   document.querySelectorAll('.calc-panel').forEach(function(p){ p.classList.toggle('active', p.id==='tab-'+name); });
-  localStorage.setItem('sv-calc-tab' + LS, name);
+  localStorage.setItem(KEY + 'tab' + LS, name);
 }
 
 // ── Estimate tab ──────────────────────────────────────────────────────────
@@ -29,18 +41,17 @@ function addEstimateBlock() {
   var colorIdx = document.querySelectorAll('#estimateBlocks .projector-block').length;
   var color = COLORS[colorIdx % COLORS.length];
   var idx = estCount++;
-  var nameNum = colorIdx + 1;
   var div = document.createElement('div');
   div.className = 'projector-block'; div.id = 'eb'+idx;
   div.style.borderLeftColor = color;
   div.innerHTML = '<button class="remove-btn" aria-label="'+L.removeAria+'" onclick="removeBlock(\'eb'+idx+'\')">×</button>'
     + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
-    + '<input type="text" placeholder="'+L.projPlaceholder+'" value="'+L.projDefault+' '+nameNum+'"></div>'
+    + '<input type="text" placeholder="'+L.projPlaceholder+'"></div>'
     + '<div class="calc-grid">'
-    + field(L.onoffLabel, 'est-onoff-'+idx, L.eg+' 30000', L.onoffHint)
-    + field(L.ansiLabel, 'est-ansi-'+idx, L.eg+' 1000', L.ansiHint)
-    + field(L.apl1Label, 'est-apl1-'+idx, L.eg+' 20000', L.optional)
-    + field(L.apl5Label, 'est-apl5-'+idx, L.eg+' 10000', L.optional)
+    + field(L.onoffLabel, 'est-onoff-'+idx, '', L.onoffHint)
+    + field(L.ansiLabel, 'est-ansi-'+idx, '', L.ansiHint)
+    + field(L.apl1Label, 'est-apl1-'+idx, '', L.optional)
+    + field(L.apl5Label, 'est-apl5-'+idx, '', L.optional)
     + '</div>';
   document.getElementById('estimateBlocks').appendChild(div);
 }
@@ -54,16 +65,15 @@ function addManualBlock() {
   var colorIdx = document.querySelectorAll('#manualBlocks .projector-block').length;
   var color = COLORS[colorIdx % COLORS.length];
   var idx = manCount++;
-  var nameNum = colorIdx + 1;
   var div = document.createElement('div');
   div.className = 'projector-block'; div.id = 'mb'+idx;
   div.style.borderLeftColor = color;
   var fields = APL_POINTS.map(function(apl,i){
-    return field(APL_LABELS[i]+' '+L.contrastWord,'man-'+idx+'-'+i, L.eg+' '+ Math.round(1/(1/30000 + 1.29e-5*apl*(1+0.01*apl))/100)*100, L.optional);
+    return field(APL_LABELS[i]+' '+L.contrastWord,'man-'+idx+'-'+i, '', L.optional);
   }).join('');
   div.innerHTML = '<button class="remove-btn" aria-label="'+L.removeAria+'" onclick="removeBlock(\'mb'+idx+'\')">×</button>'
     + '<div class="proj-name-row"><span class="color-swatch" style="background:'+color+'"></span>'
-    + '<input type="text" placeholder="'+L.projPlaceholder+'" value="'+L.projDefault+' '+nameNum+'"></div>'
+    + '<input type="text" placeholder="'+L.projPlaceholder+'"></div>'
     + '<div class="calc-grid">' + fields + '</div>';
   document.getElementById('manualBlocks').appendChild(div);
 }
@@ -82,6 +92,72 @@ function removeBlock(id) {
     saveCalcState();
     scheduleRecalc(which);
   }
+}
+
+// ── Demo & reset ──────────────────────────────────────────────────────────
+// Real measured numbers from the Titan Noir Max review (F7.0, shifted lens).
+// Picked because the curves cross: zoom 1.5x has the BETTER On/Off (6400 vs
+// 6100) yet is worse from ~2% ADL on. That is the whole reason this tool
+// exists, so the example demonstrates it instead of just filling boxes.
+var DEMO_EST = [
+  { onoff: 6100, ansi: 846, apl1: 5861, apl5: 4830 },
+  { onoff: 6400, ansi: 764, apl1: 5928, apl5: 4368 }
+];
+
+// Same three curves as the review chart, keyed by APL_POINTS index.
+// 0.25%, 0.5% and 30% were never measured, so they stay blank — which also
+// shows that partial data is fine on this tab.
+var DEMO_MAN = [
+  { 0: 6100, 3: 5861, 4: 4830, 5: 3870, 6: 2320, 8: 846 },
+  { 0: 6400, 3: 5928, 4: 4368, 5: 3320, 6: 2184, 8: 764 },
+  { 0: 4882, 3: 4368, 4: 3192, 5: 2441, 6: 1627, 8: 557 }
+];
+
+function demoName(n) {
+  return (L.demoNames && L.demoNames[n]) || ('Demo ' + (n + 1));
+}
+
+function loadExample(which) {
+  var isEst = which !== 'manual';
+  var wrap = document.getElementById(isEst ? 'estimateBlocks' : 'manualBlocks');
+  wrap.querySelectorAll('.projector-block').forEach(function (b) { b.remove(); });
+
+  if (isEst) {
+    estCount = 0;
+    DEMO_EST.forEach(function (d, n) {
+      addEstimateBlock();
+      var i = estCount - 1;
+      document.querySelector('#eb' + i + ' .proj-name-row input').value = demoName(n);
+      document.getElementById('est-onoff-' + i).value = d.onoff;
+      document.getElementById('est-ansi-' + i).value  = d.ansi;
+      document.getElementById('est-apl1-' + i).value  = d.apl1;
+      document.getElementById('est-apl5-' + i).value  = d.apl5;
+    });
+  } else {
+    manCount = 0;
+    DEMO_MAN.forEach(function (d, n) {
+      addManualBlock();
+      var i = manCount - 1;
+      document.querySelector('#mb' + i + ' .proj-name-row input').value = demoName(n);
+      Object.keys(d).forEach(function (k) {
+        document.getElementById('man-' + i + '-' + k).value = d[k];
+      });
+    });
+  }
+
+  saveCalcState();
+  if (isEst) buildEstimateChart(); else buildManualChart();
+}
+
+// Clears the fields, the saved state AND the chart. The old "clear" only reset
+// the canvas, so stale input survived every reload with no way to get rid of it.
+function resetCalc(which) {
+  var isEst = which === 'estimate';
+  document.getElementById(isEst ? 'estimateBlocks' : 'manualBlocks')
+    .querySelectorAll('.projector-block').forEach(function (b) { b.remove(); });
+  if (isEst) { estCount = 0; addEstimateBlock(); } else { manCount = 0; addManualBlock(); }
+  try { localStorage.removeItem(KEY + which + LS); } catch (e) {}
+  clearChart(isEst ? 'estimateChart' : 'manualChart');
 }
 
 // ── Chart helpers ─────────────────────────────────────────────────────────
@@ -507,8 +583,8 @@ function buildEstimateChart() {
   var blocks = document.getElementById('estimateBlocks').querySelectorAll('.projector-block');
   var colorIdx = 0;
   var dataMin = Infinity, dataMax = -Infinity;
-  blocks.forEach(function(block){
-    var name = block.querySelector('.proj-name-row input').value || L.projDefault;
+  blocks.forEach(function(block, n){
+    var name = block.querySelector('.proj-name-row input').value || (L.projDefault + ' ' + (n + 1));
     var id = block.id.replace('eb','');
     var onoff = parseFloat(document.getElementById('est-onoff-'+id).value);
     var ansi  = parseFloat(document.getElementById('est-ansi-'+id).value);
@@ -564,8 +640,8 @@ function buildManualChart() {
   var blocks = document.getElementById('manualBlocks').querySelectorAll('.projector-block');
   var colorIdx = 0;
   var dataMin = Infinity, dataMax = -Infinity;
-  blocks.forEach(function(block){
-    var name = block.querySelector('.proj-name-row input').value || L.projDefault;
+  blocks.forEach(function(block, n){
+    var name = block.querySelector('.proj-name-row input').value || (L.projDefault + ' ' + (n + 1));
     var id = block.id.replace('mb','');
     var pts = [];
     var expanded = xExpandPref['manualChart'];
@@ -615,7 +691,7 @@ function saveCalcState() {
       apl5:  document.getElementById('est-apl5-'+id).value
     });
   });
-  localStorage.setItem('sv-calc-estimate' + LS, JSON.stringify(estData));
+  localStorage.setItem(KEY + 'estimate' + LS, JSON.stringify(estData));
 
   var manData = [];
   document.querySelectorAll('#manualBlocks .projector-block').forEach(function(block) {
@@ -628,14 +704,14 @@ function saveCalcState() {
       })
     });
   });
-  localStorage.setItem('sv-calc-manual' + LS, JSON.stringify(manData));
+  localStorage.setItem(KEY + 'manual' + LS, JSON.stringify(manData));
 }
 
 function loadCalcState() {
   // Estimate blocks
   var estLoaded = false;
   try {
-    var estData = JSON.parse(localStorage.getItem('sv-calc-estimate' + LS) || '[]');
+    var estData = JSON.parse(localStorage.getItem(KEY + 'estimate' + LS) || '[]');
     if (estData.length) {
       estCount = 0;
       estData.forEach(function(d) {
@@ -655,7 +731,7 @@ function loadCalcState() {
   // Manual blocks
   var manLoaded = false;
   try {
-    var manData = JSON.parse(localStorage.getItem('sv-calc-manual' + LS) || '[]');
+    var manData = JSON.parse(localStorage.getItem(KEY + 'manual' + LS) || '[]');
     if (manData.length) {
       manCount = 0;
       manData.forEach(function(d) {
@@ -673,7 +749,7 @@ function loadCalcState() {
   if (!manLoaded) addManualBlock();
 
   // Active tab
-  var savedTab = localStorage.getItem('sv-calc-tab' + LS);
+  var savedTab = localStorage.getItem(KEY + 'tab' + LS);
   if (savedTab && savedTab !== 'estimate') switchTab(savedTab);
 
   // Wire up auto-save + debounced auto-recalc on any input change

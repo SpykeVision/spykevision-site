@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Donate from '../components/Donate.astro';
 import { v } from '../lib/assetVersion';
+import { publisherGraph } from '../lib/schema';
 const {
   title, description, active, theme = 'light',
   image,            // og:image — site-relative path (e.g. review cover)
@@ -10,6 +11,7 @@ const {
   alternate = false, // true when an EN↔RU counterpart page exists at the mirrored path
   noindex = false,
   reviewAssets = false, // Chart.js, comparison sliders and review widget scripts — only review pages need them
+  schema = [],      // extra JSON-LD nodes merged into this page's @graph
 } = Astro.props;
 const isRu = Astro.url.pathname === '/ru' || Astro.url.pathname.startsWith('/ru/');
 const site = Astro.site ?? new URL('https://spykevision.com');
@@ -17,6 +19,10 @@ const canonical = new URL(Astro.url.pathname, site);
 const ogImage = image ? new URL(image, site) : null;
 const enPath = isRu ? (Astro.url.pathname.replace(/^\/ru\/?/, '/') || '/') : Astro.url.pathname;
 const ruPath = isRu ? Astro.url.pathname : (Astro.url.pathname === '/' ? '/ru/' : '/ru' + Astro.url.pathname);
+// Noindex pages (drafts) get no structured data — nothing should be indexable about them.
+const jsonLd = noindex ? null : { '@context': 'https://schema.org', '@graph': [...publisherGraph(site), ...schema] };
+// `<` is escaped so a stray `</script>` in any title or summary can't close the tag early.
+const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : '';
 ---
 <!DOCTYPE html>
 <html lang={isRu ? 'ru' : 'en'} data-theme={theme}>
@@ -48,6 +54,7 @@ const ruPath = isRu ? Astro.url.pathname : (Astro.url.pathname === '/' ? '/ru/' 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <!-- Apply stored theme before first paint to avoid a light-theme flash -->
   <script is:inline>try{var t=localStorage.getItem('sv-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  {jsonLd && <script type="application/ld+json" is:inline set:html={jsonLdText} />}
   <slot name="head" />
   <link rel="stylesheet" href={v("/css/style.css")} />
   <link rel="alternate" type="application/rss+xml" title="SpykeVision Reviews" href="/rss.xml" />
@@ -88,6 +95,7 @@ const ruPath = isRu ? Astro.url.pathname : (Astro.url.pathname === '/' ? '/ru/' 
       <script is:inline src={v("/js/compare.js")}></script>
       <script is:inline src={v("/js/charts-tnm.js")}></script>
       <script is:inline src={v("/js/charts-tnm-cards.js")}></script>
+      <script is:inline src={v("/js/charts-ax.js")}></script>
       <script is:inline src={v("/js/enh-compare.js")}></script>
     </>
   )}

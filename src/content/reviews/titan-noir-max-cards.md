@@ -6,7 +6,6 @@ category: 4K • Triple-Laser • Flagship
 cover: /images/tnm/hero-tnm.jpeg
 readTime: 45 min read
 draft: false
-badge: NEW
 summary: Unboxing, build quality, lens, DBLE, and full brightness & contrast measurements for the XGIMI Titan Noir Max.
 date: 2026-06-01
 extra: Firmware 1.2.36

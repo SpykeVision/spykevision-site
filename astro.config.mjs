@@ -1,4 +1,6 @@
 import { defineConfig } from 'astro/config';
+import { galleryMiddleware } from './scripts/gallery-api.mjs';
+import { startBackupWatcher } from './scripts/watch-backups.mjs';
 import { imageSize } from 'image-size';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -23,7 +25,7 @@ function dimsFor(src) {
 
 // Downscaled grid variants live at /thumbs/<w>/<original path> (see scripts/gen-thumbs.mjs).
 // Originals stay in src= — the lightbox always opens the untouched file.
-const THUMB_WIDTHS = [640, 1280];
+const THUMB_WIDTHS = [320, 640, 1280];
 function srcsetFor(src, width) {
   if (!/^\/(images|uploads)\//.test(src)) return null;
   const parts = THUMB_WIDTHS.filter((w) => width > w).map((w) => `/thumbs/${w}${src} ${w}w`);
@@ -88,9 +90,28 @@ function lazyImages() {
   };
 }
 
+// Serves the admin gallery manager's API in dev, and lets /admin resolve to its
+// index.html the way Cloudflare Pages does in production.
+function adminTools() {
+  return {
+    name: 'admin-tools',
+    hooks: {
+      'astro:server:setup': ({ server }) => {
+        startBackupWatcher();
+        server.middlewares.use(galleryMiddleware());
+        server.middlewares.use((req, _res, next) => {
+          if (/^\/admin\/?(\?|$)/.test(req.url)) req.url = '/admin/index.html';
+          next();
+        });
+      },
+    },
+  };
+}
+
 export default defineConfig({
   site: 'https://spykevision.com',
   build: { format: 'directory' },
+  integrations: [adminTools()],
   markdown: {
     rehypePlugins: [lazyImages()],
   },

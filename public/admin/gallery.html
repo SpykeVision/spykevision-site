@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Галереи обзоров</title>
+<style>
+  :root {
+    --bg: #0e0f13; --surface: #16181f; --surface-2: #1d2028; --border: #2b2f3a;
+    --text: #e8eaf0; --text-2: #9aa2b4; --accent: #ffb020; --danger: #e5484d;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 14px/1.5 -apple-system, "SF Pro Text", system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 20; display: flex; gap: 12px; align-items: center;
+           padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  h1 { font-size: 15px; margin: 0 8px 0 0; font-weight: 700; letter-spacing: .01em; }
+  select, button { font: inherit; color: var(--text); background: var(--surface-2);
+                   border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  button.primary { background: var(--accent); color: #17181d; border-color: var(--accent); font-weight: 700; }
+  button:disabled { opacity: .45; cursor: default; }
+  #back { color: var(--text-2); text-decoration: none; font-size: 18px; line-height: 1; padding: 2px 4px; }
+  #back:hover { color: var(--text); }
+  #status { margin-left: auto; color: var(--text-2); font-size: 13px; }
+  main { padding: 18px 20px 120px; }
+  .sec { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 14px; background: var(--surface); }
+  .sec.empty > .head { opacity: .5; }
+  .head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+  .head h2 { font-size: 14px; margin: 0; font-weight: 600; }
+  .count { color: var(--text-2); font-size: 12px; }
+  .layout { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-2); }
+  .layout select { padding: 4px 8px; font-size: 12px; }
+  .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--surface-2);
+          border: 1px solid var(--border); color: var(--text-2); }
+  .pill.car { color: var(--accent); border-color: #4a3a12; background: #241c08; }
+  .drop { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 14px 14px; min-height: 64px; }
+  .drop.over { outline: 2px dashed var(--accent); outline-offset: -6px; border-radius: 10px; }
+  .drop:empty::after { content: "перетащи сюда"; color: var(--text-2); font-size: 12px;
+                       opacity: .6; padding: 16px 4px; }
+  .tile { position: relative; width: 118px; border-radius: 8px; overflow: hidden;
+          border: 1px solid var(--border); background: #000; cursor: grab; }
+  .tile.drag { opacity: .35; }
+  .tile img { width: 100%; height: 88px; object-fit: cover; display: block; }
+  .tile .name { font-size: 10px; color: var(--text-2); padding: 3px 5px; background: var(--surface-2);
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tile .acts { position: absolute; inset: 0 0 auto 0; display: flex; justify-content: space-between;
+                padding: 4px; opacity: .38; transition: .12s; }
+  .tile:hover .acts { opacity: 1; }
+  .acts button { padding: 3px 8px; font-size: 13px; line-height: 1.3; border-radius: 6px;
+                 background: rgba(12,13,17,.86); backdrop-filter: blur(4px); }
+  .acts button:hover { background: var(--accent); color: #17181d; border-color: var(--accent); }
+  .acts button.on { background: var(--accent); color: #17181d; border-color: var(--accent); }
+  .acts button.on[data-act="card"] { background: #3fa2f7; color: #0b1520; border-color: #3fa2f7; }
+  .tile.cover { border-color: var(--accent); }
+  .tile.cover::after { content: "обложка"; position: absolute; left: 0; bottom: 20px; right: 0;
+                       font-size: 10px; text-align: center; background: var(--accent); color: #17181d; font-weight: 700; }
+  .tile.lead::before { content: "главное"; position: absolute; left: 4px; bottom: 22px; z-index: 1;
+                       font-size: 10px; padding: 1px 6px; border-radius: 4px;
+                       background: rgba(12,13,17,.86); color: var(--text); }
+  .tile.card { border-color: #3fa2f7; }
+  .tile.card::after { content: "карточка"; position: absolute; left: 0; bottom: 20px; right: 0;
+                      font-size: 10px; text-align: center; background: #3fa2f7; color: #0b1520; font-weight: 700; }
+  .slotrow { display: flex; gap: 14px; padding: 0 14px 14px; }
+  .slot h4 { font-size: 12px; color: var(--text-2); font-weight: 600; margin: 0 0 6px; }
+  .drop.one { padding: 0; min-height: 96px; width: 150px; align-content: flex-start; }
+  .drop.one:empty::after { content: "перетащи фото"; }
+  .drop.one .tile { width: 136px; cursor: default; }
+  #pool { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: var(--surface);
+          border-top: 1px solid var(--border); padding: 8px 20px 12px; max-height: 42vh; overflow: auto; }
+  #pool h3 { font-size: 12px; margin: 0 0 8px; color: var(--text-2); font-weight: 600; }
+  #pool .drop { padding: 0; }
+  .hint { color: var(--text-2); font-size: 12px; margin: 0 0 14px; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/admin/" id="back" title="К менеджеру контента">←</a>
+  <h1>Галереи</h1>
+  <select id="doc"></select>
+  <button id="reload">Обновить</button>
+  <button id="save" class="primary" disabled>Сохранить</button>
+  <span id="status"></span>
+</header>
+
+<main>
+  <section class="sec slots">
+    <div class="head"><h2>Шапка и карточка</h2>
+      <span class="count">эти два фото живут отдельно от галерей</span></div>
+    <div class="slotrow">
+      <div class="slot"><h4>Шапка обзора</h4><div class="drop one" data-idx="cover"></div></div>
+      <div class="slot"><h4>Карточка на главной</h4><div class="drop one" data-idx="card"></div></div>
+    </div>
+  </section>
+  <p class="hint">Тащи фото между разделами и внутри раздела, порядок какой поставишь. ◉ — главный кадр раздела,
+     с него открывается карусель, и стоять он может где угодно в ряду. ✕ — убрать в запас. «Вид» задаёт раскладку
+     явно; на «авто» карусель включается сама, когда число фото не делится на число колонок.</p>
+  <div id="sections"></div>
+</main>
+
+<div id="pool">
+  <h3>Запас — не стоят ни в одном разделе. Файлы из Finder можно бросить прямо сюда.</h3>
+  <div class="drop" id="pooldrop" data-idx="pool"></div>
+</div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+let doc = null, file = '', dirty = false, dragFrom = null;
+
+const setDirty = (v) => { dirty = v; $('#save').disabled = !v; };
+const status = (t) => { $('#status').textContent = t; };
+const base = (s) => s.split('/').pop();
+
+async function loadDocs() {
+  let docs;
+  try {
+    const r = await fetch('/api/gallery/docs');
+    if (!r.ok) throw new Error(r.status);
+    docs = await r.json();
+  } catch {
+    // The editor writes straight to the markdown files, so it needs the dev server.
+    document.querySelector('main').innerHTML =
+      '<p class="hint">Редактор галерей работает на локальной сборке: запусти <code>npm run dev</code> ' +
+      'и открой <code>localhost:4321/admin/gallery.html</code>. Здесь, на боевом сайте, он пока только смотрит.</p>';
+    document.querySelector('#pool').style.display = 'none';
+    return status('нет связи с локальным сервером');
+  }
+  $('#doc').innerHTML = docs
+    .map((d) => `<option value="${d.file}">${d.lang} · ${d.title}</option>`).join('');
+  file = localStorage.galleryFile && docs.some((d) => d.file === localStorage.galleryFile)
+    ? localStorage.galleryFile : docs[0].file;
+  $('#doc').value = file;
+  await loadDoc();
+}
+
+async function loadDoc() {
+  localStorage.galleryFile = file;
+  status('загрузка…');
+  doc = await (await fetch('/api/gallery/doc?file=' + encodeURIComponent(file))).json();
+  setDirty(false);
+  render();
+  status(doc.dirs.length ? 'папки: ' + doc.dirs.join(', ') : 'в этом обзоре пока нет галерей');
+}
+
+function tile(im, idx) {
+  const el = document.createElement('div');
+  const slot = idx === 'cover' || idx === 'card';
+  const isLead = !slot && idx !== 'pool' && doc.sections[idx].lead === doc.sections[idx].images.indexOf(im);
+  el.className = 'tile' + (isLead && carouselFor(doc.sections[idx]) ? ' lead' : '');
+  el.draggable = !slot;
+  el.dataset.src = im.src;
+  // 118px tiles: pull the smallest generated tier, fall back to the original.
+  el.innerHTML = `<img src="/thumbs/320${im.src}" loading="lazy" alt=""
+       onerror="this.onerror=null;this.src='${im.src}'">
+    <div class="name">${base(im.src)}</div>
+    <div class="acts">
+      ${slot ? '<button draggable="false" data-act="clear" title="Убрать">✕</button>' : ''}
+      ${slot || idx === 'pool' ? '' : `<button draggable="false" class="${isLead ? 'on' : ''}" data-act="lead" title="Главный кадр раздела — с него открывается карусель">◉</button>`}
+      ${slot || idx === 'pool' ? '' : '<button draggable="false" data-act="out" title="Убрать в запас">✕</button>'}
+    </div>`;
+  // Pressing a button inside a draggable tile otherwise starts a drag and eats the click.
+  el.querySelector('.acts').addEventListener('pointerdown', (e) => {
+    if (e.target.dataset.act) { el.draggable = false; e.stopPropagation(); }
+  });
+  el.addEventListener('pointerup', () => { el.draggable = true; });
+  el.addEventListener('dragstart', (e) => {
+    dragFrom = { idx, src: im.src };
+    el.classList.add('drag');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', im.src);
+  });
+  el.addEventListener('dragend', () => el.classList.remove('drag'));
+  el.querySelector('.acts').addEventListener('click', (e) => {
+    const act = e.target.dataset.act;
+    if (!act) return;
+    if (act === 'lead') doc.sections[idx].lead = doc.sections[idx].images.indexOf(im);
+    if (act === 'clear' && idx === 'card') doc.coverCard = '';   // cover is required, card is not
+    if (act === 'out') { remove(idx, im.src); doc.pool.push(im); }
+    setDirty(true); render();
+  });
+  return el;
+}
+
+const listFor = (idx) => (idx === 'pool' ? doc.pool : doc.sections[idx].images);
+const carouselFor = (s) => s.images.length > 0 &&
+  (s.mode === 'carousel' || (s.mode === 'auto' && s.images.length % s.cols !== 0));
+function remove(idx, src) {
+  const l = listFor(idx);
+  const i = l.findIndex((x) => x.src === src);
+  if (i === -1) return;
+  l.splice(i, 1);
+  if (idx === 'pool') return;
+  const s = doc.sections[idx];
+  if (s.lead > i) s.lead--;
+  else if (s.lead === i) s.lead = 0;
+}
+
+// Drop position = index of the tile whose left half the cursor is over.
+function dropIndex(zone, x) {
+  const tiles = [...zone.querySelectorAll('.tile:not(.drag)')];
+  for (let i = 0; i < tiles.length; i++) {
+    const r = tiles[i].getBoundingClientRect();
+    if (x < r.left + r.width / 2) return i;
+  }
+  return tiles.length;
+}
+
+function wireZone(zone) {
+  const idx = zone.dataset.idx;
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    zone.classList.remove('over');
+    if (e.dataTransfer.files && e.dataTransfer.files.length) return upload(e.dataTransfer.files, idx);
+    if (!dragFrom) return;
+    if (idx === 'cover' || idx === 'card') {
+      // The hero and the card keep their own slot: the photo stays where it was too.
+      if (idx === 'cover') doc.cover = dragFrom.src; else doc.coverCard = dragFrom.src;
+      dragFrom = null;
+      setDirty(true); render();
+      return;
+    }
+    const at = dropIndex(zone, e.clientX);
+    const moved = listFor(dragFrom.idx).find((x) => x.src === dragFrom.src);
+    remove(dragFrom.idx, dragFrom.src);
+    listFor(idx).splice(at, 0, moved);
+    if (idx !== 'pool' && at <= doc.sections[idx].lead) doc.sections[idx].lead++;
+    dragFrom = null;
+    setDirty(true); render();
+  });
+}
+
+async function upload(files, idx) {
+  if (idx === 'cover' || idx === 'card') return uploadToSlot(files[0], idx);
+  const dir = doc.dirs[0];
+  if (!dir) return status('некуда класть: в обзоре ещё нет ни одной картинки, добавь первую вручную');
+  for (const f of files) {
+    status('загружаю ' + f.name + '…');
+    const r = await fetch(`/api/gallery/upload?dir=${encodeURIComponent(dir)}&name=${encodeURIComponent(f.name)}`,
+      { method: 'POST', body: f });
+    const res = await r.json();
+    if (res.error) { status('ошибка: ' + res.error); return; }
+    if (!listFor(idx).some((x) => x.src === res.src)) listFor(idx).push({ src: res.src, alt: '' });
+  }
+  setDirty(true); render();
+  status('загружено');
+}
+
+async function uploadToSlot(f, idx) {
+  const dir = doc.dirs[0];
+  if (!dir) return status('некуда класть: в обзоре ещё нет ни одной картинки');
+  status('загружаю ' + f.name + '…');
+  const res = await (await fetch(`/api/gallery/upload?dir=${encodeURIComponent(dir)}&name=${encodeURIComponent(f.name)}`,
+    { method: 'POST', body: f })).json();
+  if (res.error) return status('ошибка: ' + res.error);
+  if (idx === 'cover') doc.cover = res.src; else doc.coverCard = res.src;
+  if (!doc.pool.some((x) => x.src === res.src)) doc.pool.push({ src: res.src, alt: '' });
+  setDirty(true); render();
+  status('загружено');
+}
+
+function render() {
+  const host = $('#sections');
+  host.innerHTML = '';
+  doc.sections.forEach((s, i) => {
+    const n = s.images.length;
+    s.mode = s.mode || 'auto';
+    s.lead = s.lead || 0;
+    const carousel = carouselFor(s);
+    const el = document.createElement('section');
+    el.className = 'sec' + (n ? '' : ' empty');
+    el.innerHTML = `<div class="head">
+        <h2>${s.title}</h2>
+        <span class="count">${n || '—'}</span>
+        <div class="layout">
+          <label>колонок
+            <select data-cols="${i}">
+              <option value="2"${s.cols === 2 ? ' selected' : ''}>2</option>
+              <option value="3"${s.cols === 3 ? ' selected' : ''}>3</option>
+            </select>
+          </label>
+          <label>вид
+            <select data-mode="${i}">
+              <option value="auto"${s.mode === 'auto' ? ' selected' : ''}>авто</option>
+              <option value="grid"${s.mode === 'grid' ? ' selected' : ''}>сетка</option>
+              <option value="carousel"${s.mode === 'carousel' ? ' selected' : ''}>карусель</option>
+            </select>
+          </label>
+          ${n ? `<span class="pill${carousel ? ' car' : ''}">${carousel ? 'карусель' : 'сетка'}</span>` : ''}
+        </div>
+      </div>
+      <div class="drop" data-idx="${i}"></div>`;
+    const zone = el.querySelector('.drop');
+    s.images.forEach((im) => zone.appendChild(tile(im, i)));
+    wireZone(zone);
+    el.querySelector('[data-cols]').addEventListener('change', (e) => {
+      s.cols = +e.target.value; setDirty(true); render();
+    });
+    el.querySelector('[data-mode]').addEventListener('change', (e) => {
+      s.mode = e.target.value; setDirty(true); render();
+    });
+    host.appendChild(el);
+  });
+  [['cover', doc.cover], ['card', doc.coverCard]].forEach(([idx, src]) => {
+    const zone = document.querySelector(`.drop[data-idx="${idx}"]`);
+    zone.innerHTML = '';
+    if (src) zone.appendChild(tile({ src, alt: '' }, idx));
+    wireZone(zone);
+  });
+
+  const pd = $('#pooldrop');
+  pd.innerHTML = '';
+  doc.pool.forEach((im) => pd.appendChild(tile(im, 'pool')));
+  wireZone(pd);
+}
+
+$('#doc').addEventListener('change', (e) => {
+  if (dirty && !confirm('Есть несохранённые изменения. Уйти?')) { e.target.value = file; return; }
+  file = e.target.value; loadDoc();
+});
+$('#reload').addEventListener('click', () => {
+  if (dirty && !confirm('Есть несохранённые изменения. Перечитать с диска?')) return;
+  loadDoc();
+});
+$('#save').addEventListener('click', async () => {
+  status('сохраняю…');
+  const r = await fetch('/api/gallery/save', {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ file, cover: doc.cover, coverCard: doc.coverCard, sections: doc.sections }),
+  });
+  const res = await r.json();
+  if (res.error) return status('ошибка: ' + res.error);
+  setDirty(false);
+  status('сохранено, превью пересобраны — обнови страницу обзора');
+});
+window.addEventListener('beforeunload', (e) => { if (dirty) e.preventDefault(); });
+// Files dropped outside a zone would otherwise navigate away.
+document.addEventListener('dragover', (e) => e.preventDefault());
+document.addEventListener('drop', (e) => e.preventDefault());
+
+loadDocs();
+</script>
+</body>
+</html>

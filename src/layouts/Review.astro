@@ -3,6 +3,7 @@ import Base from './Base.astro';
 import Comments from '../components/Comments.astro';
 import { getCollection } from 'astro:content';
 import { thumbSrcset, CARD_SIZES } from '../lib/thumbs';
+import { reviewGraph } from '../lib/schema';
 const { review, headings, alternate = false, slug = '' } = Astro.props;
 const ML_ACCOUNT_ID = '2448508';
 const ML_FORM_ID    = '8lzoBZ';
@@ -13,6 +14,9 @@ const toc = (headings || []).filter((h) => h.depth === 2);
 const meta = [fmtDate, review.readTime, review.extra].filter(Boolean);
 const cmsEditUrl = `/admin/#/collections/reviews/entries/${slug || review.slug || ''}`;
 const reviewsBase = isRu ? '/ru/reviews/' : '/reviews/';
+const site = Astro.site ?? new URL('https://spykevision.com');
+const canonical = new URL(Astro.url.pathname, site);
+const schema = reviewGraph({ review, site, canonical, isRu });
 const related = (await getCollection(isRu ? 'reviews-ru' : 'reviews'))
   .filter((r) => !r.data.draft && r.slug !== slug)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -45,6 +49,7 @@ const t = {
   noindex={review.draft}
   alternate={alternate}
   reviewAssets={true}
+  schema={schema}
 >
   <!-- Hero cover is a CSS background — preload it so LCP doesn't wait for stylesheet parse -->
   {review.cover && <link slot="head" rel="preload" as="image" href={review.cover} fetchpriority="high" />}
@@ -74,6 +79,29 @@ const t = {
     style={review.cover ? `background-image:url('${review.cover}')` : ''}
     data-draft={review.draft ? 'true' : null}
   >
+    {review.coverVideo && (
+      <video class="hero-video" autoplay muted playsinline preload="auto" poster={review.coverVideo.replace(/\.mp4$/, '-poster.jpg')}><source src={review.coverVideo} type="video/mp4" /></video>
+    )}
+    {review.coverVideo && (
+      <script is:inline>
+        // Replay the hero clip whenever the reader scrolls away from the header and comes back.
+        // "Away" = the hero is less than 80 % visible; "back" = it is fully in view again.
+        (function () {
+          var v = document.querySelector('.hero-video');
+          if (!v || !('IntersectionObserver' in window)) return;
+          var armed = false;
+          new IntersectionObserver(function (entries) {
+            var r = entries[0].intersectionRatio;
+            if (r < 0.8) { armed = true; return; }
+            if (armed && r >= 0.98) {
+              armed = false;
+              try { v.currentTime = 0; } catch (e) {}
+              var p = v.play(); if (p && p.catch) p.catch(function () {});
+            }
+          }, { threshold: [0, 0.2, 0.4, 0.6, 0.8, 0.98, 1] }).observe(v);
+        })();
+      </script>
+    )}
     <div class="article-hero-overlay">
       <div class="wrap">
         {review.eyebrow && <p class="eyebrow">{review.eyebrow}</p>}
@@ -139,10 +167,6 @@ const t = {
           {review.verdictTitle && <h3>{review.verdictTitle}</h3>}
           {review.verdictText && <p>{review.verdictText}</p>}
           <div class="conclusion-actions">
-            <button class="btn btn-donate" data-donate-open>
-              {t.donate}
-              <svg class="heart-icon" viewBox="0 0 20 18" width="16" height="16" fill="#ff3b30" aria-hidden="true"><path d="M10 17S1 11 1 5.5A4.5 4.5 0 0 1 10 3.57 4.5 4.5 0 0 1 19 5.5C19 11 10 17 10 17z"/></svg>
-            </button>
             <button class="btn btn-subscribe" data-subscribe-open>{t.subscribe}</button>
             {review.buyLink && (
               <a href={review.buyLink} target="_blank" rel="noopener" class="btn btn-official">
@@ -163,7 +187,7 @@ const t = {
           <a href={`${reviewsBase}${r.slug}/`} class="card">
             <div class="card-media">
               <img src={r.data.coverCard || r.data.cover} alt={r.data.title} loading="lazy" decoding="async" srcset={thumbSrcset(r.data.coverCard || r.data.cover)} sizes={CARD_SIZES} />
-              {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
+              {r.data.badge && <div class="card-badge">{r.data.badge}</div>}
             </div>
             <div class="card-body">
               {r.data.category && <span class="card-cat">{r.data.category}</span>}

@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Subscribe from '../../components/Subscribe.astro';
 import { getCollection } from 'astro:content';
-import { thumbSrcset, CARD_SIZES, FEATURED_SIZES } from '../../lib/thumbs';
+import { thumbSrcset, CARD_SIZES } from '../../lib/thumbs';
 import home from '../../data/home.ru.json';
 
 const reviews = (await getCollection('reviews-ru'))
@@ -31,10 +31,10 @@ const ogCover = reviews.find((r) => !r.data.draft)?.data.cover;
         <div class="section-head"><h2>{home.headings.latest}</h2><a href="/ru/reviews/">{home.headings.allReviews}</a></div>
         <div class="grid">
           {reviews.slice(0, 6).map((r, i) => (
-            <a href={`/ru/reviews/${r.slug}/`} class={`card${i === 0 ? ' featured' : ''}`} data-draft={r.data.draft ? 'true' : null}>
+            <a href={`/ru/reviews/${r.slug}/`} class="card" data-draft={r.data.draft ? 'true' : null}>
               <div class="card-media">
-                <img src={r.data.coverCard || r.data.cover} alt={r.data.title} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={i === 0 ? 'high' : undefined} srcset={thumbSrcset(r.data.coverCard || r.data.cover)} sizes={i === 0 ? FEATURED_SIZES : CARD_SIZES} />
-                {r.data.badge ? <div class="card-badge">{r.data.badge}</div> : (r.data.score != null && <div class="score">{r.data.score.toFixed(1)}</div>)}
+                <img src={r.data.coverCard || r.data.cover} alt={r.data.title} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={i === 0 ? 'high' : undefined} srcset={thumbSrcset(r.data.coverCard || r.data.cover)} sizes={CARD_SIZES} />
+                {r.data.badge && <div class="card-badge">{r.data.badge}</div>}
               </div>
               <div class="card-body">
                 {r.data.draft && <span class="draft-badge">Черновик</span>}

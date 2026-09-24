@@ -541,7 +541,20 @@ a:hover { color: var(--accent-dk); }
   min-height: 0;
   background: var(--bg);
 }
+/* Optional looping clip behind the hero. The cover image stays as its poster,
+   so the hero looks identical before the video decodes and on reduced-motion. */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media (prefers-reduced-motion: reduce) { .hero-video { display: none; } }
 .article-hero-overlay {
+  position: relative;
+  z-index: 1;
   width: 100%;
   background: linear-gradient(to top, rgba(0,0,0,.90) 0%, rgba(0,0,0,.50) 55%, rgba(0,0,0,.0) 100%);
   padding: 72px 0 48px;
@@ -588,14 +601,39 @@ a:hover { color: var(--accent-dk); }
   gap: 4px 32px; align-items: start;
 }
 .toc-group { break-inside: avoid; margin-bottom: 8px; }
-.toc-group-label {
+/* `.prose p` (0-1-1) outranks a bare class, so the label needs `.toc` in front
+   or it silently inherits body text colour instead of the accent. */
+.toc .toc-group-label, .toc-float .toc-group-label {
   font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
   color: var(--accent); margin: 0 0 5px; padding-bottom: 4px;
   border-bottom: 1px solid var(--border);
 }
+/* --border on --surface is a 1px line you can't see in dark mode; tint the rule
+   with the accent instead so the group separation survives the dark theme. */
+[data-theme="dark"] .toc .toc-group-label,
+[data-theme="dark"] .toc-float .toc-group-label { border-bottom-color: #0a84ff55; }
 /* Floating sidebar TOC stays single-column regardless of grid markup */
 .toc-float .toc-grid { display: block; }
 .toc-float .toc-group { margin-bottom: 8px; }
+/* Grouped TOC: numbered magazine-style columns, accent rule fading to the right on top of each group */
+.toc .toc-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 32px; align-items: start;
+  counter-reset: tocg;
+}
+.toc .toc-group {
+  counter-increment: tocg; margin: 0; padding: 14px 0 0;
+  background: linear-gradient(to right, var(--accent), transparent) left top / 120px 2px no-repeat;
+}
+.toc .toc-group .toc-group-label { border: 0; padding: 0; margin-bottom: 12px; font-size: 11px; }
+.toc .toc-group .toc-group-label::before {
+  content: counter(tocg, decimal-leading-zero); display: block;
+  font-size: 26px; font-weight: 300; letter-spacing: 0; color: var(--text-3); margin: 0 0 6px;
+}
+.toc .toc-grid ul { margin: 0; padding: 0; gap: 7px; }
+.toc .toc-grid li { margin: 0; line-height: 1.3; }
+.toc .toc-grid a { display: block; font-size: 13px; }
+@media (max-width: 900px) { .toc .toc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .toc .toc-grid { grid-template-columns: 1fr; } }
 
 /* Floating section nav — desktop only, appears after scrolling past hero */
 .toc-float {
@@ -655,6 +693,28 @@ a:hover { color: var(--accent-dk); }
 .prose figure img { width: 100%; }
 .prose figcaption { text-align: center; color: var(--text-3); font-size: 14px; margin-top: 10px; }
 
+/* Data tables — measurement grids inside review prose */
+.prose table {
+  width: 100%; border-collapse: collapse; margin: 26px 0;
+  font-size: 14.5px; font-variant-numeric: tabular-nums;
+  background: var(--surface); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow); overflow: hidden; display: table;
+}
+.prose thead th {
+  text-align: left; font-weight: 600; font-size: 12.5px;
+  letter-spacing: .03em; text-transform: uppercase; color: var(--text-3);
+  background: var(--surface-2); padding: 11px 14px; white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+.prose tbody td { padding: 10px 14px; color: var(--text-2); border-top: 1px solid var(--border); }
+.prose tbody tr:first-child td { border-top: none; }
+.prose tbody td:first-child { color: var(--text); font-weight: 500; }
+.prose thead th:not(:first-child), .prose tbody td:not(:first-child) { text-align: right; }
+.prose tbody strong { color: var(--text); }
+/* Narrow screens: let wide grids scroll instead of squashing */
+.prose .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 26px 0; }
+.prose .table-scroll table { margin: 0; min-width: 460px; }
+
 /* Photo gallery — grid of clickable images */
 .prose .gallery {
   display: grid; gap: 10px; margin: 28px 0;
@@ -668,6 +728,8 @@ a:hover { color: var(--accent-dk); }
   cursor: zoom-in;
 }
 .prose .gallery.cols-3 { grid-template-columns: repeat(3, 1fr); }
+/* Full frames side by side — no crop, keep native aspect */
+.prose .gallery.raw img { aspect-ratio: auto; object-fit: contain; }
 
 /* Odd-count galleries — hero image + thumbnail strip */
 .prose .gallery.carousel { display: block; }
@@ -877,13 +939,13 @@ a:hover { color: var(--accent-dk); }
 .footer-social a:hover { color: var(--accent); transform: translateY(-2px); }
 .copyright { color: var(--text-3); font-size: 13px; }
 .footer-support-btn {
-  align-self: flex-start; padding: 8px 20px; font-size: 13px; font-weight: 600;
-  background: transparent; border: 1px solid var(--border); border-radius: 999px;
-  color: var(--text-2); cursor: pointer; transition: border-color .15s, color .15s;
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; font-size: 14px; font-weight: 700; white-space: nowrap;
+  background: var(--accent); border: 0; border-radius: 999px; color: #fff; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,122,255,.3); transition: background .15s, transform .15s, box-shadow .15s;
 }
-.footer-support-btn:hover { border-color: var(--accent); color: var(--accent); }
-[data-theme="dark"] .footer-support-btn { background: #fff; color: #000; border-color: #fff; }
-[data-theme="dark"] .footer-support-btn:hover { background: #e5e5ea; border-color: #e5e5ea; color: #000; }
+.footer-support-btn .heart-icon { color: #ff5a5f; }
+.footer-support-btn:hover { background: var(--accent-dk); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,122,255,.4); }
 .heart-icon { display: inline; vertical-align: middle; flex-shrink: 0; }
 
 /* ---------- Comments ---------- */
@@ -920,7 +982,15 @@ a:hover { color: var(--accent-dk); }
 @media (min-width: 640px) {
   .grid { grid-template-columns: 1fr 1fr; }
   .proscons { grid-template-columns: 1fr 1fr; }
-  .footer-inner { flex-direction: row; align-items: center; justify-content: space-between; }
+  .footer-inner { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px; }
+  .footer-support-btn { align-self: center; }
+  .copyright { flex-basis: 100%; padding-top: 18px; border-top: 1px solid var(--border); }
+}
+@media (min-width: 1000px) {
+  /* One clean row: brand | links | social | donate, copyright underneath */
+  .footer-inner { display: grid; grid-template-columns: auto 1fr auto auto; }
+  .footer-links { flex-wrap: nowrap; justify-content: center; white-space: nowrap; }
+  .copyright { grid-column: 1 / -1; }
 }
 @media (min-width: 900px) {
   .grid { grid-template-columns: repeat(3, 1fr); }
@@ -1073,9 +1143,11 @@ a:hover { color: var(--accent-dk); }
 
 /* Draft cards hidden by default; shown only in preview mode */
 .card[data-draft="true"] { display: none; }
+.preview-mode .card[data-draft="true"] { display: flex; }
 
 /* Draft badge on cards */
 .draft-badge {
+  align-self: flex-start;
   display: inline-block;
   background: #ff9f0a22;
   color: #ff9f0a;
@@ -1207,6 +1279,78 @@ figure.video-r2 video {
   display: block;
   background: #000;
   max-height: 70vh;
+}
+
+/* ── Portrait video beside body text ───────────────────── */
+figure.video-portrait {
+  float: right;
+  width: min(265px, 32%);
+  margin: 6px 0 20px 38px;
+  shape-outside: inset(0 round 12px);
+}
+/* wide articles break out direct-child figures — this one must stay in-column */
+.article-page--wide .prose > figure.video-portrait {
+  width: min(265px, 32%);
+  max-width: none;
+  margin-left: 38px;
+}
+figure.video-portrait video {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  background: #000;
+  box-shadow: var(--shadow);
+}
+figure.video-portrait figcaption {
+  text-align: center; font-size: 13px; color: var(--text-3); margin-top: 8px;
+}
+/* headings never wrap around the float */
+.prose h2, .prose h3, .prose hr { clear: both; }
+
+@media (max-width: 760px) {
+  figure.video-portrait,
+  .article-page--wide .prose > figure.video-portrait {
+    float: none;
+    width: min(280px, 72%);
+    margin: 22px auto;
+  }
+  /* on mobile there is room for the full portrait frame */
+  figure.video-portrait video { aspect-ratio: 9 / 16; }
+}
+
+/* Photo beside the text — same idea as figure.video-portrait, for landscape stills.
+   Click opens it in the lightbox. */
+figure.photo-side {
+  float: right;
+  width: min(360px, 40%);
+  margin: 6px 0 20px 38px;
+  shape-outside: inset(0 round 12px);
+}
+.article-page--wide .prose > figure.photo-side {
+  width: min(360px, 40%);
+  max-width: none;
+  margin-left: 38px;
+}
+figure.photo-side img {
+  width: 100%;
+  aspect-ratio: auto;
+  display: block;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  cursor: zoom-in;
+}
+figure.photo-side figcaption {
+  text-align: center; font-size: 13px; color: var(--text-3); margin-top: 8px;
+}
+@media (max-width: 760px) {
+  figure.photo-side,
+  .article-page--wide .prose > figure.photo-side {
+    float: none;
+    width: 100%;
+    margin: 22px 0;
+  }
 }
 
 /* ── Spoiler / collapsible ─────────────────────────────── */
@@ -1451,6 +1595,9 @@ figure.ba figcaption {
 
 /* Enhancer selection buttons */
 .enh-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+/* Aetherion widgets carry 11 modes: centre the rows so they read as a block */
+.enh-compare[data-dir="/images/ax/"] .enh-btns { justify-content: center; }
+.enh-compare[data-dir="/images/ax/"] .enh-btn { white-space: nowrap; }
 .enh-btn {
   border: 1px solid var(--border); background: var(--surface-2);
   color: var(--text-2); cursor: pointer; font: inherit;
@@ -1465,6 +1612,7 @@ figure.ba figcaption {
 
 @media (max-width: 600px) {
   .enh-btn { font-size: 12px; padding: 6px 11px; }
+  .enh-btns--grouped .enh-btn { white-space: nowrap; }
   .enh-label { font-size: 14px; }
 }
 

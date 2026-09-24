@@ -25,7 +25,8 @@ import { v } from '../lib/assetVersion';
     <!-- TAB 1: ESTIMATE -->
     <div class="calc-panel active" id="tab-estimate">
       <div class="prose" style="margin-bottom:20px">
-        <p>Enter the known contrast measurements. The calculator uses a power-law model to interpolate the full ADL curve from On/Off (100% black) down to the measured ANSI and/or ADL points. More input points = more accurate estimate.</p>
+        <p><strong>What this is.</strong> The On/Off contrast on a spec sheet is measured on a fully black frame — a situation that never occurs in real content. ADL contrast shows what happens once there is light on screen: 1% white, 5%, 50%. That curve, not the headline number, is what you actually watch.</p>
+        <p>On/Off and ANSI are enough for an estimate. Add the 1% and 5% measurements and the curve gets sharper. Not sure where to start — hit <strong>Example</strong> for two real measured curves from the <a href="/reviews/titan-noir-max-cards/">Titan Noir Max In-Depth Review</a>.</p>
       </div>
 
       <div id="estimateBlocks">
@@ -35,7 +36,8 @@ import { v } from '../lib/assetVersion';
 
       <div class="calc-actions">
         <button class="btn" onclick="buildEstimateChart()">Calculate &amp; plot</button>
-        <button class="btn-secondary" onclick="clearChart('estimateChart')">Clear chart</button>
+        <button class="btn-secondary" onclick="loadExample('estimate')">Example</button>
+        <button class="btn-secondary" onclick="resetCalc('estimate')">Clear chart</button>
       </div>
 
       <div class="chart-wrap" id="estimateWrap">
@@ -61,6 +63,7 @@ import { v } from '../lib/assetVersion';
     <div class="calc-panel" id="tab-manual">
       <div class="prose" style="margin-bottom:20px">
         <p>Enter the exact measured contrast values for each ADL level. Leave fields blank if not measured; the chart will connect only the points you provide. Add multiple projectors to compare them side by side.</p>
+        <p>Hit <strong>Example</strong> for three real measured curves from the <a href="/reviews/titan-noir-max-cards/">Titan Noir Max In-Depth Review</a> — zoom 1.0×, 1.5× and 2.0×.</p>
       </div>
 
       <div id="manualBlocks">
@@ -70,7 +73,8 @@ import { v } from '../lib/assetVersion';
 
       <div class="calc-actions">
         <button class="btn" onclick="buildManualChart()">Plot</button>
-        <button class="btn-secondary" onclick="clearChart('manualChart')">Clear chart</button>
+        <button class="btn-secondary" onclick="loadExample('manual')">Example</button>
+        <button class="btn-secondary" onclick="resetCalc('manual')">Clear chart</button>
       </div>
 
       <div class="chart-wrap" id="manualWrap">
@@ -116,6 +120,7 @@ import { v } from '../lib/assetVersion';
     closeBtn:        '✕ Close',
     plotFirst:       'Plot the chart first.',
     removeAria:      'Remove projector',
+    demoNames:       ['Titan Noir Max · zoom 1.0×', 'Titan Noir Max · zoom 1.5×', 'Titan Noir Max · zoom 2.0×'],
     ansiWarn:        'ANSI contrast can’t be higher than On/Off contrast — check the values. This projector was skipped.'
   };
   </script>

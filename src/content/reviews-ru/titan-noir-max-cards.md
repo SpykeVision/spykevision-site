@@ -6,7 +6,6 @@ category: 4K • Трёхлазерный • Флагман
 cover: /images/tnm/hero-tnm.jpeg
 readTime: 45 мин чтения
 draft: false
-badge: NEW
 summary: Распаковка, качество сборки, объектив, DBLE и полные измерения яркости и контраста XGIMI Titan Noir Max.
 date: 2026-06-01
 extra: Прошивка 1.2.36

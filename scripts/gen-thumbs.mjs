@@ -7,7 +7,7 @@ import { readdir, mkdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOTS = ['public/images', 'public/uploads'];
-const WIDTHS = [640, 1280];
+const WIDTHS = [320, 640, 1280];
 const EXT = /\.(jpe?g|png|webp)$/i;
 
 async function* walk(dir) {
@@ -39,7 +39,7 @@ for (const root of ROOTS) {
       if ((meta.width ?? 0) <= w) { skipped++; continue; } // never upscale
       await mkdir(path.dirname(out), { recursive: true });
       let pipe = sharp(file).rotate().resize({ width: w }); // .rotate() bakes in EXIF orientation
-      if (/\.jpe?g$/i.test(out)) pipe = pipe.jpeg({ quality: 85, mozjpeg: true });
+      if (/\.jpe?g$/i.test(out)) pipe = pipe.jpeg({ quality: 85, mozjpeg: true, progressive: true });
       else if (/\.webp$/i.test(out)) pipe = pipe.webp({ quality: 85 });
       else pipe = pipe.png({ compressionLevel: 9 });
       await pipe.toFile(out);

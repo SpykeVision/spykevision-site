@@ -10,6 +10,7 @@ const reviews = defineCollection({
     summary: z.string(),                     // card blurb + meta description
     cover: z.string(),                       // /uploads/... or /images/...
     coverCard: z.string().optional(),        // homepage card thumbnail (overrides cover)
+    coverVideo: z.string().optional(),       // looping clip behind the hero; cover stays as its poster
     date: z.coerce.date(),
     readTime: z.string().optional(),         // e.g. "18 min read"
     extra: z.string().optional(),            // e.g. "Firmware 1.0.99"
@@ -23,6 +24,8 @@ const reviews = defineCollection({
     verdictTitle: z.string().optional(),
     verdictText: z.string().optional(),
     buyLink: z.string().url().optional(),
+    productName: z.string().optional(),     // JSON-LD Product name; defaults to the title before the dash
+    brand: z.string().optional(),           // JSON-LD Brand; defaults to the first word of productName
     tocGroups: z.array(z.object({
       label: z.string(),
       sections: z.array(z.string()),
@@ -40,6 +43,7 @@ const reviewsRu = defineCollection({
     summary: z.string(),
     cover: z.string(),
     coverCard: z.string().optional(),
+    coverVideo: z.string().optional(),
     date: z.coerce.date(),
     readTime: z.string().optional(),
     extra: z.string().optional(),
@@ -52,6 +56,8 @@ const reviewsRu = defineCollection({
     verdictTitle: z.string().optional(),
     verdictText: z.string().optional(),
     buyLink: z.string().url().optional(),
+    productName: z.string().optional(),     // JSON-LD Product name; defaults to the title before the dash
+    brand: z.string().optional(),           // JSON-LD Brand; defaults to the first word of productName
     tocGroups: z.array(z.object({
       label: z.string(),
       sections: z.array(z.string()),

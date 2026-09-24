@@ -24,5 +24,12 @@ public/thumbs/
 # Unrelated local exercise — not part of the site
 kibana-training/
 
-# Unpublished draft reviews — repo is public, drafts build as real pages
-src/content/reviews/aetherion-max.md
+research/.chrome-avs/
+research/.chrome-headless/
+
+# Local research + raw chat archive — contains pasted credentials, repo is PUBLIC
+research/
+My files/
+
+# local backups
+.backups/

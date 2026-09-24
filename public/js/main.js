@@ -182,8 +182,27 @@
   }
 
   // Build hero+thumbs carousel for odd-count galleries
+  // Swap a /thumbs/<w>/ tier into an image URL (or strip it for the original).
+  function thumbSrc(img, w) {
+    var src = img.getAttribute('src') || '';
+    var bare = src.replace(/^\/thumbs\/\d+/, '');
+    return (img.srcset || '').indexOf('/thumbs/' + w) !== -1 ? '/thumbs/' + w + bare : src;
+  }
+
+  // Point `sizes` at the element's real rendered width so srcset resolves honestly.
+  function sizeToBox(img, box) {
+    function apply() {
+      var w = Math.round(box.getBoundingClientRect().width);
+      if (w > 0) img.sizes = w + 'px';
+    }
+    apply();
+    if (window.ResizeObserver) new ResizeObserver(apply).observe(box);
+    else window.addEventListener('resize', apply);
+  }
+
+  // `data-lead` names the photo the carousel opens on; order stays as authored.
   function buildCarousel(g, figs) {
-    var carCur = 0;
+    var carCur = Math.max(0, Math.min(parseInt(g.dataset.lead || '0', 10) || 0, figs.length - 1));
 
     var container = document.createElement('div');
     container.className = 'car-container';
@@ -217,7 +236,8 @@
         var tImg = document.createElement('img');
         tImg.loading = 'lazy';
         tImg.decoding = 'async';
-        tImg.src = origImg.src;
+        // 72x54 button — pull the smallest tier, never the full-size file
+        tImg.src = thumbSrc(origImg, 320);
         tImg.alt = origImg.alt || '';
         btn.appendChild(tImg);
       }
@@ -234,10 +254,20 @@
       carCur = Math.max(0, Math.min(idx, figs.length - 1));
 
       mainArea.innerHTML = '';
+
+      // The detached figure still carries the grid's `sizes`, which would make the
+      // browser pick a thumbnail tier for a slide that renders several times wider.
+      // Cloning alone kicks off that fetch, so fix the template before cloning.
+      var srcImg = figs[carCur].querySelector('img');
+      if (srcImg) {
+        var boxW = Math.round(mainArea.getBoundingClientRect().width);
+        if (boxW > 0) srcImg.sizes = boxW + 'px';
+      }
       mainArea.appendChild(figs[carCur].cloneNode(true));
 
       var mainImg = mainArea.querySelector('img');
       if (mainImg) {
+        sizeToBox(mainImg, mainArea);
         mainImg.addEventListener('click', function (e) {
           e.stopPropagation();
           var oi = figs[carCur].querySelector('img');
@@ -252,12 +282,12 @@
         thumbsRow.children[carCur].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
 
-      prevBtn.style.opacity = carCur === 0 ? '0.15' : '0.45';
-      nextBtn.style.opacity = carCur === figs.length - 1 ? '0.15' : '0.45';
     }
 
-    prevBtn.addEventListener('click', function () { if (carCur > 0) carGoTo(carCur - 1, true); });
-    nextBtn.addEventListener('click', function () { if (carCur < figs.length - 1) carGoTo(carCur + 1, true); });
+    // The carousel loops: past the last photo it starts again from the first, and back
+    function carStep(dir) { carGoTo((carCur + dir + figs.length) % figs.length, true); }
+    prevBtn.addEventListener('click', function () { carStep(-1); });
+    nextBtn.addEventListener('click', function () { carStep(1); });
 
     // Swipe support on the main image area
     var swipeX = 0;
@@ -265,18 +295,21 @@
     mainArea.addEventListener('touchend', function (e) {
       var dx = e.changedTouches[0].clientX - swipeX;
       if (Math.abs(dx) > 40) {
-        if (dx < 0 && carCur < figs.length - 1) carGoTo(carCur + 1, true);
-        if (dx > 0 && carCur > 0) carGoTo(carCur - 1, true);
+        carStep(dx < 0 ? 1 : -1);
       }
     });
 
-    carGoTo(0);
+    carGoTo(carCur);
   }
 
   document.querySelectorAll('.prose .gallery').forEach(function (g) {
     var cols = g.classList.contains('cols-3') ? 3 : 2;
     var figs = Array.prototype.slice.call(g.querySelectorAll('figure'));
-    if (figs.length % cols !== 0) {
+    // `as-carousel` / `as-grid` force the layout; without them a gallery falls back
+    // to the old rule: carousel whenever the photos do not fill whole rows.
+    var wantCar = g.classList.contains('as-carousel');
+    var wantGrid = g.classList.contains('as-grid');
+    if (wantCar || (!wantGrid && figs.length % cols !== 0)) {
       buildCarousel(g, figs);
     } else {
       figs.forEach(function (fig) {
@@ -288,6 +321,14 @@
         });
       });
     }
+  });
+
+  // Stand-alone photos beside the text open full screen, same lightbox as the galleries
+  document.querySelectorAll('.prose figure.photo-side img').forEach(function (img) {
+    img.addEventListener('click', function (e) {
+      e.stopPropagation();
+      openLb(parseInt(img.dataset.lbIdx || '0', 10));
+    });
   });
 
   // Build floating section nav (desktop) from the inline TOC, show on scroll
@@ -393,4 +434,44 @@
   }, { passive: true });
   window.addEventListener('resize', update, { passive: true });
   update();
+})();
+
+/* Lazy autoplay for local video figures.
+   Sources live in data-src until the figure is close to the viewport, so a
+   reader who never scrolls to a section never downloads its clip. Offscreen
+   clips are paused again to keep decoding off the CPU on long pages. */
+(function () {
+  var vids = document.querySelectorAll('figure.video-local video[autoplay], figure.video-portrait video[autoplay]');
+  if (!vids.length) return;
+
+  function attach(v) {
+    if (v.dataset.attached) return;
+    v.dataset.attached = '1';
+    if (v.dataset.poster) { v.poster = v.dataset.poster; }
+    v.querySelectorAll('source[data-src]').forEach(function (s) {
+      s.src = s.dataset.src;
+      s.removeAttribute('data-src');
+    });
+    v.load();
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    vids.forEach(attach);
+    return;
+  }
+
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var v = e.target;
+      if (e.isIntersecting) {
+        attach(v);
+        var p = v.play();
+        if (p && p.catch) p.catch(function () {});
+      } else if (v.dataset.attached) {
+        v.pause();
+      }
+    });
+  }, { rootMargin: '300px 0px' });
+
+  vids.forEach(function (v) { obs.observe(v); });
 })();
