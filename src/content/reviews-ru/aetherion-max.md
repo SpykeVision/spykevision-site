@@ -6,7 +6,7 @@ summary: Дизайн и сборка, оптика, EBL и anti-RBE, игры �
   замеры яркости и контраста AWOL Aetherion Max.
 cover: /images/ax/p/cover-03.jpg
 coverCard: /images/ax/p/card-ax-v4.jpg
-date: 2026-09-24
+date: 2026-09-23
 readTime: 40 мин чтения
 extra: Прошивка Q0421 + DLP 2.4.0
 badge: NEW
