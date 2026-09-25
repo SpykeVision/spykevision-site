@@ -19,7 +19,11 @@ const site = Astro.site ?? new URL('https://spykevision.com');
 const canonical = new URL(Astro.url.pathname, site);
 const schema = reviewGraph({ review, site, canonical, isRu });
 // Phones get the 1280px hero variant (~2.5× lighter) when prebuild generated one.
-const heroMobile = review.cover && existsSync(`public/thumbs/1280${review.cover}`) ? `/thumbs/1280${review.cover}` : null;
+// With a hero clip, the background is the clip's own poster (first frame), so nothing else
+// flashes through while the video loads or restarts; the cover stays for OG/cards.
+const heroPoster = review.coverVideo ? review.coverVideo.replace(/\.mp4$/, '-poster.jpg') : null;
+const heroBg = heroPoster ?? review.cover;
+const heroMobile = !heroPoster && review.cover && existsSync(`public/thumbs/1280${review.cover}`) ? `/thumbs/1280${review.cover}` : null;
 const related = (await getCollection(isRu ? 'reviews-ru' : 'reviews'))
   .filter((r) => !r.data.draft && r.slug !== slug)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -55,7 +59,7 @@ const t = {
   schema={schema}
 >
   <!-- Hero cover is a CSS background — preload it so LCP doesn't wait for stylesheet parse -->
-  {review.cover && !heroMobile && <link slot="head" rel="preload" as="image" href={review.cover} fetchpriority="high" />}
+  {heroBg && !heroMobile && <link slot="head" rel="preload" as="image" href={heroBg} fetchpriority="high" />}
   {heroMobile && <link slot="head" rel="preload" as="image" href={heroMobile} media="(max-width: 900px)" fetchpriority="high" />}
   {heroMobile && <link slot="head" rel="preload" as="image" href={review.cover} media="(min-width: 901px)" fetchpriority="high" />}
   {heroMobile && <style slot="head" is:inline set:html={`@media (max-width:900px){.article-hero-fb{background-image:url('${heroMobile}')!important}}`} />}
@@ -82,11 +86,11 @@ const t = {
   <!-- Full-bleed hero with cover image as background -->
   <div
     class={`article-hero-fb${review.cover ? '' : ' article-hero-fb--plain'}`}
-    style={review.cover ? `background-image:url('${review.cover}')` : ''}
+    style={heroBg ? `background-image:url('${heroBg}')` : ''}
     data-draft={review.draft ? 'true' : null}
   >
     {review.coverVideo && (
-      <video class="hero-video" muted playsinline preload="none" poster={review.coverVideo.replace(/\.mp4$/, '-poster.jpg')} data-src={review.coverVideo}></video>
+      <video class="hero-video" muted playsinline preload="none" poster={heroPoster} data-src={review.coverVideo}></video>
     )}
     {review.coverVideo && (
       <script is:inline>
