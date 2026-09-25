@@ -82,6 +82,7 @@ function pal(){
 }
 
 var charts=[];
+var MENTIONS=[];
 function clearCharts(){charts.forEach(function(c){c.destroy();});charts=[];}
 
 function fetchStats(){
@@ -92,7 +93,10 @@ function fetchStats(){
   var q=RANGE?('from='+RANGE.from+'&to='+RANGE.to):('days='+DAYS);
   fetch('/api/stats?key='+encodeURIComponent(key)+'&'+q)
     .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
-    .then(function(j){DATA=j;render();})
+    .then(function(j){DATA=j;
+      return fetch('/api/mentions?key='+encodeURIComponent(key)).then(function(r){return r.ok?r.json():{mentions:[]};}).catch(function(){return {mentions:[]};})
+        .then(function(m){MENTIONS=m.mentions||[];render();});
+    })
     .catch(function(){document.getElementById('content').innerHTML='<p class="msg">Не пустило (неверный ключ или база ещё не подключена).</p>';});
 }
 
@@ -144,6 +148,11 @@ function render(){
     +(DATA.charts||[]).map(function(c){return '<tr><td>'+c.meta+'</td><td class="num">'+n(c.n)+'</td></tr>';}).join('')
     +'</tbody></table></div>';
   html+='</div>';
+  html+='<div class="card"><h2>Упоминания в сети (ночной поиск)</h2>'
+    +(MENTIONS&&MENTIONS.length?'<table><thead><tr><th>Где</th><th class="num">Найдено</th></tr></thead><tbody>'
+    +MENTIONS.map(function(m){return '<tr><td style="word-break:break-all"><a href="'+esc(/^https?:\/\//.test(m.url)?m.url:'#')+'" target="_blank" rel="noopener noreferrer">'+esc(m.title||m.url)+'</a><div style="opacity:.6;font-size:12px">'+esc(m.source)+(m.snippet?' · '+esc(m.snippet):'')+'</div></td><td class="num">'+dt(m.ts)+'</td></tr>';}).join('')
+    +'</tbody></table>':'<p style="opacity:.6">Пока ничего. Поиск идёт каждую ночь.</p>')
+    +'</div>';
   document.getElementById('content').innerHTML=html;
 
   Chart.defaults.color=P.ink;
