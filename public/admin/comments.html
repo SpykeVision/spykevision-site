@@ -14,6 +14,7 @@ h1{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0}
 h2{font-size:15px;font-weight:700;margin:26px 0 10px;color:var(--text-2)}
 .controls{display:flex;gap:8px;align-items:center}
 .controls a.back{font-size:13px;color:var(--text-3);text-decoration:none;margin-right:6px}
+.controls button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
 .key-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;width:200px}
 .c{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px}
 .c-meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:var(--text-3);margin-bottom:8px}
@@ -32,6 +33,7 @@ h2{font-size:15px;font-weight:700;margin:26px 0 10px;color:var(--text-2)}
   <h1>Комментарии</h1>
   <div class="controls">
     <a class="back" href="/admin/stats.html">Статистика</a>
+    <button id="dl" type="button" title="JSON со всеми комментариями, включая скрытые и почты">Скачать всё</button>
     <input class="key-input" id="key" type="password" placeholder="Stats key" autocomplete="off">
   </div>
 </div>
@@ -73,6 +75,23 @@ h2{font-size:15px;font-weight:700;margin:26px 0 10px;color:var(--text-2)}
     if(a==='delete' && !confirm('Удалить комментарий навсегда?')) return;
     b.disabled=true;
     api('POST',{id:id,action:a}).then(load).catch(function(){ b.disabled=false; alert('Не получилось'); });
+  });
+  // Full export (all statuses, with emails) — for backups / moving off Cloudflare
+  document.getElementById('dl').addEventListener('click',function(){
+    var b=this, rows=[]; b.disabled=true;
+    (function page(after){
+      fetch('/api/backup?table=comments&after='+after,{headers:{'Authorization':'Bearer '+keyEl.value.trim()}})
+        .then(function(r){ if(r.status===401) throw new Error('auth'); return r.json(); })
+        .then(function(d){
+          rows=rows.concat(d.rows);
+          if(d.next) return page(d.next);
+          var a=document.createElement('a');
+          a.href=URL.createObjectURL(new Blob([JSON.stringify(rows,null,2)],{type:'application/json'}));
+          a.download='spykevision-comments-'+new Date().toISOString().slice(0,10)+'.json';
+          a.click(); b.disabled=false;
+        })
+        .catch(function(e){ b.disabled=false; alert(e.message==='auth'?'Неверный ключ':'Не получилось'); });
+    })(0);
   });
   keyEl.addEventListener('change',load);
   load();
