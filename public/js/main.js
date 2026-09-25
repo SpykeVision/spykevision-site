@@ -323,8 +323,17 @@
     }
   });
 
-  // Stand-alone photos beside the text open full screen, same lightbox as the galleries
-  document.querySelectorAll('.prose figure.photo-side img').forEach(function (img) {
+  // Light image protection: no right-click "save image" and no drag-out (text stays selectable)
+  ['contextmenu', 'dragstart'].forEach(function (type) {
+    document.addEventListener(type, function (e) {
+      if (e.target.tagName === 'IMG') e.preventDefault();
+    });
+  });
+
+  // Stand-alone photos (outside galleries) open full screen, same lightbox as the galleries
+  document.querySelectorAll('.prose figure img').forEach(function (img) {
+    if (img.closest('.gallery')) return;
+    img.classList.add('lb-zoom');
     img.addEventListener('click', function (e) {
       e.stopPropagation();
       openLb(parseInt(img.dataset.lbIdx || '0', 10));

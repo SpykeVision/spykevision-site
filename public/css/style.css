@@ -1636,3 +1636,9 @@ figure.ba figcaption {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Stand-alone article photos open in the lightbox */
+.prose img.lb-zoom { cursor: zoom-in; }
+
+/* No iOS long-press "save image" callout */
+img { -webkit-touch-callout: none; }
