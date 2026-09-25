@@ -2,7 +2,8 @@
 title: AWOL Aetherion Max — In-Depth Review
 eyebrow: In-Depth Review
 category: 4K • Triple-Laser • Flagship • UST
-summary: Design and build, optics, EBL and anti-RBE, gaming and 3D, plus full brightness and contrast measurements of the AWOL Aetherion Max.
+summary: Design and build, optics, EBL and anti-RBE, gaming and 3D, plus full
+  brightness and contrast measurements of the AWOL Aetherion Max.
 cover: /images/ax/p/cover-03.jpg
 coverCard: /images/ax/p/card-ax-v4.jpg
 date: 2026-09-23
@@ -11,26 +12,40 @@ extra: Firmware Q0421 + DLP 2.4.0
 badge: NEW
 draft: false
 pros:
-  - "Record native contrast for a UST: up to 5,895:1 in M7 → Cinema 2, almost 1.5× the Valerion VisionMaster Max"
+  - "Record native contrast for a UST: up to 5,895:1 in M7 → Cinema 2, almost
+    1.5× the Valerion VisionMaster Max"
   - Faster XPR-Shift gives a more cohesive image with less visible SDE
   - Motion handling is one of its biggest strengths
-  - Low input lag, VRR, ALLM, and DisplayPort over USB-C, which is rare in this class
+  - Low input lag, VRR, ALLM, and DisplayPort over USB-C, which is rare in this
+    class
   - EBL delivers up to 5.5× on real dark scenes
   - Anti-RBE works in 3D
   - Proper temporal dithering
-  - Good edge-to-edge sharpness for a UST; channel convergence within about a third of a pixel
+  - Good edge-to-edge sharpness for a UST; channel convergence within about a
+    third of a pixel
   - Premium chassis, built-in power supply, quiet in Warm 1
 cons:
-  - "PixelLock can't be disabled: fine detail is lost in 4K, and 1080p shows striping from offset pixels"
-  - Anti-RBE is only 8×, tied to Warm 1, and causes whine and posterization at 120/240 Hz
-  - Banding with the iris stopped down (reduced in Q0908), horizontal stripes on some units, a red line along the bottom edge
+  - "PixelLock can't be disabled: fine detail is lost in 4K, and 1080p shows
+    striping from offset pixels"
+  - Anti-RBE is only 8×, tied to Warm 1, and causes whine and posterization at
+    120/240 Hz
+  - Banding with the iris stopped down (reduced in Q0908), horizontal stripes on
+    some units, a red line along the bottom edge
   - Warm 1 is noticeably green out of the box
-  - EBL depends heavily on preceding scenes, occasionally gets stuck, and has no aggressiveness setting
+  - EBL depends heavily on preceding scenes, occasionally gets stuck, and has no
+    aggressiveness setting
   - Loud
   - Uneven white field
 buyLink: https://awolvision.com/products/rgb-laser-ust-projector-aetherion-max
 coverVideo: /videos/ax-hero.mp4
-verdictText: "The Aetherion Max is the first UST to seriously tackle the class's biggest problem: an iris and a redesigned optical engine give it the highest native contrast of any UST to date, while the faster pixel shift and proper refresh-rate handling make its motion among the best of any DLP. It's let down by software compromises (PixelLock that can't be turned off, a limited anti-RBE, fickle iris presets), but most of them are fixable in firmware, and Q0908 shows AWOL is working on it. Right now it's the best UST for anyone who cares about contrast in a dark room."
+verdictText: "The Aetherion Max is the first UST to seriously tackle the class's
+  biggest problem: an iris and a redesigned optical engine give it the highest
+  native contrast of any UST to date, while the faster pixel shift and proper
+  refresh-rate handling make its motion among the best of any DLP. It's let down
+  by software compromises (PixelLock that can't be turned off, a limited
+  anti-RBE, fickle iris presets), but most of them are fixable in firmware, and
+  Q0908 shows AWOL is working on it. Right now it's the best UST for anyone who
+  cares about contrast in a dark room."
 wide: true
 tocGroups:
   - label: Unboxing
@@ -72,7 +87,6 @@ tocGroups:
     sections:
       - Verdict
 ---
-
 When AWOL Vision launched the Aetherion series on Kickstarter, it raised more than **$10,000,000** in the first twelve hours. Nearly four thousand people ordered a projector that almost nobody had seen in person. No projector campaign had ever hit eight figures that fast, and the Aetherion went on to become the most successful projector campaign in the platform's history. It closed at **$18,649,456** from 7,050 backers, a sign of a big fan base, and Valerion's success clearly helped.
 
 ![](/uploads/2026-09-21-23.33.20.jpg)
@@ -89,7 +103,7 @@ Start with the optical engine. It's been redesigned from the ground up, and ever
 
 The key is an iris: seven steps plus fully open. It's the first time AWOL has put an iris in a UST at all. Most DLPs in this class do without one, since an iris eats light and brightness is close to the most important spec a UST has. AWOL leaves the call to you: open it up for lumens, close it down for contrast. A recent firmware update adds a dynamic mode too. How the iris actually moves between its presets turned out to be a story of its own, and I get to it later in the review.
 
-On top of the iris sits EBL, the proprietary laser-dimming system familiar from **Valerion** projectors. Together with the iris, it makes up what AWOL calls **NoirScene System II**, which is where the **60,000:1** dynamic contrast figure comes from. Treat numbers like that with caution. Real contrast in movies depends heavily on how the laser dimming is implemented and how aggressive it is, not on a peak figure measured on a full-black field. We measured how EBL performs on real scenes, so you can judge the actual effect for yourself.
+On top of the iris sits **EBL**, the proprietary laser-dimming system familiar from Valerion projectors. Together with the iris, it makes up what AWOL calls **NoirScene System II**, which is where the **60,000:1** dynamic contrast figure comes from. Treat numbers like that with caution. Real contrast in movies depends heavily on how the laser dimming is implemented and how aggressive it is, not on a peak figure measured on a full-black field. We measured how EBL performs on real scenes, so you can judge the actual effect for yourself.
 
 <figure class="video-local"><video autoplay loop muted playsinline preload="metadata" data-poster="/videos/ax-lens-coating-poster.jpg"><source data-src="/videos/ax-lens-coating.mp4" type="video/mp4"></video><figcaption>Planetary versus static coating. On the left the lens rotates and the coating goes on evenly; on the right it stays still and the layer thickness varies</figcaption></figure>
 
@@ -101,7 +115,7 @@ The logic makes sense. A UST lens runs hot, and as it heats up the geometry drif
 
 The platform is a little unusual for the segment: a **0.47″** **DLP472TP** DMD, the new **DLPC8445** display controller, and standard XPR pixel shifting to 4K, with an interesting twist I'll get to later. Other spec-sheet highlights: 1080p at **240 Hz** with a record-low **1 ms** input lag, **VRR** and **ALLM**, **Dolby Vision Gaming**, the full **HDR** set (**HDR10**, **HDR10+**, **HLG**, **Dolby Vision**) with dynamic tone mapping, and an Anti-RBE mode inherited from Valerion.
 
-The **DLP472TP** is a TRP-platform chip, TI's previous generation. The new one is called SST and hasn't reached UST projectors yet. The controller is new, though, and the Aetherion is the first UST to get it. It belongs to the same architectural family as the **DLPC8455** in the Titan Noir, and it is what enables 1080p at **240 Hz** and the record-low input lag. It also brings rolling (line-by-line) scan-out instead of full-frame output, the same **rolling buffer** we covered in detail in the Titan review. The trade-off: gaming input lag drops sharply, but you also inherit the side effects of rolling scan-out. More on that later.
+The **DLP472TP** is a TRP-platform chip, TI's previous generation. The new one is called SST and hasn't reached UST projectors yet. The controller is new, though, and the Aetherion is the first UST to get it. It belongs to the same architectural family as the **DLPC8455** in the Titan Noir. 1080p at **240 Hz** isn't new, the Valerion VisionMaster Max already had it on the older controller, but the new one is what makes the record-low input lag possible: it brings rolling (line-by-line) scan-out instead of full-frame output, the same **rolling buffer** we covered in detail in the Titan review. The trade-off: gaming input lag drops sharply, but you also inherit the side effects of rolling scan-out. More on that later.
 
 The smart-TV side runs on a **MediaTek MT9655** (better known as the Pentonic 800) with **8 GB** of RAM and **128 GB** of storage, which is very generous for a projector. It should stay snappy for years.
 
@@ -123,7 +137,7 @@ Beneath the tray is the retail box: matte black, with a fabric carry handle and 
 
 <div class="gallery cols-3 as-carousel" data-lead="11"><figure><img src="/images/ax/p/box-01.jpg" alt=""></figure><figure><img src="/images/ax/p/box-02.jpg" alt=""></figure><figure><img src="/images/ax/p/box-03.jpg" alt=""></figure><figure><img src="/images/ax/p/3d-01.jpg" alt=""></figure><figure><img src="/images/ax/p/box-04.jpg" alt=""></figure><figure><img src="/images/ax/p/box-05.jpg" alt=""></figure><figure><img src="/images/ax/p/box-06.jpg" alt=""></figure><figure><img src="/images/ax/p/acc-01.jpg" alt=""></figure><figure><img src="/images/ax/p/acc-02.jpg" alt=""></figure><figure><img src="/images/ax/p/cover-01.jpg" alt=""></figure><figure><img src="/images/ax/p/cover-02.jpg" alt=""></figure><figure><img src="/images/ax/p/cover-03.jpg" alt=""></figure></div>
 
-Under the lid, the documents come first: a user manual (shared by the **Aetherion Pro** and Aetherion Max), a Contact Information Card with the warranty, and a microfiber cleaning cloth. Beneath them is the hard dust cover, and under that, the projector itself.
+Under the lid, the documents come first: a user manual (shared by the Aetherion Pro and Aetherion Max), a Contact Information Card with the warranty, and a microfiber cleaning cloth. Beneath them is the hard dust cover, and under that, the projector itself.
 
 <div class="note">There's no carry case, just cardboard and foam. For a UST that's no big deal, since it lives on the same media console for years. But if you ever need to ship it, keep the original box. A box this size is hard to come by.</div>
 
@@ -191,7 +205,7 @@ A throw ratio of **0.2:1** means that for a 120-inch screen you'll need **56.2**
 
 <figure><img src="/images/ax/tech/throw-distance-dark.png" alt="Aetherion Max throw distance diagram: chassis dimensions, four room scenes for 80, 100, 120, and 150 inches, and tables A, B, C, D in inches and centimeters"><figcaption>AWOL's official throw distance diagram. A — horizontal distance from the front face of the chassis to the screen, B — from the rear face, C — height of the bottom edge of the image, D — vertical distance from the projector's base</figcaption></figure>
 
-Lining up a UST is a special kind of fun. You have to move the projector in every plane, ideally with a spirit level in hand. It has four adjustable feet, so you can set height and level on every axis at once. The stand has to be rigid, though. With more than eight kilograms on four points, a thin tabletop will sag, and the geometry will drift after you've finished setting up.
+Lining up a UST is a special kind of fun. You have to move the projector in every plane, ideally with a spirit level in hand. It has four adjustable feet, which let you adjust height and tilt in two axes simultaneously. The stand has to be rigid, though. With more than eight kilograms on four points, a thin tabletop will sag, and the geometry will drift after you've finished setting up.
 
 There's no lens shift, and that's not a complaint aimed at the Aetherion specifically. Almost no home UST has it, because the geometry is highly off-axis and moving the lens without wrecking convergence at the edges is really hard. The only notable exception in recent years is the 2017 **Sony VPL-VZ1000ES**, which cost **$25,000** and is built on entirely different technology. AWOL itself will be next, with its high-end **LuxVision** model shown at IFA in fall 2026. With the Aetherion, physical positioning is all you have.
 
@@ -359,7 +373,7 @@ Plot every measured operating point on a brightness vs. contrast chart, and a cl
 
 The best combinations come from Warm 2 in the bright half of the chart and Warm 1 in the dark half, with the boundary between them at around **2,400 lumens**. In the bright half, Warm 1 is nearly useless. Five of its positions, Iris Off through **M3**, sit strictly below the frontier, and for each of them there's a Warm 2 setting that's both brighter and more contrasty. Warm 1 starts to earn its keep at **Cinema 1** and **M4**, and from there down it leads almost everywhere. The only exception is **M5**, which loses to **M6** on Warm 2.
 
-If maximum brightness is your goal, the sweet spot runs from **1,910** to **2,750 lumens**, where you gain **44%** more light while losing only **17%** of contrast. For most large screens I'd go with Warm 2 in **Cinema 1**, which gives **2,750 lm** at **4,049:1**, the brightest point that still stays above **4,000:1**. Or **Dynamic Iris High**, if its visible artifacts don't bother you. Beyond that, the trade-off stops paying off: the last **460 lumens** cost a quarter of the contrast.
+If maximum brightness is your goal, the sweet spot runs from **Cinema 2** (**1,910 lm**, **4,900:1**) to Warm 2 in **Cinema 1** (**2,750 lm**, **4,049:1**): you gain **44%** more light while losing only **17%** of contrast. For most large screens I'd go with Warm 2 in **Cinema 1**, which gives **2,750 lm** at **4,049:1**, the brightest point that still stays above **4,000:1**. Or **Dynamic Iris High**, if its visible artifacts don't bother you. Beyond that, the trade-off stops paying off: the last **460 lumens** cost almost a third of the contrast.
 
 If your goal is the best contrast and the deepest black, the only real option is **M7** with the switch to **Cinema 2**. This mode gives around **1,600 lm** at **nearly 6,000:1** contrast.
 
@@ -531,7 +545,7 @@ Off is always on the left, the selected enhancer on the right. The switch at the
 
 ## Artifacts: Banding, Dithering, Posterization
 
-**Banding with the iris closed.** The Aetherion's most discussed artifact, inherited from the **Valerion Max**. Red-green bands appear on smooth gradients, and the further the iris closes, the more of them appear. At Iris Off there are none, and by **M7** they become visible even in real content, especially in skies and transitions. The cause is digital rather than optical: adjust contrast on a gradient and the bands crawl along with the setting. The projector appears to have a separate gamma correction profile for each iris position, and remapping the image to it eats some of the gradations. It's worst at **24 Hz** in Film mode; in **Cinema 1** and **Cinema 2** it's much less noticeable on normal content. AWOL has acknowledged the bug, and firmware **Q0908** reduces it considerably, especially in dynamic iris mode, where almost no bands remain.
+**Banding with the iris closed.** The Aetherion's most discussed artifact, inherited from the **Valerion Max**. Red-green bands appear on smooth gradients, and the further the iris closes, the more of them appear. At Iris Off there are almost none, and by **M7** they become visible even in real content, especially in skies and transitions. The cause is digital rather than optical: adjust contrast on a gradient and the bands crawl along with the setting. The projector appears to have a separate gamma correction profile for each iris position, and remapping the image to it eats some of the gradations. It's worst at **24 Hz** in Film mode; in **Cinema 1** and **Cinema 2** it's much less noticeable on normal content. AWOL has acknowledged the bug, and firmware **Q0908** reduces it considerably, especially in dynamic iris mode, where almost no banding remain.
 
 **Horizontal stripes.** A separate defect that's often confused with the previous one. These are wide horizontal bands on bright flat fills, resembling window blinds, and they appear at any iris position. According to owners, it's a unit lottery: some units don't have them at all, on others they get worse as the projector warms up. Our unit has them, clearly visible on a green background, but they don't do much damage to image quality.
 
@@ -605,13 +619,13 @@ The pattern is a black field with a grid on top, where the number of cells equal
 
 The results, with input at 1080p or 4K from a MacBook over **DisplayPort**, with all enhancers and digital geometry correction turned off:
 
-| Refresh rate | Result                                           | Verdict   |
-| ------------ | ------------------------------------------------ | --------- |
-| 24 Hz        | all 24 cells, no drops or repeats, no 3:2 pulldown | ✓ passed  |
-| 30 Hz        | all 30 cells, no drops or repeats                | ✓ passed  |
-| 60 Hz        | all 60 cells, no drops or repeats                | ✓ passed  |
-| 120 Hz       | all 120 cells, no drops or repeats               | ✓ passed  |
-| 240 Hz       | all 240 cells, each with its own number          | ✓ passed  |
+| Refresh rate | Result                                             | Verdict  |
+| ------------ | -------------------------------------------------- | -------- |
+| 24 Hz        | all 24 cells, no drops or repeats, no 3:2 pulldown | ✓ passed |
+| 30 Hz        | all 30 cells, no drops or repeats                  | ✓ passed |
+| 60 Hz        | all 60 cells, no drops or repeats                  | ✓ passed |
+| 120 Hz       | all 120 cells, no drops or repeats                 | ✓ passed |
+| 240 Hz       | all 240 cells, each with its own number            | ✓ passed |
 
 At 240 Hz, the projector displays 24p without judder: **exactly ten refreshes per frame**, with a frame-duration spread of **2.5%**.
 
