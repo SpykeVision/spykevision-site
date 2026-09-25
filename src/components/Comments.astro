@@ -9,11 +9,13 @@ const t = isRu
   ? { heading: 'Комментарии', nick: 'Ник', email: 'Email', emailNote: 'не публикуется', message: 'Сообщение',
       send: 'Отправить', sending: 'Отправка…', empty: 'Пока нет комментариев — будьте первым.',
       done: 'Спасибо! Комментарий появится после проверки.', error: 'Не удалось отправить. Попробуйте ещё раз.',
-      rate: 'Слишком много комментариев подряд — попробуйте через несколько минут.', invalid: 'Проверьте ник, email и сообщение.' }
+      rate: 'Слишком много комментариев подряд — попробуйте через несколько минут.', invalid: 'Проверьте ник, email и сообщение.',
+      badNick: 'Укажите ник.', badEmail: 'Похоже, в email опечатка — нужен адрес вида name@mail.com.', badBody: 'Напишите сообщение.' }
   : { heading: 'Comments', nick: 'Name', email: 'Email', emailNote: 'never shown', message: 'Message',
       send: 'Post comment', sending: 'Sending…', empty: 'No comments yet — be the first.',
       done: 'Thanks! Your comment will appear after review.', error: "Couldn't send. Please try again.",
-      rate: 'Too many comments in a row — try again in a few minutes.', invalid: 'Please check your name, email and message.' };
+      rate: 'Too many comments in a row — try again in a few minutes.', invalid: 'Please check your name, email and message.',
+      badNick: 'Please enter a name.', badEmail: 'That email looks off — it should look like name@mail.com.', badBody: 'Please write a message.' };
 ---
 <section class="comments article-page wrap" id="comments" data-web3={WEB3FORMS_KEY} data-title={title ?? ''} data-locale={isRu ? 'ru-RU' : 'en-US'}>
   <h2 class="comments-title">{t.heading}</h2>
@@ -80,7 +82,11 @@ const t = isRu
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var nick = form.nick.value.trim(), email = form.email.value.trim(), body = form.body.value.trim();
-        if (!nick || !form.email.checkValidity() || !email || body.length < 2) { say(t.invalid); return; }
+        var bad = !nick ? ['nick', t.badNick]
+          : !email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? ['email', t.badEmail]
+          : body.length < 2 ? ['body', t.badBody] : null;
+        form.querySelectorAll('.cm-bad').forEach(function (el) { el.classList.remove('cm-bad'); });
+        if (bad) { form[bad[0]].classList.add('cm-bad'); form[bad[0]].focus(); say(bad[1]); return; }
         btn.disabled = true; btn.textContent = t.sending; say('');
         fetch('/api/comments', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -143,4 +149,5 @@ const t = isRu
   .comments .cm-status { margin: 0; font-size: 13px; color: var(--text-3); }
   .comments .cm-status.ok { color: var(--green); }
   .comments .cm-status.err { color: var(--red); }
+  .comments .cm-bad { border-color: var(--red) !important; }
 </style>

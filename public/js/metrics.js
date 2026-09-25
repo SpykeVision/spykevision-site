@@ -65,9 +65,9 @@
     }).observe(cStatus, { childList: true, characterData: true, subtree: true });
   }
 
-  // Newsletter: button that opens the subscribe modal (reviews)
-  document.querySelectorAll('[data-subscribe-open]').forEach(function (b) {
-    b.addEventListener('click', function () { track('subscribe_open', '', true); });
+  // Newsletter: inline form in the review conclusion
+  document.querySelectorAll('.sub-inline').forEach(function (f) {
+    f.addEventListener('submit', function () { track('subscribe_submit', 'inline', true); });
   });
 
   // Newsletter (MailerLite injects its form dynamically — delegated submit)

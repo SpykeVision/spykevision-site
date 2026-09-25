@@ -6,8 +6,6 @@ import { thumbSrcset, CARD_SIZES } from '../lib/thumbs';
 import { reviewGraph } from '../lib/schema';
 import { existsSync } from 'node:fs';
 const { review, headings, alternate = false, slug = '' } = Astro.props;
-const ML_ACCOUNT_ID = '2448508';
-const ML_FORM_ID    = '8lzoBZ';
 const isRu = Astro.url.pathname.startsWith('/ru');
 const locale = isRu ? 'ru-RU' : 'en-US';
 const fmtDate = new Date(review.date).toLocaleDateString(locale, { year: 'numeric', month: 'long' });
@@ -37,6 +35,11 @@ const t = {
   subscribe:    isRu ? 'Подписаться' : 'Subscribe',
   officialPage: isRu ? 'Официальная страница →' : 'Official page →',
   subTitle:     isRu ? 'Новые обзоры на почту' : 'New reviews in your inbox',
+  subLabel:     isRu ? 'Подписка на новые обзоры' : 'Get new reviews by email',
+  subEmail:     isRu ? 'Ваш e-mail' : 'Your email',
+  subOk:        isRu ? 'Готово! Проверьте почту и подтвердите подписку.' : 'Done! Check your inbox to confirm.',
+  subBad:       isRu ? 'Проверьте адрес e-mail.' : 'Please check the email address.',
+  subFail:      isRu ? 'Не получилось, попробуйте ещё раз.' : 'Something went wrong, please try again.',
   subDesc:      isRu ? 'Когда выйдет новый обзор — узнаете первыми. Без спама, отписка в один клик.' : "When a new review drops — you'll know. No spam, unsubscribe any time.",
   moreReviews:  isRu ? 'Ещё обзоры' : 'More reviews',
   allReviews:   isRu ? 'Все обзоры' : 'All reviews',
@@ -183,7 +186,15 @@ const t = {
           {review.verdictTitle && <h3>{review.verdictTitle}</h3>}
           {review.verdictText && <p>{review.verdictText}</p>}
           <div class="conclusion-actions">
-            <button class="btn btn-subscribe" data-subscribe-open>{t.subscribe}</button>
+            {!review.draft && (
+              <form class="sub-inline" data-ok={t.subOk} data-bad={t.subBad} data-fail={t.subFail} novalidate>
+                <span class="sub-label">{t.subLabel}</span>
+                <input type="email" name="email" placeholder={t.subEmail} aria-label={t.subEmail} autocomplete="email" required />
+                <input type="text" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true" class="sub-hp" />
+                <button type="submit" class="btn-donate">{t.subscribe}</button>
+                <p class="sub-msg" role="status"></p>
+              </form>
+            )}
             {review.buyLink && (
               <a href={review.buyLink} target="_blank" rel="noopener" class="btn btn-official">
                 {t.officialPage}
@@ -222,50 +233,25 @@ const t = {
 
   {!review.draft && <Comments title={review.title} />}
 
-  {!review.draft && (
-    <>
-      <div class="subscribe-backdrop" id="subscribeBackdrop" aria-hidden="true"></div>
-      <dialog class="subscribe-modal" id="subscribeModal" aria-label="Subscribe to updates">
-        <button class="subscribe-close" id="subscribeClose" aria-label="Close">✕</button>
-        <h2 class="subscribe-modal-title">{t.subTitle}</h2>
-        <p class="subscribe-modal-sub">{t.subDesc}</p>
-        <div class="ml-embedded" data-form={ML_FORM_ID}></div>
-      </dialog>
-      <script define:vars={{ ML_ACCOUNT_ID, ML_FORM_ID }} is:inline>
-      (function(w,d,e,u,f,l,n){
-        w[f]=w[f]||function(){(w[f].q=w[f].q||[]).push(arguments);};
-        // Load after the page so MailerLite's font CSS doesn't delay first render
-        w.addEventListener('load',function(){setTimeout(function(){
-          l=d.createElement(e);l.async=1;l.src=u;
-          n=d.getElementsByTagName(e)[0];n.parentNode.insertBefore(l,n);
-        },1500);});
-      })(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
-      ml('account', ML_ACCOUNT_ID);
-
-      var sModal = document.getElementById('subscribeModal');
-      var sBackdrop = document.getElementById('subscribeBackdrop');
-      var sClose = document.getElementById('subscribeClose');
-
-      function openSub() { sModal.classList.add('open'); sBackdrop.classList.add('open'); document.body.style.overflow = 'hidden'; }
-      function closeSub() { sModal.classList.remove('open'); sBackdrop.classList.remove('open'); document.body.style.overflow = ''; }
-
-      document.querySelectorAll('[data-subscribe-open]').forEach(function(el) { el.addEventListener('click', openSub); });
-      sClose.addEventListener('click', closeSub);
-      sBackdrop.addEventListener('click', closeSub);
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSub(); });
-
-      var mlT = document.querySelector('#subscribeModal .ml-embedded');
-      if (mlT) {
-        new MutationObserver(function() {
-          mlT.querySelectorAll('*').forEach(function(el) {
-            var t = el.tagName.toLowerCase(), c = el.className || '';
-            if (c.indexOf('Wrapper') > -1 || c.indexOf('Container') > -1 || c.indexOf('embedBody') > -1 || t === 'input' || t === 'button' || t === 'textarea') {
-              el.style.setProperty('border-radius', '12px', 'important');
-            }
-          });
-        }).observe(mlT, { childList: true, subtree: true });
-      }
-      </script>
-    </>
-  )}
+  <script is:inline>
+  document.querySelectorAll('.sub-inline').forEach(function (f) {
+    var msg = f.querySelector('.sub-msg'), btn = f.querySelector('button');
+    function say(text, ok) { msg.textContent = text; msg.className = 'sub-msg ' + (ok ? 'ok' : 'err'); }
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = f.email.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return say(f.dataset.bad, false);
+      btn.disabled = true;
+      fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, hp: f.hp.value }) })
+        .then(function (r) { return r.json().then(function (d) { return [r.ok, d]; }); })
+        .then(function (res) {
+          if (res[0] && res[1].ok) { say(f.dataset.ok, true); f.email.value = ''; }
+          else say(res[1].error === 'invalid' ? f.dataset.bad : f.dataset.fail, false);
+        })
+        .catch(function () { say(f.dataset.fail, false); })
+        .then(function () { btn.disabled = false; });
+    });
+  });
+  </script>
 </Base>

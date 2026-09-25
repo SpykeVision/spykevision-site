@@ -60,7 +60,7 @@ const ogCover = reviews.find((r) => !r.data.draft)?.data.cover;
           <a href="#" class="cs-card">
             <div class="cs-media">
               {c.image && <img src={c.image} alt={c.title} class="cs-img" loading="lazy" decoding="async" srcset={thumbSrcset(c.image)} sizes={CARD_SIZES} />}
-              <div class="cs-badge">{c.status}</div>
+              <div class={/progress|процесс|тестир/i.test(c.status) ? "cs-badge cs-badge--progress" : "cs-badge"}>{c.status}</div>
             </div>
             <div class="cs-body">
               <span class="card-cat">{c.category}</span>
