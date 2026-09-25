@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Comments · SpykeVision Admin</title>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+*{box-sizing:border-box}
+body{max-width:820px;margin:0 auto;padding:28px 20px 60px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+h1{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0}
+h2{font-size:15px;font-weight:700;margin:26px 0 10px;color:var(--text-2)}
+.controls{display:flex;gap:8px;align-items:center}
+.controls a.back{font-size:13px;color:var(--text-3);text-decoration:none;margin-right:6px}
+.key-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:8px 12px;font-size:13px;width:200px}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.c-meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:var(--text-3);margin-bottom:8px}
+.c-meta b{color:var(--text);font-size:14px}
+.c-meta a{color:var(--accent);text-decoration:none}
+.c-body{white-space:pre-wrap;word-wrap:break-word;font-size:14px;line-height:1.5;color:var(--text)}
+.c-act{display:flex;gap:8px;margin-top:12px}
+.c-act button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:9px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.c-act .ok{background:var(--accent);border-color:var(--accent);color:#fff}
+.c-act .del{color:var(--red)}
+.msg{color:var(--text-3);font-size:14px}
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Комментарии</h1>
+  <div class="controls">
+    <a class="back" href="/admin/stats.html">Статистика</a>
+    <input class="key-input" id="key" type="password" placeholder="Stats key" autocomplete="off">
+  </div>
+</div>
+<div id="content"><p class="msg">Введи stats key — комментарии подтянутся.</p></div>
+
+<script>
+(function(){
+  try{ if(localStorage.getItem('sv-theme')==='dark' || (!localStorage.getItem('sv-theme') && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.dataset.theme='dark'; }catch(e){}
+  var keyEl=document.getElementById('key'), out=document.getElementById('content');
+  try{ keyEl.value=localStorage.getItem('sv-stats-key')||''; }catch(e){}
+
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function when(ts){ return new Date(ts).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  function api(method, body){
+    return fetch('/api/comments-admin',{method:method,headers:{'Authorization':'Bearer '+keyEl.value.trim(),'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined})
+      .then(function(r){ if(r.status===401) throw new Error('auth'); return r.json(); });
+  }
+  function card(c){
+    var btns = c.status==='pending'
+      ? '<button class="ok" data-a="approve">Опубликовать</button><button class="del" data-a="delete">Удалить</button>'
+      : '<button data-a="hide">Скрыть</button><button class="del" data-a="delete">Удалить</button>';
+    return '<div class="c" data-id="'+c.id+'"><div class="c-meta"><b>'+esc(c.nick)+'</b><a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a>'
+      +'<span>'+when(c.ts)+'</span><a href="'+esc(c.path)+'#comments" target="_blank">'+esc(c.path)+'</a></div>'
+      +'<div class="c-body">'+esc(c.body)+'</div><div class="c-act">'+btns+'</div></div>';
+  }
+  function load(){
+    if(!keyEl.value.trim()) return;
+    try{ localStorage.setItem('sv-stats-key',keyEl.value.trim()); }catch(e){}
+    api('GET').then(function(d){
+      out.innerHTML='<h2>Ждут модерации · '+d.pending.length+'</h2>'
+        +(d.pending.length? d.pending.map(card).join('') : '<p class="msg">Новых нет.</p>')
+        +'<h2>Опубликованные</h2>'
+        +(d.approved.length? d.approved.map(card).join('') : '<p class="msg">Пока пусто.</p>');
+    }).catch(function(e){ out.innerHTML='<p class="msg">'+(e.message==='auth'?'Неверный ключ.':'Ошибка загрузки.')+'</p>'; });
+  }
+  out.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-a]'); if(!b) return;
+    var a=b.dataset.a, id=Number(b.closest('.c').dataset.id);
+    if(a==='delete' && !confirm('Удалить комментарий навсегда?')) return;
+    b.disabled=true;
+    api('POST',{id:id,action:a}).then(load).catch(function(){ b.disabled=false; alert('Не получилось'); });
+  });
+  keyEl.addEventListener('change',load);
+  load();
+})();
+</script>
+</body>
+</html>

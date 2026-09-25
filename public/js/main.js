@@ -344,10 +344,13 @@
     floatToc.innerHTML = '<h4>' + tocHeading + '</h4>' + innerHtml;
     document.body.appendChild(floatToc);
 
-    // Show floating nav once the inline TOC scrolls out of view
+    // Show floating nav once the inline TOC scrolls out of view; hide it again when
+    // the article ends so it doesn't overlap "More reviews" and comments
+    var article = inlineToc.closest('main') || document.body;
     window.addEventListener('scroll', function () {
       var heroBottom = inlineToc.getBoundingClientRect().bottom;
-      floatToc.classList.toggle('visible', heroBottom < 0);
+      var articleEnd = article.getBoundingClientRect().bottom;
+      floatToc.classList.toggle('visible', heroBottom < 0 && articleEnd > floatToc.getBoundingClientRect().bottom);
     }, { passive: true });
   }
 

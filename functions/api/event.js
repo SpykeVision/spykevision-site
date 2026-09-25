@@ -16,6 +16,7 @@ const ALLOWED_EVENTS = new Set([
   'chart_interact',      // any Chart.js chart hovered/clicked (meta: chart id)
   'rss_click',
   'contact_submit',      // contact form sent (meta: ok/fail)
+  'subscribe_open',      // review "Subscribe" button opened the modal
   'subscribe_submit',    // newsletter (MailerLite) form submitted
 ]);
 

@@ -1,99 +1,146 @@
 ---
-// Cusdis comments — no account required, name + email only.
-// 1. Sign up at https://cusdis.com and create an app.
-// 2. Paste your App ID (Settings → General → App ID) into APP_ID below.
-const APP_ID = 'fb2e9de2-0050-4d4d-8004-8eda40b1fafc';
+// Self-hosted comments: /api/comments (D1). New comments wait for moderation at
+// /admin/comments.html; the owner gets an email via Web3Forms (same key as the contact form).
+const WEB3FORMS_KEY = '87fe1b0f-1e6d-4ddd-9dd7-dad928ae315b';
 
 const { title } = Astro.props;
-const pageUrl = Astro.url.href;
-const pageId  = Astro.url.pathname;
-const enabled = APP_ID !== 'YOUR_CUSDIS_APP_ID';
 const isRu = Astro.url.pathname.startsWith('/ru');
+const t = isRu
+  ? { heading: 'Комментарии', nick: 'Ник', email: 'Email', emailNote: 'не публикуется', message: 'Сообщение',
+      send: 'Отправить', sending: 'Отправка…', empty: 'Пока нет комментариев — будьте первым.',
+      done: 'Спасибо! Комментарий появится после проверки.', error: 'Не удалось отправить. Попробуйте ещё раз.',
+      rate: 'Слишком много комментариев подряд — попробуйте через несколько минут.', invalid: 'Проверьте ник, email и сообщение.' }
+  : { heading: 'Comments', nick: 'Name', email: 'Email', emailNote: 'never shown', message: 'Message',
+      send: 'Post comment', sending: 'Sending…', empty: 'No comments yet — be the first.',
+      done: 'Thanks! Your comment will appear after review.', error: "Couldn't send. Please try again.",
+      rate: 'Too many comments in a row — try again in a few minutes.', invalid: 'Please check your name, email and message.' };
 ---
-{enabled && (
-  <section class="comments article-page wrap">
-    <h2 class="comments-title">{isRu ? 'Комментарии' : 'Comments'}</h2>
-    <div
-      id="cusdis_thread"
-      data-host="https://cusdis.com"
-      data-app-id={APP_ID}
-      data-page-id={pageId}
-      data-page-url={pageUrl}
-      data-page-title={title ?? pageId}
-    ></div>
-    <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
-    <script>
-      // Cusdis renders inside a srcdoc iframe (same-origin) — inject styles directly
-      const thread = document.getElementById('cusdis_thread');
-      if (thread) {
-        const obs = new MutationObserver(() => {
-          const iframe = thread.querySelector('iframe');
-          if (!iframe || iframe.dataset.patched) return;
-          iframe.dataset.patched = '1';
-          iframe.addEventListener('load', () => {
-            try {
-              const doc = iframe.contentDocument;
-              if (!doc) return;
-              // Inject CSS (label asterisks + remove h-24 height cap)
-              const style = doc.createElement('style');
-              style.textContent = `
-                label:not([data-optional])::after { content: ' *'; color: #e53e3e; font-size: 12px; }
-                textarea.h-24 { height: auto !important; min-height: 150px !important; }
-              `;
-              const darkStyle = doc.createElement('style');
-              darkStyle.id = 'cusdis-dark';
-              const darkCSS = `
-                body, .bg-white, [class*="bg-white"] { background: #1c1c1e !important; color: #f2f2f7 !important; }
-                input, textarea { background: #2c2c2e !important; color: #f2f2f7 !important; border-color: #38383a !important; }
-                input::placeholder, textarea::placeholder { color: #8e8e93 !important; }
-                label, p, span, a { color: #f2f2f7 !important; }
-                a { color: #6ab0ff !important; }
-                button { color: #1c1c1e !important; }
-                button[type="submit"] { background: #0a84ff !important; color: #fff !important; border: none !important; }
-                .text-gray-500, .text-gray-400 { color: #8e8e93 !important; }
-                hr, [class*="border"] { border-color: #38383a !important; }
-              `;
-              const applyTheme = () => {
-                const dark = document.documentElement.dataset.theme === 'dark';
-                darkStyle.textContent = dark ? darkCSS : '';
-              };
-              doc.head.appendChild(darkStyle);
-              applyTheme();
-              new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-              doc.head.appendChild(style);
-              const resize = () => {
-                // Grow the iframe host to fit its content so nothing is clipped
-                const h = doc.body.scrollHeight;
-                if (h > 0) iframe.style.height = (h + 24) + 'px';
-              };
-              const patch = () => {
-                doc.querySelectorAll('label').forEach(l => {
-                  if (!l.dataset.optional && (l.textContent.includes('optional') || l.textContent.trim() === 'Email')) {
-                    l.textContent = 'Email';
-                    l.dataset.optional = '1';
-                  }
-                });
-                const ta = doc.querySelector('textarea');
-                if (ta) {
-                  ta.classList.remove('h-24');
-                  ta.style.height = '150px';
-                  ta.rows = 6;
-                }
-                resize();
-              };
-              iframe.style.width = '100%';
-              iframe.style.border = '0';
-              // Svelte renders synchronously before load — patch immediately
-              patch();
-              // Also watch in case of re-render
-              const inner = new MutationObserver(patch);
-              inner.observe(doc.body, { childList: true, subtree: true });
-              window.addEventListener('resize', resize);
-            } catch (e) {}
-          });
-        });
-        obs.observe(thread, { childList: true });
+<section class="comments article-page wrap" id="comments" data-web3={WEB3FORMS_KEY} data-title={title ?? ''} data-locale={isRu ? 'ru-RU' : 'en-US'}>
+  <h2 class="comments-title">{t.heading}</h2>
+  <div class="cm-list" aria-live="polite"></div>
+  <p class="cm-empty" hidden>{t.empty}</p>
+  <form class="cm-form" novalidate>
+    <div class="cm-row">
+      <label class="cm-field">
+        <span>{t.nick}</span>
+        <input name="nick" maxlength="40" autocomplete="nickname" required />
+      </label>
+      <label class="cm-field">
+        <span>{t.email} <em>· {t.emailNote}</em></span>
+        <input name="email" type="email" maxlength="254" autocomplete="email" required />
+      </label>
+    </div>
+    <label class="cm-field">
+      <span>{t.message}</span>
+      <textarea name="body" rows="4" maxlength="4000" required></textarea>
+    </label>
+    <input class="cm-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <div class="cm-foot">
+      <button type="submit" class="btn">{t.send}</button>
+      <p class="cm-status" role="status"></p>
+    </div>
+  </form>
+  <script is:inline define:vars={{ t }}>
+    (function () {
+      var root = document.getElementById('comments');
+      if (!root) return;
+      var list = root.querySelector('.cm-list'), empty = root.querySelector('.cm-empty');
+      var form = root.querySelector('.cm-form'), status = root.querySelector('.cm-status');
+      var btn = form.querySelector('button'), path = location.pathname, opened = Date.now();
+
+      function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+      function render(items) {
+        empty.hidden = items.length > 0;
+        list.innerHTML = items.map(function (c) {
+          var d = new Date(c.ts).toLocaleDateString(root.dataset.locale, { day: 'numeric', month: 'short', year: 'numeric' });
+          return '<article class="cm-item"><header><b>' + esc(c.nick) + '</b><time>' + d + '</time></header><p>' + esc(c.body) + '</p></article>';
+        }).join('');
       }
-    </script>
-  </section>
-)}
+      function load() {
+        fetch('/api/comments?path=' + encodeURIComponent(path))
+          .then(function (r) { return r.json(); })
+          .then(function (d) { render(d.comments || []); })
+          .catch(function () { render([]); });
+      }
+      // Fetch only when the section approaches the viewport
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px' });
+        io.observe(root);
+      } else load();
+
+      // Remember name/email between comments
+      try {
+        var saved = JSON.parse(localStorage.getItem('sv-commenter') || '{}');
+        if (saved.nick) form.nick.value = saved.nick;
+        if (saved.email) form.email.value = saved.email;
+      } catch (e) {}
+
+      function say(msg, ok) { status.textContent = msg; status.className = 'cm-status' + (ok ? ' ok' : ' err'); }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var nick = form.nick.value.trim(), email = form.email.value.trim(), body = form.body.value.trim();
+        if (!nick || !form.email.checkValidity() || !email || body.length < 2) { say(t.invalid); return; }
+        btn.disabled = true; btn.textContent = t.sending; say('');
+        fetch('/api/comments', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: path, nick: nick, email: email, body: body, hp: form.website.value, t: Date.now() - opened })
+        }).then(function (r) {
+          if (r.status === 429) throw new Error('rate');
+          if (!r.ok) throw new Error(r.status === 400 ? 'invalid' : 'error');
+          return r.json();
+        }).then(function () {
+          try { localStorage.setItem('sv-commenter', JSON.stringify({ nick: nick, email: email })); } catch (e) {}
+          form.body.value = '';
+          say(t.done, true);
+          // Owner notification (fire-and-forget; the comment is already saved)
+          var mail = new FormData();
+          mail.append('access_key', root.dataset.web3);
+          mail.append('subject', 'New comment: ' + (root.dataset.title || path));
+          mail.append('from_name', 'SpykeVision comments');
+          mail.append('name', nick);
+          mail.append('email', email);
+          mail.append('message', body);
+          mail.append('page', location.origin + path);
+          mail.append('moderate', location.origin + '/admin/comments.html');
+          // FormData keeps it a simple CORS request, same as the contact form
+          fetch('https://api.web3forms.com/submit', { method: 'POST', body: mail }).catch(function () {});
+        }).catch(function (err) {
+          say(err.message === 'rate' ? t.rate : err.message === 'invalid' ? t.invalid : t.error);
+        }).finally(function () { btn.disabled = false; btn.textContent = t.send; });
+      });
+    })();
+  </script>
+</section>
+
+<style is:global>
+  .comments .cm-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+  .comments .cm-list:empty { display: none; }
+  .comments .cm-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; }
+  .comments .cm-item header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .comments .cm-item b { font-size: 14px; color: var(--text); }
+  .comments .cm-item time { font-size: 12px; color: var(--text-3); }
+  .comments .cm-item p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .comments .cm-empty { color: var(--text-3); font-size: 14px; margin: 0 0 16px; }
+  .comments .cm-form { display: flex; flex-direction: column; gap: 12px; }
+  .comments .cm-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 640px) { .comments .cm-row { grid-template-columns: 1fr 1fr; } }
+  .comments .cm-field { display: flex; flex-direction: column; gap: 5px; }
+  .comments .cm-field > span { font-size: 12px; font-weight: 600; color: var(--text-2); }
+  .comments .cm-field em { font-style: normal; font-weight: 400; color: var(--text-3); }
+  .comments .cm-field input, .comments .cm-field textarea {
+    font: inherit; font-size: 15px; color: var(--text); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; width: 100%;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .comments .cm-field textarea { resize: vertical; min-height: 104px; }
+  .comments .cm-field input:focus, .comments .cm-field textarea:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .comments .cm-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .comments .cm-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .comments .cm-foot .btn:disabled { opacity: .6; cursor: default; }
+  .comments .cm-status { margin: 0; font-size: 13px; color: var(--text-3); }
+  .comments .cm-status.ok { color: var(--green); }
+  .comments .cm-status.err { color: var(--red); }
+</style>
