@@ -13,8 +13,23 @@
     }
   }
 
-  // Pageview — basis for unique-visitor counts
-  track('pageview');
+  // Traffic source: utm_source > known click ids > external referrer host > "direct".
+  // Only the source name/host is kept, never the full referrer URL.
+  function source() {
+    var q = new URLSearchParams(location.search);
+    var utm = q.get('utm_source');
+    if (utm) return utm.toLowerCase().slice(0, 40);
+    if (q.has('fbclid')) return 'facebook';
+    if (q.has('gclid')) return 'google-ads';
+    try {
+      var host = new URL(document.referrer).hostname.replace(/^www\.|^m\.|^l\.|^lm\./, '');
+      if (!host || host === location.hostname.replace(/^www\./, '')) return 'internal';
+      return host;
+    } catch (_) { return 'direct'; }
+  }
+
+  // Pageview — basis for unique-visitor counts; meta = traffic source
+  track('pageview', source());
 
   // Language switch
   document.querySelectorAll('.lang-dropdown-menu a').forEach(function (a) {

@@ -5,7 +5,7 @@ category: 4K • Triple-Laser • Flagship • UST
 summary: Design and build, optics, EBL and anti-RBE, gaming and 3D, plus full brightness and contrast measurements of the AWOL Aetherion Max.
 cover: /images/ax/p/cover-03.jpg
 coverCard: /images/ax/p/card-ax-v4.jpg
-date: 2026-09-18
+date: 2026-09-24
 readTime: 40 min read
 extra: Firmware Q0421 + DLP 2.4.0
 badge: NEW
