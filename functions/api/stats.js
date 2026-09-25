@@ -20,7 +20,7 @@ export async function onRequestGet(context) {
     since = Date.now() - days * 86400000;
   }
 
-  const [byEvent, byDay, langs, countries, cities, readDepth, charts, pages, sources, reviewSources] = await Promise.all([
+  const [byEvent, byDay, langs, countries, cities, readDepth, charts, pages, sources, reviewSources, referrers] = await Promise.all([
     env.DB.prepare('SELECT event, COUNT(*) n FROM events WHERE ts>? AND ts<=? GROUP BY event ORDER BY n DESC').bind(since, until).all(),
     env.DB.prepare("SELECT date(ts/1000,'unixepoch') d, COUNT(DISTINCT visitor) uniques, SUM(event='pageview') views FROM events WHERE ts>? AND ts<=? GROUP BY d ORDER BY d").bind(since, until).all(),
     env.DB.prepare("SELECT lang, COUNT(DISTINCT visitor) uniques FROM events WHERE ts>? AND ts<=? GROUP BY lang").bind(since, until).all(),
@@ -32,6 +32,8 @@ export async function onRequestGet(context) {
     // Traffic sources (pageview meta; empty = recorded before source tracking existed)
     env.DB.prepare("SELECT meta source, COUNT(DISTINCT visitor) uniques FROM events WHERE ts>? AND ts<=? AND event='pageview' AND meta NOT IN ('', 'internal') GROUP BY meta ORDER BY uniques DESC LIMIT 20").bind(since, until).all(),
     env.DB.prepare("SELECT path, meta source, COUNT(DISTINCT visitor) uniques FROM events WHERE ts>? AND ts<=? AND event='pageview' AND path LIKE '%/reviews/_%' AND meta NOT IN ('', 'internal') GROUP BY path, meta ORDER BY uniques DESC LIMIT 30").bind(since, until).all(),
+    // Exact referring pages (forum threads etc.), newest first
+    env.DB.prepare("SELECT meta url, COUNT(DISTINCT visitor) uniques, MIN(ts) first, MAX(ts) last, GROUP_CONCAT(DISTINCT path) pages FROM events WHERE ts>? AND ts<=? AND event='referrer' GROUP BY meta ORDER BY last DESC LIMIT 60").bind(since, until).all(),
   ]);
 
   return new Response(JSON.stringify({
@@ -44,6 +46,7 @@ export async function onRequestGet(context) {
     topPages: pages.results,
     sources: sources.results,
     reviewSources: reviewSources.results,
+    referrers: referrers.results,
     readDepth: readDepth.results,
     charts: charts.results,
   }, null, 2), { headers: { 'Content-Type': 'application/json' } });

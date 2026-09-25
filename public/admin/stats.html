@@ -97,6 +97,8 @@ function fetchStats(){
 }
 
 function n(x){return (x||0).toLocaleString('en-US');}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function dt(ts){var d=new Date(ts);return d.toISOString().slice(5,10)+' '+d.toISOString().slice(11,16);}
 function ev(name){var r=(DATA.events||[]).find(function(e){return e.event===name;});return r?r.n:0;}
 
 function render(){
@@ -123,6 +125,16 @@ function render(){
   html+='<div class="card"><h2>События</h2><table><thead><tr><th>Событие</th><th class="num">Кол-во</th></tr></thead><tbody>'
     +(DATA.events||[]).map(function(e){return '<tr><td>'+e.event+'</td><td class="num">'+n(e.n)+'</td></tr>';}).join('')
     +'</tbody></table></div>';
+  html+='</div>';
+  html+='<div class="grid2">';
+  html+='<div class="card"><h2>Источники (домены)</h2><table><thead><tr><th>Откуда</th><th class="num">Уники</th></tr></thead><tbody>'
+    +(DATA.sources||[]).map(function(s){return '<tr><td>'+esc(s.source)+'</td><td class="num">'+n(s.uniques)+'</td></tr>';}).join('')
+    +'</tbody></table></div>';
+  html+='<div class="card"><h2>Ссылки-источники (точные страницы)</h2>'
+    +((DATA.referrers||[]).length?'<table><thead><tr><th>Страница</th><th class="num">Уники</th><th class="num">Последний</th></tr></thead><tbody>'
+    +(DATA.referrers||[]).map(function(r){var u='https://'+r.url;return '<tr><td style="word-break:break-all"><a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(r.url)+'</a><div style="opacity:.6;font-size:12px">→ '+esc(r.pages)+' · впервые '+dt(r.first)+' UTC</div></td><td class="num">'+n(r.uniques)+'</td><td class="num">'+dt(r.last)+'</td></tr>';}).join('')
+    +'</tbody></table>':'<p style="opacity:.6">Пока нет. Появятся, когда кто-то придёт со страницы, которая отдаёт полный адрес (многие форумы отдают только домен).</p>')
+    +'</div>';
   html+='</div>';
   html+='<div class="grid2">';
   html+='<div class="card"><h2>Города</h2><table><thead><tr><th>Город</th><th class="num">Уники</th></tr></thead><tbody>'

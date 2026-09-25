@@ -18,6 +18,7 @@ const ALLOWED_EVENTS = new Set([
   'contact_submit',      // contact form sent (meta: ok/fail)
   'subscribe_open',      // review "Subscribe" button opened the modal
   'subscribe_submit',    // newsletter (MailerLite) form submitted
+  'referrer',            // exact external referring page when the browser reveals it (meta: host+path)
 ]);
 
 export async function onRequestPost(context) {
@@ -31,7 +32,7 @@ export async function onRequestPost(context) {
     if (!ALLOWED_EVENTS.has(event)) return resp;
 
     const path = String(data.p || '').slice(0, 200);
-    const meta = String(data.m || '').slice(0, 100);
+    const meta = String(data.m || '').slice(0, event === 'referrer' ? 200 : 100);
     const lang = path.startsWith('/ru') || path.includes('-ru') ? 'ru' : 'en';
     const country = (request.cf && request.cf.country) || '';
     const city = (request.cf && request.cf.city) || '';

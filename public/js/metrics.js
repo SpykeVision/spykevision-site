@@ -31,6 +31,19 @@
   // Pageview — basis for unique-visitor counts; meta = traffic source
   track('pageview', source());
 
+  // Exact referring page (forum thread, blog post), when the other site's browser policy
+  // reveals more than the bare domain. Tracking/ID-like query params are dropped.
+  try {
+    var ref = new URL(document.referrer);
+    if (ref.hostname.replace(/^www\./, '') !== location.hostname.replace(/^www\./, '') && /^https?:$/.test(ref.protocol)) {
+      [...ref.searchParams.keys()].forEach(function (k) {
+        if (/^(utm_|fbclid|gclid|yclid|mc_|ref_?src|token|key|sid|session|email|e?mail|auth|code|s)$|^utm_/i.test(k)) ref.searchParams.delete(k);
+      });
+      var full = ref.hostname.replace(/^www\./, '') + ref.pathname.replace(/\/$/, '') + ref.search;
+      if (full.indexOf('/') > -1 || ref.search) track('referrer', full.slice(0, 200));
+    }
+  } catch (_) {}
+
   // Language switch
   document.querySelectorAll('.lang-dropdown-menu a').forEach(function (a) {
     a.addEventListener('click', function () { track('lang_switch', a.getAttribute('href')); });
