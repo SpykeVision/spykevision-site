@@ -63,8 +63,8 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : ''
       <!-- Before/after comparison slider (web component) -->
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css" />
       <script type="module" src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
-      <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-      <script is:inline src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2/dist/chartjs-plugin-datalabels.min.js"></script>
+      <script is:inline defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+      <script is:inline defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2/dist/chartjs-plugin-datalabels.min.js"></script>
     </>
   )}
 </head>
@@ -92,11 +92,11 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : ''
   <script is:inline src={v("/js/main.js")}></script>
   {reviewAssets && (
     <>
-      <script is:inline src={v("/js/compare.js")}></script>
-      <script is:inline src={v("/js/charts-tnm.js")}></script>
-      <script is:inline src={v("/js/charts-tnm-cards.js")}></script>
-      <script is:inline src={v("/js/charts-ax.js")}></script>
-      <script is:inline src={v("/js/enh-compare.js")}></script>
+      <script is:inline defer src={v("/js/compare.js")}></script>
+      <script is:inline defer src={v("/js/charts-tnm.js")}></script>
+      <script is:inline defer src={v("/js/charts-tnm-cards.js")}></script>
+      <script is:inline defer src={v("/js/charts-ax.js")}></script>
+      <script is:inline defer src={v("/js/enh-compare.js")}></script>
     </>
   )}
   <script is:inline defer src={v("/js/metrics.js")}></script>

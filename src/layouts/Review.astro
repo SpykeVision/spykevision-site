@@ -4,6 +4,7 @@ import Comments from '../components/Comments.astro';
 import { getCollection } from 'astro:content';
 import { thumbSrcset, CARD_SIZES } from '../lib/thumbs';
 import { reviewGraph } from '../lib/schema';
+import { existsSync } from 'node:fs';
 const { review, headings, alternate = false, slug = '' } = Astro.props;
 const ML_ACCOUNT_ID = '2448508';
 const ML_FORM_ID    = '8lzoBZ';
@@ -17,6 +18,8 @@ const reviewsBase = isRu ? '/ru/reviews/' : '/reviews/';
 const site = Astro.site ?? new URL('https://spykevision.com');
 const canonical = new URL(Astro.url.pathname, site);
 const schema = reviewGraph({ review, site, canonical, isRu });
+// Phones get the 1280px hero variant (~2.5× lighter) when prebuild generated one.
+const heroMobile = review.cover && existsSync(`public/thumbs/1280${review.cover}`) ? `/thumbs/1280${review.cover}` : null;
 const related = (await getCollection(isRu ? 'reviews-ru' : 'reviews'))
   .filter((r) => !r.data.draft && r.slug !== slug)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -52,7 +55,10 @@ const t = {
   schema={schema}
 >
   <!-- Hero cover is a CSS background — preload it so LCP doesn't wait for stylesheet parse -->
-  {review.cover && <link slot="head" rel="preload" as="image" href={review.cover} fetchpriority="high" />}
+  {review.cover && !heroMobile && <link slot="head" rel="preload" as="image" href={review.cover} fetchpriority="high" />}
+  {heroMobile && <link slot="head" rel="preload" as="image" href={heroMobile} media="(max-width: 900px)" fetchpriority="high" />}
+  {heroMobile && <link slot="head" rel="preload" as="image" href={review.cover} media="(min-width: 901px)" fetchpriority="high" />}
+  {heroMobile && <style slot="head" is:inline set:html={`@media (max-width:900px){.article-hero-fb{background-image:url('${heroMobile}')!important}}`} />}
   <!-- Draft overlay: shown to non-preview visitors when article is a draft -->
   {review.draft && (
     <div id="draftOverlay" class="draft-overlay">
@@ -80,7 +86,7 @@ const t = {
     data-draft={review.draft ? 'true' : null}
   >
     {review.coverVideo && (
-      <video class="hero-video" autoplay muted playsinline preload="auto" poster={review.coverVideo.replace(/\.mp4$/, '-poster.jpg')}><source src={review.coverVideo} type="video/mp4" /></video>
+      <video class="hero-video" muted playsinline preload="none" poster={review.coverVideo.replace(/\.mp4$/, '-poster.jpg')} data-src={review.coverVideo}></video>
     )}
     {review.coverVideo && (
       <script is:inline>
@@ -88,7 +94,13 @@ const t = {
         // "Away" = the hero is less than 80 % visible; "back" = it is fully in view again.
         (function () {
           var v = document.querySelector('.hero-video');
-          if (!v || !('IntersectionObserver' in window)) return;
+          if (!v) return;
+          // Clip loads after the page does, so it doesn't compete with first paint; poster shows meanwhile.
+          window.addEventListener('load', function () {
+            v.src = v.dataset.src;
+            var p0 = v.play(); if (p0 && p0.catch) p0.catch(function () {});
+          });
+          if (!('IntersectionObserver' in window)) return;
           var armed = false;
           new IntersectionObserver(function (entries) {
             var r = entries[0].intersectionRatio;
@@ -218,8 +230,11 @@ const t = {
       <script define:vars={{ ML_ACCOUNT_ID, ML_FORM_ID }} is:inline>
       (function(w,d,e,u,f,l,n){
         w[f]=w[f]||function(){(w[f].q=w[f].q||[]).push(arguments);};
-        l=d.createElement(e);l.async=1;l.src=u;
-        n=d.getElementsByTagName(e)[0];n.parentNode.insertBefore(l,n);
+        // Load after the page so MailerLite's font CSS doesn't delay first render
+        w.addEventListener('load',function(){setTimeout(function(){
+          l=d.createElement(e);l.async=1;l.src=u;
+          n=d.getElementsByTagName(e)[0];n.parentNode.insertBefore(l,n);
+        },1500);});
       })(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
       ml('account', ML_ACCOUNT_ID);
 

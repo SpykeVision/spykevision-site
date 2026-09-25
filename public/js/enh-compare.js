@@ -102,10 +102,12 @@
     var slider = document.createElement('img-comparison-slider');
     slider.className = 'enh-slider';
     var imgOff = document.createElement('img');
+    imgOff.loading = 'lazy';
     imgOff.setAttribute('slot', 'first');
     imgOff.src = src('off');
     imgOff.alt = label + ' — enhancers OFF';
     var imgOn = document.createElement('img');
+    imgOn.loading = 'lazy';
     imgOn.setAttribute('slot', 'second');
     imgOn.src = src(current);
     imgOn.alt = label + ' — ' + modeLabel(current);
@@ -117,10 +119,12 @@
     hover.className = 'enh-hover';
     hover.style.display = 'none';
     var hOff = document.createElement('img');
+    hOff.loading = 'lazy';
     hOff.className = 'enh-hover-base';
     hOff.src = src('off');
     hOff.alt = label + ' — enhancers OFF';
     var hOn = document.createElement('img');
+    hOn.loading = 'lazy';
     hOn.className = 'enh-hover-on';
     hOn.src = src(current);
     hOn.alt = label + ' — ' + modeLabel(current);

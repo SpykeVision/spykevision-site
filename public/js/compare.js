@@ -41,8 +41,8 @@
     // Slider view
     var slider = document.createElement('img-comparison-slider');
     slider.className = 'enh-slider';
-    var sB = document.createElement('img'); sB.setAttribute('slot', 'first');  sB.src = before; sB.alt = lblBefore;
-    var sA = document.createElement('img'); sA.setAttribute('slot', 'second'); sA.src = after;  sA.alt = lblAfter;
+    var sB = document.createElement('img'); sB.loading = 'lazy'; sB.setAttribute('slot', 'first');  sB.src = before; sB.alt = lblBefore;
+    var sA = document.createElement('img'); sA.loading = 'lazy'; sA.setAttribute('slot', 'second'); sA.src = after;  sA.alt = lblAfter;
     slider.appendChild(sB);
     slider.appendChild(sA);
 
@@ -50,8 +50,8 @@
     var hover = document.createElement('div');
     hover.className = 'enh-hover';
     hover.style.display = 'none';
-    var hB = document.createElement('img'); hB.className = 'enh-hover-base'; hB.src = before; hB.alt = lblBefore;
-    var hA = document.createElement('img'); hA.className = 'enh-hover-on';   hA.src = after;  hA.alt = lblAfter;
+    var hB = document.createElement('img'); hB.loading = 'lazy'; hB.className = 'enh-hover-base'; hB.src = before; hB.alt = lblBefore;
+    var hA = document.createElement('img'); hA.loading = 'lazy'; hA.className = 'enh-hover-on';   hA.src = after;  hA.alt = lblAfter;
     var badge = document.createElement('div');
     badge.className = 'enh-hover-badge';
     badge.textContent = lblBefore;
