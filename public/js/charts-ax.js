@@ -1014,6 +1014,698 @@ var GAM_CUT = [
 
   }
 
+  /* ═══ XPR-Shift — the static schematic, animated ════════ */
+  function buildXpr(el) {
+    // always the palette of the original static schematic, whatever the page theme
+    var XC = { text: '#e8e9ec', text3: '#9a9ba0' };
+    el.style.background = '#18191d';
+    mkTitle(el, 'XPR-SHIFT: HOW 4K IS BUILT FROM A 1080p DMD', 'SpykeVision · schematic, not to scale · time slowed down');
+    el.querySelector('.cs-title strong').style.color = XC.text;
+    el.querySelector('.cs-title span').style.color = XC.text3;
+
+    var PH = ['#4FC3F7', '#FFA726', '#EF5350', '#AB47BC'];
+    var OFF = [[0, 0], [1, 0], [1, 1], [0, 1]];
+    var TL = 3.6;                                // one 16.7 ms frame is played over 3.6 s
+    var FADE = 1.5;                              // how long a lit quarter lingers on the 4K grid, s
+
+    var RATE = 8;                                // sub-frames per 4K/60 frame driving the top: 8 = Aetherion, 4 = others
+    var bar = document.createElement('div');
+    bar.style.cssText = 'text-align:center;margin:4px 0 6px';
+    var tg = document.createElement('div');
+    tg.className = 'cs-view-toggle';
+    tg.innerHTML = '<button class="cs-tab cs-tab--active" data-r="8">Aetherion · ≈480 Hz</button>'
+                 + '<button class="cs-tab" data-r="4">Others · 240 Hz</button>';
+    bar.appendChild(tg); el.appendChild(bar);
+    function tgStyle() {                         // the tab CSS is light-only; follow the chart theme
+      var d = true;
+      tg.style.background = d ? '#26262a' : '';
+      [].forEach.call(tg.children, function (b) {
+        var on = +b.getAttribute('data-r') === RATE;
+        b.classList.toggle('cs-tab--active', on);
+        b.style.background = d && on ? '#3a3a40' : '';
+        b.style.color = d ? (on ? '#fff' : '#98989f') : '';
+      });
+    }
+    tg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      RATE = +b.getAttribute('data-r'); tgStyle();
+      if (!raf) draw(tAcc + 0.2);
+    });
+    tgStyle();
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'padding:0 20px';
+    el.appendChild(wrap);
+    var cv = document.createElement('canvas');
+    cv.style.cssText = 'display:block;width:100%';
+    wrap.appendChild(cv);
+    var ctx = cv.getContext('2d');
+    var W = 0, H = 0, k = 1, narrow = false;
+
+    function size() {
+      W = wrap.clientWidth - 40; narrow = W < 640; k = W / 1000;
+      H = Math.round(narrow ? 250 * k + 250 : 510 * k);
+      var dpr = window.devicePixelRatio || 1;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      cv.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function rgba(hex, a) {
+      var n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    }
+    function text(s, x, y, o) {                  // x, y in px; font size in px (not scaled)
+      ctx.font = (o.w || 500) + ' ' + (o.s || 12) + 'px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+      ctx.fillStyle = o.c || XC.text; ctx.textAlign = o.a || 'left'; ctx.textBaseline = o.b || 'alphabetic';
+      ctx.fillText(s, x, y);
+    }
+    function rrect(x, y, w, h, r) {
+      r = Math.min(r, w / 2, h / 2);
+      ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+    }
+    function arrow(x1, x2, y, col) {
+      ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2 - 8, y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x2, y); ctx.lineTo(x2 - 10, y - 6); ctx.lineTo(x2 - 10, y + 6); ctx.closePath(); ctx.fill();
+    }
+
+    function drawTop(t, dark) {
+      var p = (t % TL) / TL, cur = Math.floor(p * RATE) % 4;       // phase follows the selected row
+      var into = (p * RATE) % 1;
+      var line = '#4a4c55', cell = '#1e1f24';
+      var lab = { s: narrow ? 10 : 13, a: 'center', c: XC.text3 };
+      var ly = narrow ? 14 : 34 * k + 8, gy = ly + (narrow ? 10 : 14);
+
+      // DMD: 5×4 mirrors, fixed. The shift happens after it, in the XPR actuator
+      var m = 36 * k, g = 4 * k, dx = 40 * k, dy = gy + 8 * k, mid = dy + 80 * k;
+      text(narrow ? 'DMD 1080p' : 'DMD  1920 x 1080 mirrors', dx + 98 * k, ly, lab);
+      for (var r = 0; r < 4; r++) for (var c = 0; c < 5; c++) {
+        var x = dx + c * (m + g), y = dy + 4 * k + r * (m + g);
+        ctx.fillStyle = cell; ctx.fillRect(x, y, m, m);
+        ctx.strokeStyle = line; ctx.lineWidth = Math.max(1, 2 * k); ctx.strokeRect(x, y, m, m);
+      }
+      arrow(246 * k, 282 * k, mid, XC.text3);
+
+      // XPR actuator: a glass plate that tilts on two axes; the beam lands in one of 4 spots
+      var ax = 292 * k, as = 64 * k, ay = mid - as / 2;
+      if (narrow) text('actuator', ax + as / 2, mid + as / 2 + 20 * k + 10, lab);
+      else text('XPR actuator', ax + as / 2, ly, lab);
+      var e = Math.min(1, into * 5), ease = 1 - Math.pow(1 - e, 3);
+      var prev = OFF[(cur + 3) % 4], nxt = OFF[cur];
+      var tx = prev[0] + (nxt[0] - prev[0]) * ease, ty = prev[1] + (nxt[1] - prev[1]) * ease;
+      ctx.save();
+      ctx.translate(ax + as / 2, mid);
+      ctx.transform(1, (ty - 0.5) * 0.25, (tx - 0.5) * 0.25, 1, 0, 0);          // fake 2-axis tilt
+      ctx.fillStyle = dark ? 'rgba(120,170,255,.10)' : 'rgba(10,132,255,.08)';
+      rrect(-as / 2, -as / 2, as, as, 6 * k); ctx.fill();
+      ctx.strokeStyle = XC.text3; ctx.lineWidth = Math.max(1, 1.5 * k); ctx.stroke();
+      ctx.restore();
+      var spx = ax + as / 2 + (tx - 0.5) * as * 0.45, spy = mid + (ty - 0.5) * as * 0.45;
+      ctx.fillStyle = PH[cur]; ctx.shadowColor = PH[cur]; ctx.shadowBlur = 12 * k;
+      ctx.beginPath(); ctx.arc(spx, spy, Math.max(3, 8 * k), 0, 6.283); ctx.fill();
+      ctx.shadowBlur = 0;
+      arrow(366 * k, 420 * k, mid, XC.text3);
+
+      // 4 phase positions, half a mirror apart
+      var u = 46 * k, bx = 431 * k, by = dy + 4 * k;
+      text(narrow ? '4 positions' : '4 phase positions, half a mirror apart', 500 * k, ly, lab);
+      ctx.fillStyle = cell; ctx.fillRect(bx, by, 3 * u, 3 * u);
+      for (var i = 0; i < 4; i++) {
+        var j = (cur + 1 + i) % 4;                                   // draw the active one last, on top
+        var sx = bx + OFF[j][0] * u, sy = by + OFF[j][1] * u, on = j === cur;
+        if (on) { ctx.fillStyle = rgba(PH[j], dark ? 0.22 : 0.18); ctx.fillRect(sx, sy, 2 * u, 2 * u); }
+        ctx.strokeStyle = rgba(PH[j], on ? 1 : 0.35); ctx.lineWidth = on ? Math.max(2, 4 * k) : Math.max(1, 2 * k);
+        ctx.strokeRect(sx, sy, 2 * u, 2 * u);
+        text(String(j + 1), sx + 2 * u - 6 * k, sy + 2 * u - 7 * k,
+          { s: narrow ? 10 : Math.round(18 * k + 2), w: on ? 800 : 500, a: 'right', c: rgba(PH[j], on ? 1 : 0.55) });
+      }
+      if (!narrow) text('phase ' + (cur + 1) + ' / 4 · identical on both projectors', 500 * k, by + 3 * u + 26 * k,
+        { s: 12, a: 'center', c: XC.text3 });
+      arrow(590 * k, 640 * k, mid, XC.text3);
+
+      // 3840×2160 grid: each phase lights its interleaved quarter; the eye holds it for a moment
+      var f = 19.5 * k, rx = 722 * k, ry = dy;
+      text(narrow ? '4K grid' : '3840 x 2160 addressed positions', rx + 97 * k, ly, lab);
+      for (var yy = 0; yy < 8; yy++) for (var xx = 0; xx < 10; xx++) {
+        var q = (yy % 2) ? ((xx % 2) ? 2 : 3) : ((xx % 2) ? 1 : 0);
+        // time since this quarter was last shown on the selected row
+        var steps = (cur - q + 4) % 4, since = (steps + into) * TL / RATE - (steps === 0 ? into * TL / RATE : 0);
+        var a = steps === 0 ? 1 : Math.max(0, 1 - since / FADE);
+        ctx.fillStyle = cell; ctx.fillRect(rx + xx * f, ry + yy * f, f - 2 * k, f - 2 * k);
+        if (a > 0.01) { ctx.fillStyle = rgba(PH[q], 0.85 * a); ctx.fillRect(rx + xx * f, ry + yy * f, f - 2 * k, f - 2 * k); }
+        ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.strokeRect(rx + xx * f + 0.5, ry + yy * f + 0.5, f - 2 * k - 1, f - 2 * k - 1);
+      }
+      return dy + (narrow ? 175 : 205) * k;
+    }
+
+    function drawTimeline(y0, p, dark) {
+      var lab = narrow ? 0 : 205 * k, x0 = lab, bw = W - lab, bh = narrow ? 28 : 34 * k + 6;
+      ctx.strokeStyle = '#3c3d41'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, y0); ctx.lineTo(W, y0); ctx.stroke();
+      var y = y0 + (narrow ? 26 : 36);
+      text(narrow ? 'TIME INSIDE ONE 4K/60 FRAME' : 'SAME POSITIONS, DIFFERENT RATE · TIME INSIDE ONE 4K/60 FRAME', W / 2, y,
+        { s: narrow ? 11 : 14, w: 600, a: 'center', c: XC.text });
+      y += narrow ? 14 : 22;
+      [['Typical XPR  240 Hz', '4 phases per frame, 4.2 ms each', 4],
+       ['Aetherion  about 480 Hz', 'same 4 phases twice, 2.1 ms each', 8]].forEach(function (r) {
+        ctx.globalAlpha = r[2] === RATE ? 1 : 0.35;
+        if (narrow) { text(r[0], 0, y + 12, { s: 12, w: 600 }); y += 18; }
+        else { text(r[0], 0, y + bh / 2, { s: 15, w: 500 }); text(r[1], 0, y + bh / 2 + 17, { s: 11, c: XC.text3 }); }
+        var n = r[2], sw = bw / n, cur = Math.floor(p * n), sel = n === RATE;
+        ctx.globalAlpha = sel ? 1 : 0.35;
+        for (var i = 0; i < n; i++) {
+          var on = i === cur && sel;
+          ctx.fillStyle = PH[i % 4]; ctx.fillRect(x0 + i * sw + 2, y, sw - 4, bh);
+          ctx.strokeStyle = on ? '#fff' : '#3c3d41'; ctx.lineWidth = on ? 3 : 2; ctx.strokeRect(x0 + i * sw + 2, y, sw - 4, bh);
+          text(String(i % 4 + 1), x0 + i * sw + sw / 2, y + bh / 2 + 1,
+            { s: narrow ? 12 : 15, w: on ? 800 : 500, a: 'center', b: 'middle', c: '#18191d' });
+        }
+        ctx.globalAlpha = 1;
+        y += bh + (narrow ? 10 : 18);
+      });
+      var ay = y + 4;
+      ctx.strokeStyle = XC.text3; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0, ay); ctx.lineTo(x0 + bw, ay); ctx.stroke();
+      ['0', '4.2', '8.3', '12.5', '16.7'].forEach(function (s, i) {
+        var x = x0 + bw * i / 4;
+        ctx.beginPath(); ctx.moveTo(x, ay - 5); ctx.lineTo(x, ay + 5); ctx.stroke();
+        text(s, x, ay + 20, { s: 11, a: i === 0 ? 'left' : i === 4 ? 'right' : 'center', c: XC.text3 });
+      });
+      text('milliseconds', x0 + bw / 2, ay + 38, { s: 11, a: 'center', c: XC.text3 });
+      var px = x0 + bw * p, top = y0 + (narrow ? 34 : 48);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(px - 1.5, top, 3, ay - top + 6);
+    }
+
+    function draw(t) {
+      var dark = true;
+      ctx.clearRect(0, 0, W, H);
+      var yb = drawTop(t, dark);
+      drawTimeline(yb + (narrow ? 12 : 18 * k), (t % TL) / TL, dark);
+    }
+
+    size();
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var visible = false, raf = 0, t0 = null, tAcc = 0;
+    function frame(now) {
+      if (t0 === null) t0 = now;
+      draw(tAcc + (now - t0) / 1000);
+      raf = requestAnimationFrame(frame);
+    }
+    function start() { if (!raf && !reduce) { t0 = null; raf = requestAnimationFrame(frame); } }
+    function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; if (t0 !== null) tAcc += (performance.now() - t0) / 1000; } }
+    draw(0.2);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; visible ? start() : stop(); }, { threshold: 0.15 }).observe(el);
+    } else { visible = true; start(); }
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : visible && start(); });
+    window.addEventListener('resize', function () { size(); if (!raf) draw(tAcc + 0.2); });
+    new MutationObserver(function () { tgStyle(); if (!raf) draw(tAcc + 0.2); })
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+
+  /* ═══ PixelLock — how it works, animated ════════════════ */
+  function buildPixelLockHow(el) {
+    mkTitle(el, 'PIXELLOCK: HOW DIGITAL CONVERGENCE WORKS',
+      'Schematic, not to scale · one row of pixels, zoomed in');
+
+    var STEPS = [['1 · Lens', 'Lens error'], ['2 · PixelLock', 'PixelLock'], ['3 · Resampling', 'Resampling'], ['4 · Whole frame', 'Whole frame'], ['5 · Measured', 'Measured']];
+    var DUR = 7, step = 0, auto = true, stepT0 = 0;
+    var bar = document.createElement('div');
+    bar.style.cssText = 'text-align:center;margin:4px 0 8px;padding:0 12px';
+    var tg = document.createElement('div');
+    tg.className = 'cs-view-toggle';
+    tg.style.flexWrap = 'wrap'; tg.style.justifyContent = 'center';
+    tg.innerHTML = STEPS.map(function (s, i) { return '<button class="cs-tab" data-i="' + i + '">' + s[0] + '</button>'; }).join('');
+    bar.appendChild(tg); el.appendChild(bar);
+    function tgStyle() {
+      var d = _useDark();
+      tg.style.background = d ? '#26262a' : '';
+      [].forEach.call(tg.children, function (b) {
+        var on = +b.getAttribute('data-i') === step;
+        b.classList.toggle('cs-tab--active', on);
+        b.style.background = d && on ? '#3a3a40' : '';
+        b.style.color = d ? (on ? '#fff' : '#98989f') : '';
+      });
+    }
+    tg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      step = +b.getAttribute('data-i'); auto = false; stepT0 = clock; tgStyle();
+      if (!raf) draw();
+    });
+    tgStyle();
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'padding:0 20px';
+    el.appendChild(wrap);
+    var cv = document.createElement('canvas');
+    cv.style.cssText = 'display:block;width:100%';
+    wrap.appendChild(cv);
+    // step 5: the measured band profiles (Chart.js), shown instead of the canvas
+    var meas = document.createElement('div');
+    meas.style.display = 'none';
+    el.appendChild(meas);
+    plPanel(meas, '', 'Down the screen, top to bottom — about seventeen horizontal bands, every second one deeper',
+      PL_YX, PL_YY, '#0a84ff', '210px');
+    plPanel(meas, '', 'Across the screen, left to right — six vertical bands in three pairs',
+      PL_XX, PL_XY, '#ff375f', '210px');
+    var measCharts = ALL_CHARTS.slice(-2);
+    var capEl = document.createElement('div');
+    capEl.style.cssText = 'text-align:center;font-size:13px;line-height:1.45;max-width:760px;margin:10px auto 0;padding:0 20px;min-height:3em';
+    el.appendChild(capEl);
+    var ctx = cv.getContext('2d');
+    var W = 0, H = 0, narrow = false;
+    function size() {
+      W = cv.getBoundingClientRect().width || (wrap.clientWidth - 40); narrow = W < 640;
+      H = narrow ? 250 : 270;
+      var dpr = window.devicePixelRatio || 1;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      cv.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function text(s, x, y, o) {
+      ctx.font = (o.w || 500) + ' ' + (o.s || 12) + 'px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+      ctx.fillStyle = o.c || TC.text; ctx.textAlign = o.a || 'left'; ctx.textBaseline = 'alphabetic';
+      ctx.fillText(s, x, y);
+    }
+    var sm = function (x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+    var CH = { R: 'rgb(255,45,45)', G: 'rgb(45,255,45)', B: 'rgb(60,60,255)' };
+
+    // a dark "screen" row of n pixels; returns geometry
+    function row(x0, y0, n, cs, label) {
+      ctx.fillStyle = '#0b0b0e'; ctx.fillRect(x0, y0, n * cs, cs);
+      ctx.strokeStyle = '#2a2a31'; ctx.lineWidth = 1;
+      for (var i = 0; i <= n; i++) { ctx.beginPath(); ctx.moveTo(x0 + i * cs + 0.5, y0); ctx.lineTo(x0 + i * cs + 0.5, y0 + cs); ctx.stroke(); }
+      ctx.strokeRect(x0 + 0.5, y0 + 0.5, n * cs - 1, cs - 1);
+      if (label) text(label, x0, y0 - 8, { s: 12, w: 600, c: TC.text3 });
+      return { x0: x0, y0: y0, cs: cs, n: n };
+    }
+    function light(g, pos, col, a, w) {           // light at a fractional pixel position (after optics)
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = col; ctx.globalAlpha = Math.max(0, Math.min(1, a));
+      ctx.fillRect(g.x0 + pos * g.cs + 2, g.y0 + 2, (w || 1) * g.cs - 4, g.cs - 4);
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    }
+    function lightW(g, pos, a) { ['R', 'G', 'B'].forEach(function (c) { light(g, pos, CH[c], a); }); }
+    function down(x, y1, y2, label) {
+      ctx.strokeStyle = TC.text3; ctx.fillStyle = TC.text3; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2 - 6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, y2); ctx.lineTo(x - 5, y2 - 8); ctx.lineTo(x + 5, y2 - 8); ctx.closePath(); ctx.fill();
+      if (label) text(label, x + 12, (y1 + y2) / 2 + 4, { s: 12, c: TC.text3 });
+    }
+
+    function stepLens(t, cap) {
+      var n = narrow ? 9 : 13, cs = Math.min(44, (W - 20) / n), x0 = (W - n * cs) / 2, c = (n - 1) / 2;
+      var e = 0.55 * sm((t - 0.6) / 1.8);
+      var a = row(x0, 30, n, cs, narrow ? 'DMD: a 1 px white line' : 'DMD: a 1 px white line, all three colours on one mirror');
+      lightW(a, c, 1);
+      down(W / 2, 30 + cs + 10, 30 + cs + 70, 'lens + mirror');
+      var b = row(x0, 30 + cs + 100, n, cs, 'Screen');
+      light(b, c + e, CH.R, 1); light(b, c, CH.G, 1); light(b, c - e, CH.B, 1);
+      cap('The lens magnifies red, green and blue slightly differently, so red and blue land off green: a colour fringe along every sharp edge. On a UST it is present across the whole frame and grows toward the corners.');
+    }
+    function stepLock(t, cap) {
+      var n = narrow ? 9 : 13, cs = Math.min(44, (W - 20) / n), x0 = (W - n * cs) / 2, c = (n - 1) / 2;
+      var E = 0.55, pre = E * sm((t - 0.6) / 2);
+      var a = row(x0, 30, n, cs, narrow ? 'DMD: R and B pre-shifted' : 'DMD: red and blue pre-shifted the opposite way');
+      light(a, c - pre, CH.R, 1); light(a, c, CH.G, 1); light(a, c + pre, CH.B, 1);
+      down(W / 2, 30 + cs + 10, 30 + cs + 70, 'lens + mirror');
+      var b = row(x0, 30 + cs + 100, n, cs, 'Screen');
+      light(b, c + E - pre, CH.R, 1); light(b, c, CH.G, 1); light(b, c - E + pre, CH.B, 1);
+      cap('The projector knows its own lens. It shifts red and blue against the error in advance, each by its own field, and all three land on one pixel. Our unit: about ⅓ px residual at the centre, excellent for a UST.');
+    }
+    function stepResample(t, cap) {
+      var n = narrow ? 10 : 16, cs = Math.min(40, (W - 20) / n), x0 = (W - n * cs) / 2, c = Math.floor(n / 2) - 1;
+      var ph = 0.5 * sm(((t % DUR) < DUR / 2 ? (t % DUR) - 0.8 : DUR - 0.8 - (t % DUR)) / 1.8);
+      var y = 30;
+      var a = row(x0, y, n, cs, (narrow ? 'Wanted: shift ' : 'Wanted: a 1 px line shifted by ') + ph.toFixed(2) + ' px');
+      lightW(a, c + ph, 1);
+      y += cs + 34;
+      var b = row(x0, y, n, cs, narrow ? 'DMD: whole mirrors only' : 'DMD can only light whole mirrors → spread over two');
+      lightW(b, c, 1 - ph); lightW(b, c + 1, ph);
+      y += cs + 34;
+      var g = row(x0, y, n, cs, narrow ? '1 px grating, same shift' : '1 px grating on the DMD, same shift');
+      for (var j = 0; j < n; j++) {
+        var inj = j % 2 === 0 ? 1 : 0, inp = (j - 1) % 2 === 0 ? 1 : 0;
+        var v = (1 - ph) * inj + ph * inp; if (v > 0.01) lightW(g, j, v);
+      }
+      var st = ph < 0.08 ? 'phase ≈ 0: native 1:1, sharp' : ph > 0.42 ? (narrow ? '½ px: line doubles, grating goes grey' : 'phase ≈ ½ px: the line doubles, the grating turns into flat grey') : 'phase grows: detail smears';
+      text(st, W / 2, y + cs + 26, { s: 13, w: 600, a: 'center', c: ph > 0.42 ? '#FFA726' : TC.text });
+      cap('A shift by a fraction of a pixel needs resampling: the image is recomputed onto the mirror grid. Where the phase is near zero, a 1 px line stays on one mirror; near ½ px it is split across two at half brightness each.');
+    }
+    function stepFrame(t, cap) {
+      var n = narrow ? 48 : 96, cs = (W - 20) / n, x0 = 10, y0 = 84;
+      function phase(j) { var u = (j + 0.5) / n * 2 - 1; var d = 2.4 * u * u + 0.15 * u; return d - Math.floor(d); }
+      // compensation phase curve
+      ctx.strokeStyle = '#FFA726'; ctx.lineWidth = 2; ctx.beginPath();
+      for (var j = 0; j < n; j++) {
+        var q = phase(j), blur = 1 - Math.abs(q - 0.5) * 2, py = y0 - 14 - blur * 40;
+        j ? ctx.lineTo(x0 + (j + 0.5) * cs, py) : ctx.moveTo(x0 + (j + 0.5) * cs, py);
+      }
+      ctx.stroke();
+      text(narrow ? 'closeness of phase to ½ px' : 'how close the compensation phase is to ½ px', x0, 16, { s: 12, w: 600, c: '#FFA726' });
+      // grating content scrolls one pixel per second; the bands do not move with it
+      var sh = Math.floor(t) % 2;
+      ctx.fillStyle = '#0b0b0e'; ctx.fillRect(x0, y0, n * cs, 60);
+      for (var k = 0; k < n; k++) {
+        var p = phase(k), ph = Math.min(p, 1 - p);                    // distance to the nearest whole pixel, 0..0.5
+        var inj = (k + sh) % 2 === 0 ? 1 : 0, inp = (k - 1 + sh) % 2 === 0 ? 1 : 0;
+        var v = (1 - ph) * inj + ph * inp;
+        ctx.fillStyle = 'rgba(255,255,255,' + v.toFixed(3) + ')';
+        ctx.fillRect(x0 + k * cs, y0, Math.max(1, cs - (cs > 6 ? 1 : 0)), 60);
+      }
+      text('1 px grating across the width of the screen', x0, y0 + 80, { s: 12, w: 600, c: TC.text3 });
+      // magnifier sweeping across
+      var mx = x0 + (0.5 + 0.45 * Math.sin(t * 0.7)) * n * cs, mn = 8, mcs = narrow ? 22 : 28;
+      var m0 = Math.max(0, Math.min(n - mn, Math.round((mx - x0) / cs - mn / 2)));
+      ctx.strokeStyle = TC.text; ctx.lineWidth = 1.5; ctx.strokeRect(x0 + m0 * cs, y0 - 2, mn * cs, 64);
+      var gx = W / 2 - mn * mcs / 2, gy = y0 + 110;
+      var g = row(gx, gy, mn, mcs, '');
+      var worst = 0;
+      for (var i = 0; i < mn; i++) {
+        var kk = m0 + i, pp = phase(kk), ph2 = Math.min(pp, 1 - pp); worst = Math.max(worst, ph2);
+        var a1 = (kk + sh) % 2 === 0 ? 1 : 0, a0 = (kk - 1 + sh) % 2 === 0 ? 1 : 0;
+        var vv = (1 - ph2) * a1 + ph2 * a0; if (vv > 0.01) lightW(g, i, vv);
+      }
+      text(worst > 0.35 ? 'inside a band: lines merge into a fill' : worst < 0.15 ? 'between bands: lines stay separate' : 'band edge: lines soften',
+        W / 2, gy + mcs + 22, { s: 13, w: 600, a: 'center', c: worst > 0.35 ? '#FFA726' : TC.text });
+      cap('The shift changes smoothly across the frame, so its phase keeps passing through ½ px. Those spots become bands where 1 px detail merges. The image moves, the bands stay put: they are tied to the screen.');
+    }
+
+    var clock = 0;
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      var lt = clock - stepT0;
+      if (auto && step < 4 && lt > DUR) { step++; stepT0 = clock; lt = 0; tgStyle(); if (step === 4) auto = false; }
+      var isMeas = step === 4;
+      if ((meas.style.display === 'none') === isMeas) {
+        meas.style.display = isMeas ? '' : 'none'; wrap.style.display = isMeas ? 'none' : '';
+        if (isMeas) measCharts.forEach(function (c) { c.resize(); });
+      }
+      var capText = isMeas ? 'Measured 1 px line-pair contrast across the screen, 100 % = normal. The dips are the bands; their pitch is the same at 1080p and 4K.' : '';
+      if (!isMeas) [stepLens, stepLock, stepResample, stepFrame][step](lt, function (s) { capText = s; });
+      capEl.style.color = TC.text3;
+      if (capEl.textContent !== capText) capEl.textContent = capText;
+    }
+
+    size();
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var visible = false, raf = 0, last = null;
+    if (reduce) { auto = false; clock = 5; }
+    function frame(now) {
+      if (last !== null) clock += Math.min(0.1, (now - last) / 1000);
+      last = now; draw(); raf = requestAnimationFrame(frame);
+    }
+    function start() { if (!raf && !reduce) { last = null; raf = requestAnimationFrame(frame); } }
+    function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+    draw();
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; visible ? start() : stop(); }, { threshold: 0.15 }).observe(el);
+    } else { visible = true; start(); }
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : visible && start(); });
+    window.addEventListener('resize', function () { size(); if (!raf) draw(); });
+    new MutationObserver(function () { tgStyle(); if (!raf) draw(); })
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+
+  function _mkTabs(el, labels, onPick) {
+    var bar = document.createElement('div');
+    bar.style.cssText = 'text-align:center;margin:4px 0 8px;padding:0 12px';
+    var tg = document.createElement('div');
+    tg.className = 'cs-view-toggle'; tg.style.flexWrap = 'wrap'; tg.style.justifyContent = 'center';
+    tg.innerHTML = labels.map(function (s, i) { return '<button class="cs-tab" data-i="' + i + '">' + s + '</button>'; }).join('');
+    bar.appendChild(tg); el.appendChild(bar);
+    var cur = 0;
+    function style() {
+      var d = _useDark();
+      tg.style.background = d ? '#26262a' : '';
+      [].forEach.call(tg.children, function (b) {
+        var on = +b.getAttribute('data-i') === cur;
+        b.classList.toggle('cs-tab--active', on);
+        b.style.background = d && on ? '#3a3a40' : '';
+        b.style.color = d ? (on ? '#fff' : '#98989f') : '';
+      });
+    }
+    tg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      cur = +b.getAttribute('data-i'); style(); onPick(cur);
+    });
+    style();
+    new MutationObserver(style).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+  function _canvasHost(el) {
+    var wrap = document.createElement('div'); wrap.style.cssText = 'padding:0 20px';
+    el.appendChild(wrap);
+    var cv = document.createElement('canvas'); cv.style.cssText = 'display:block;width:100%;touch-action:none';
+    wrap.appendChild(cv);
+    return { wrap: wrap, cv: cv, ctx: cv.getContext('2d') };
+  }
+  function _fit(h, H) {
+    var W = h.cv.getBoundingClientRect().width || (h.wrap.clientWidth - 40), dpr = window.devicePixelRatio || 1;
+    h.cv.width = Math.round(W * dpr); h.cv.height = Math.round(H * dpr); h.cv.style.height = H + 'px';
+    h.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return W;
+  }
+  function _txt(ctx, s, x, y, o) {
+    ctx.font = (o.w || 500) + ' ' + (o.s || 12) + 'px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+    ctx.fillStyle = o.c || TC.text; ctx.textAlign = o.a || 'left'; ctx.textBaseline = 'alphabetic'; ctx.fillText(s, x, y);
+  }
+
+  /* ═══ Input lag — rolling scan-out, animated ═══════════ */
+  function buildLagScan(el) {
+    mkTitle(el, 'INPUT LAG: THE FRAME IS DRAWN TOP TO BOTTOM',
+      'Schematic · time slowed down · the same slow-down for every refresh rate');
+    // hz, frame period (ms), absolute top-of-screen lag if we have it (ms)
+    var MODES = [[240, 4.2, 1], [120, 8.3, null], [60, 16.7, null]];
+    var mode = 0, SLOW = 290;                     // 1 ms of real time → 290 ms on screen
+    var t = 0, fStart = 0, fNo = 1;
+    _mkTabs(el, ['1080p · 240 Hz', '120 Hz', '60 Hz'], function (i) { mode = i; fStart = t; if (!raf) draw(); });
+    var h = _canvasHost(el), ctx = h.ctx, W, H;
+    function size() {
+      var w = h.wrap.clientWidth - 40, rw = w < 560 ? 92 : 150, sw = Math.min(w - rw - 10, 370 * 16 / 9);
+      H = Math.round(sw * 9 / 16) + 40; W = _fit(h, H);
+    }
+    var COL = [['#0a84ff', 'rgba(10,132,255,.22)'], ['#FFA726', 'rgba(255,167,38,.22)']];
+
+    function draw() {
+      var dark = _useDark(), m = MODES[mode], per = m[1] * SLOW / 1000;
+      if (t - fStart >= per) { fStart += per * Math.floor((t - fStart) / per); fNo++; }
+      var p = (t - fStart) / per;
+      ctx.clearRect(0, 0, W, H);
+      var rw = W < 560 ? 92 : 150, sw = Math.min(W - rw - 10, (H - 40) * 16 / 9), shh = sw * 9 / 16;
+      var sx = (W - rw - sw) / 2, sy = 8, yl = sy + p * shh;
+      var cur = COL[fNo % 2], prev = COL[(fNo + 1) % 2];
+      // old frame below the scan line, new frame above it
+      [[prev, yl, sy + shh, fNo - 1], [cur, sy, yl, fNo]].forEach(function (f) {
+        var y0 = f[1], y1 = f[2]; if (y1 <= y0) return;
+        ctx.save(); ctx.beginPath(); ctx.rect(sx, y0, sw, y1 - y0); ctx.clip();
+        ctx.fillStyle = '#0b0b0e'; ctx.fillRect(sx, sy, sw, shh);
+        ctx.fillStyle = f[0][1]; ctx.fillRect(sx, sy, sw, shh);
+        _txt(ctx, 'frame ' + ((f[3] + 9) % 10 + 1), sx + sw / 2, sy + shh / 2 + 14, { s: Math.round(Math.max(20, sw / 12)), w: 800, a: 'center', c: f[0][0] });
+        ctx.restore();
+      });
+      ctx.strokeStyle = dark ? '#3a3a40' : '#c7c7cc'; ctx.lineWidth = 1; ctx.strokeRect(sx + 0.5, sy + 0.5, sw - 1, shh - 1);
+      ctx.fillStyle = '#fff'; ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
+      ctx.fillRect(sx, yl - 1.5, sw, 3); ctx.shadowBlur = 0;
+
+      // ruler: lag by screen position
+      var rx = sx + sw + 18;
+      ctx.strokeStyle = TC.text3; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(rx, sy); ctx.lineTo(rx, sy + shh); ctx.stroke();
+      var abs = m[2] !== null;
+      [[0, 'top'], [0.5, 'middle'], [1, 'bottom']].forEach(function (r) {
+        var y = sy + r[0] * shh, v = abs ? m[2] + r[0] * m[1] : r[0] * m[1];
+        ctx.beginPath(); ctx.moveTo(rx - 5, y); ctx.lineTo(rx + 5, y); ctx.stroke();
+        var lbl = abs ? '≈' + Math.round(v) + ' ms' : '+' + v.toFixed(1) + ' ms';
+        _txt(ctx, lbl, rx + 10, y + (r[0] === 0 ? 10 : r[0] === 1 ? -2 : 4), { s: 12, w: 700, c: TC.text });
+        if (rw > 100) _txt(ctx, r[1], rx + 10, y + (r[0] === 0 ? 24 : r[0] === 1 ? -16 : 18), { s: 11, c: TC.text3 });
+      });
+      // live marker for the line being drawn right now
+      var now = abs ? m[2] + p * m[1] : p * m[1];
+      ctx.fillStyle = '#FFA726';
+      ctx.beginPath(); ctx.moveTo(rx - 2, yl); ctx.lineTo(rx - 12, yl - 6); ctx.lineTo(rx - 12, yl + 6); ctx.closePath(); ctx.fill();
+      _txt(ctx, (abs ? 'this line: ' + now.toFixed(1) + ' ms' : 'this line: top + ' + now.toFixed(1) + ' ms'),
+        sx + sw / 2, sy + shh + 22, { s: 13, w: 700, a: 'center', c: '#FFA726' });
+    }
+    var cap = document.createElement('div');
+    cap.style.cssText = 'text-align:center;font-size:13px;line-height:1.45;max-width:720px;margin:10px auto 0;padding:0 20px';
+    el.appendChild(cap);
+    function setCap() {
+      cap.style.color = TC.text3;
+      cap.textContent = 'The DLPC8445 writes the frame line by line, so the bottom line lags the top by one frame period: 4.2 ms at 240 Hz, 8.3 ms at 120 Hz, 16.7 ms at 60 Hz. The 1 ms on the box is the top edge; at 240 Hz the whole screen spans roughly 1 to 5 ms. At 120 and 60 Hz we show the lag relative to the top line.';
+    }
+    setCap();
+    size();
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var raf = 0, last = null;
+    if (reduce) t = 0.55;
+    function frame(now) {
+      if (last !== null) t += Math.min(0.1, (now - last) / 1000);
+      last = now; draw(); raf = requestAnimationFrame(frame);
+    }
+    draw();
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting && !reduce) { if (!raf) { last = null; raf = requestAnimationFrame(frame); } }
+      else if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    }, { threshold: 0.15 }).observe(el);
+    window.addEventListener('resize', function () { size(); draw(); });
+    new MutationObserver(function () { setCap(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+
+  /* ═══ Throw distance — side view, animated over 80–200″ (AWOL's official table) ═══ */
+  function buildThrow(el) {
+    var XC = { bg: '#18191d', text: '#e8e9ec', text3: '#9a9ba0', rule: '#3c3d41', accent: '#4fc3f7' };
+    el.style.background = XC.bg;
+    el.style.scrollMarginTop = '72px';            // shared as …/aetherion-max/#ax-throw — clear the sticky header
+    mkTitle(el, 'THROW DISTANCE, 80″ TO 200″', 'AWOL’s official placement calculator · cm and inches');
+    el.querySelector('.cs-title strong').style.color = XC.text;
+    el.querySelector('.cs-title span').style.color = XC.text3;
+    // AWOL's placement calculator (awolvision.com/pages/projector-calculator-aetherion), cm: size, A (front of chassis → wall),
+    // B (rear → wall), C (image bottom above top of chassis), D (above its base) — linear in size, inches are cm / 2.54
+    var T = [[80, 39.83, 7.57, 17.90, 31.87], [100, 48.02, 15.76, 23.75, 37.72], [120, 56.21, 23.95, 29.60, 43.57],
+             [150, 68.49, 36.24, 38.38, 52.35], [200, 88.97, 56.71, 53.02, 66.99]];
+    var PH = 13.97;                               // chassis height, cm (5.5″)
+    function at(d) {
+      for (var i = 1; i < T.length; i++) if (d <= T[i][0]) {
+        var f = (d - T[i - 1][0]) / (T[i][0] - T[i - 1][0]);
+        return T[i].map(function (v, k) { return T[i - 1][k] + (v - T[i - 1][k]) * f; });
+      }
+      return T[T.length - 1];
+    }
+    var h = _canvasHost(el), ctx = h.ctx, W, H, narrow;
+    var ctl = document.createElement('div');
+    ctl.style.cssText = 'max-width:560px;margin:8px auto 0;padding:0 20px;display:flex;align-items:center;gap:12px;font-size:13px;color:' + XC.text3;
+    var sm = el.clientWidth < 600, lw = 'width:' + (sm ? 40 : 92) + 'px;white-space:nowrap';
+    ctl.innerHTML = '<span style="' + lw + '">' + (sm ? 'Size' : 'Image size') + '</span><span>80″</span><input type="range" min="80" max="200" step="1" value="120" style="flex:1"><span>200″</span>';
+    el.appendChild(ctl);
+    var ctl2 = ctl.cloneNode(false);
+    ctl2.innerHTML = '<span style="' + lw + '">' + (sm ? 'Shelf' : 'Shelf height') + '</span><input type="range" min="0" max="100" step="1" value="45" style="flex:1"><span style="min-width:92px;text-align:right;color:' + XC.text + '"></span>';
+    el.appendChild(ctl2);
+    var inp = ctl.querySelector('input'), manualUntil = -1, t = 0, size = 120;
+    inp.addEventListener('input', function () { size = +inp.value; manualUntil = t + 6; if (!raf) draw(); });
+    var inp2 = ctl2.querySelector('input'), shelfOut = ctl2.querySelector('span:last-child'), shelf = 45;
+    function shelfLabel() { shelfOut.textContent = shelf ? shelf + ' cm · ' + (shelf / 2.54).toFixed(1) + '″' : 'on the floor'; }
+    shelfLabel();
+    inp2.addEventListener('input', function () { shelf = +inp2.value; shelfLabel(); if (!raf) draw(); });
+
+    function fit() { var w = h.wrap.clientWidth - 40; narrow = w < 700; H = narrow ? 560 : 380; W = _fit(h, H); }
+    function dim(x1, y1, x2, y2, label, side) {   // dimension line with end dots and a round tag
+      ctx.strokeStyle = XC.text3; ctx.fillStyle = XC.text3; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]);
+      [[x1, y1], [x2, y2]].forEach(function (p) { ctx.beginPath(); ctx.arc(p[0], p[1], 2.5, 0, 6.283); ctx.fill(); });
+      var mx = (x1 + x2) / 2 + side[0], my = (y1 + y2) / 2 + side[1];
+      ctx.fillStyle = XC.bg; ctx.beginPath(); ctx.arc(mx, my, 9, 0, 6.283); ctx.fill();
+      ctx.strokeStyle = XC.text; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(mx, my, 9, 0, 6.283); ctx.stroke();
+      _txt(ctx, label, mx, my + 4, { s: 11, w: 700, a: 'center', c: XC.text });
+    }
+    function panel(x, y, w, hh) { ctx.fillStyle = '#1e1f24'; ctx.fillRect(x, y, w, hh); }
+    function tag(x, y, label) { _txt(ctx, label, x, y, { s: 11, w: 600, a: 'right', c: XC.text3 }); }
+    var STAND = 45;                               // side view only: the zoom doesn't depend on the shelf
+    function side(x0, y0, w, hh, v, ih) {         // zoomed side view of the projector zone
+      var A = v[1], B = v[2], D = v[4];
+      panel(x0, y0, w, hh);
+      ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, w, hh); ctx.clip();
+      var k = Math.min((hh - 30) / 140, (w - 52) / 89), wx = x0 + 18, fy = y0 + hh - 8;
+      var X = function (cm) { return wx + cm * k; }, Y = function (cm) { return fy - cm * k; };
+      ctx.fillStyle = '#2a2b31'; ctx.fillRect(x0, y0, wx - x0, hh);
+      ctx.fillStyle = '#26272c'; ctx.fillRect(wx, Y(STAND), 100 * k, STAND * k);
+      var ib = STAND + D, it = ib + ih, lx = X(A - 6), ly = Y(STAND + PH);
+      var g = ctx.createLinearGradient(lx, ly, wx, Y(ib + 60));
+      g.addColorStop(0, 'rgba(79,195,247,.55)'); g.addColorStop(1, 'rgba(79,195,247,.06)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(wx, Y(it)); ctx.lineTo(wx, Y(ib)); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = XC.accent; ctx.shadowColor = XC.accent; ctx.shadowBlur = 12;
+      ctx.fillRect(wx - 3, Y(it), 3, (it - ib) * k); ctx.shadowBlur = 0;
+      ctx.fillStyle = '#5b6068'; ctx.fillRect(X(B), Y(STAND + PH), (A - B) * k, PH * k);
+      ctx.fillStyle = XC.accent; ctx.fillRect(X(B) + 3, Y(STAND + PH / 2) - 1, (A - B) * k - 6, 2);
+      var by = Y(STAND) + 14;
+      dim(wx, by + 18, X(A), by + 18, 'A', [0, 0]);
+      dim(wx, by, X(B), by, 'B', [0, 0]);
+      dim(X(B) - 12, Y(STAND + PH), X(B) - 12, Y(ib), 'C', [-12, 0]);
+      dim(X(A) + 12, Y(STAND), X(A) + 12, Y(ib), 'D', [13, 0]);
+      ctx.restore(); tag(x0 + w - 10, y0 + 18, 'SIDE VIEW');
+    }
+    function front(x0, y0, w, hh, v, iw, ih) {    // front view: the picture grows on the wall, a person for scale
+      var D = v[4];
+      panel(x0, y0, w, hh);
+      ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, w, hh); ctx.clip();
+      var k = Math.min((hh - 34) / (100 + 67 + 250 + 8), (w - 20) / 480), cx = x0 + w / 2, fy = y0 + hh - 8;
+      var X = function (cm) { return cx + cm * k; }, Y = function (cm) { return fy - cm * k; };
+      ctx.fillStyle = '#26272c'; ctx.fillRect(X(-80), Y(shelf), 160 * k, shelf * k);
+      ctx.fillStyle = '#5b6068'; ctx.fillRect(X(-28), Y(shelf + PH), 56 * k, PH * k);
+      var ib = shelf + D;
+      ctx.fillStyle = 'rgba(79,195,247,.16)'; ctx.fillRect(X(-iw / 2), Y(ib + ih), iw * k, ih * k);
+      ctx.strokeStyle = XC.accent; ctx.lineWidth = 2; ctx.shadowColor = XC.accent; ctx.shadowBlur = 10;
+      ctx.strokeRect(X(-iw / 2), Y(ib + ih), iw * k, ih * k); ctx.shadowBlur = 0;
+      // 175 cm person
+      var px = Math.max(x0 + 26, X(-iw / 2 - 45)), s = k;
+      ctx.fillStyle = '#4a4c55';
+      ctx.beginPath(); ctx.arc(px, Y(163), 11 * s, 0, 6.283); ctx.fill();
+      rrect(px - 17 * s, Y(150), 34 * s, 62 * s, 8 * s); ctx.fill();
+      ctx.fillRect(px - 13 * s, Y(88), 11 * s, 88 * s); ctx.fillRect(px + 2 * s, Y(88), 11 * s, 88 * s);
+      _txt(ctx, '175 cm', px, Y(180), { s: 10, a: 'center', c: XC.text3 });
+      ctx.strokeStyle = XC.rule; ctx.beginPath(); ctx.moveTo(x0, fy + 0.5); ctx.lineTo(x0 + w, fy + 0.5); ctx.stroke();
+      var ex = Math.min(X(iw / 2) + 16, x0 + w - 16);  // E: floor → top of the image, right of the picture
+      dim(ex, fy, ex, Y(ib + ih), 'E', [0, 0]);
+      ctx.restore(); tag(x0 + w - 10, y0 + 18, 'FRONT VIEW');
+    }
+    function rrect(x, y, w, hh, r) {
+      ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + hh, r); ctx.arcTo(x + w, y + hh, x, y + hh, r);
+      ctx.arcTo(x, y + hh, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+    }
+    function numbers(px, py, v, iw, ih, compact) {
+      var inch = function (cm) { return (cm / 2.54).toFixed(1) + '″'; };
+      _txt(ctx, Math.round(size) + '″', px, py + 38, { s: 44, w: 800, c: XC.text });
+      var cmS = Math.round(iw) + ' × ' + Math.round(ih) + ' cm', inS = Math.round(iw / 2.54) + ' × ' + Math.round(ih / 2.54) + '″';
+      if (compact) {
+        _txt(ctx, cmS, px, py + 60, { s: 12, c: XC.text3 });
+        _txt(ctx, inS, px, py + 76, { s: 12, c: XC.text3 });
+      } else _txt(ctx, cmS + ' · ' + inS + ' image', px, py + 62, { s: 13, c: XC.text3 });
+      [['A', v[1], 'front of chassis → wall'], ['B', v[2], 'rear of chassis → wall'],
+       ['C', v[3], 'image bottom above chassis'], ['D', v[4], 'image bottom above its base'],
+       ['E', shelf + v[4] + ih, 'floor → top of the image']].forEach(function (r, i) {
+        var yy = py + (compact ? 100 : 90) + i * (compact ? 33 : 40);
+        _txt(ctx, r[0], px, yy, { s: 13, w: 700, c: XC.accent });
+        _txt(ctx, r[1].toFixed(1) + ' cm', px + 20, yy, { s: compact ? 15 : 16, w: 700, c: XC.text });
+        if (compact) _txt(ctx, inch(r[1]), px + 20, yy + 15, { s: 12, c: XC.text3 });
+        else {
+          _txt(ctx, inch(r[1]), px + 104, yy, { s: 14, w: 600, c: XC.text3 });
+          _txt(ctx, r[2], px + 20, yy + 17, { s: 11, c: XC.text3 });
+        }
+      });
+    }
+    function draw() {
+      if (t >= manualUntil) { size = 140 - 60 * Math.cos(t * 2 * Math.PI / 12); inp.value = Math.round(size); }
+      var v = at(size), ih = size * 2.54 * 9 / Math.sqrt(337), iw = size * 2.54 * 16 / Math.sqrt(337);
+      ctx.clearRect(0, 0, W, H);
+      if (narrow) {
+        front(0, 0, W, 260, v, iw, ih);
+        var sw = Math.min(W * 0.52, 240);
+        side(0, 272, sw, H - 272, v, ih);
+        numbers(sw + 16, 262, v, iw, ih, true);
+      } else {
+        var nw = 210, sw2 = Math.min(300, (W - nw) * 0.4), fw = W - nw - sw2 - 24;
+        side(0, 0, sw2, H, v, ih);
+        front(sw2 + 12, 0, fw, H, v, iw, ih);
+        numbers(sw2 + fw + 36, 6, v, iw, ih, false);
+      }
+    }
+    fit();
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var raf = 0, last = null;
+    if (reduce) manualUntil = Infinity;
+    function frame(now) {
+      if (last !== null) t += Math.min(0.1, (now - last) / 1000);
+      last = now; draw(); raf = requestAnimationFrame(frame);
+    }
+    draw();
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting && !reduce) { if (!raf) { last = null; raf = requestAnimationFrame(frame); } }
+      else if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    }, { threshold: 0.15 }).observe(el);
+    window.addEventListener('resize', function () { fit(); draw(); });
+  }
+
   /* ═══ Dynamic contrast — EBL & forced dimming ════════════ */
   function buildDyn(el) {
     // Charts removed by request — the table carries every number on its own.
@@ -1564,6 +2256,10 @@ var GAM_CUT = [
     'ax-ebl-how': buildHow,
     'ax-ebl-gamma': buildEblGamma,
     'ax-rbe-seq': buildRbeSeq,
+    'ax-xpr': buildXpr,
+    'ax-pixellock-how': buildPixelLockHow,
+    'ax-lag-scan': buildLagScan,
+    'ax-throw': buildThrow,
     'ax-antirbe-acoustic': buildRbeAcoustic,
     'ax-noise': buildNoise,
     'ax-noise-levels': buildNoiseLevels,

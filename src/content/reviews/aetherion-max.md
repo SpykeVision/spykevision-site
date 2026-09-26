@@ -203,7 +203,7 @@ AWOL also sells its **ThunderBeat** wireless speaker system separately, and it p
 
 A throw ratio of **0.2:1** means that for a 120-inch screen you'll need **56.2** cm from the wall, projector depth included, and **68.6 cm** for 150 inches; the rated image size range is 80 to 200 inches. The second figure in the table matters more: the bottom edge of the image sits **43.6** cm above the projector's base at 120 inches and 52.4 cm at 150. Add the height of your stand and you'll know where the bottom of the picture actually ends up.
 
-<figure><img src="/images/ax/tech/throw-distance-dark.png" alt="Aetherion Max throw distance diagram: chassis dimensions, four room scenes for 80, 100, 120, and 150 inches, and tables A, B, C, D in inches and centimeters"><figcaption>AWOL's official throw distance diagram. A — horizontal distance from the front face of the chassis to the screen, B — from the rear face, C — height of the bottom edge of the image, D — vertical distance from the projector's base</figcaption></figure>
+<figure><div class="chart-section" id="ax-throw"></div><noscript><img src="/images/ax/tech/throw-distance-dark.png" alt="Aetherion Max throw distance diagram: chassis dimensions, four room scenes for 80, 100, 120, and 150 inches, and tables A, B, C, D in inches and centimeters"></noscript><figcaption>AWOL's official throw distance diagram. A — horizontal distance from the front face of the chassis to the screen, B — from the rear face, C — height of the bottom edge of the image, D — vertical distance from the projector's base</figcaption></figure>
 
 Lining up a UST is a special kind of fun. You have to move the projector in every plane, ideally with a spirit level in hand. It has four adjustable feet, which let you adjust height and tilt in two axes simultaneously. The stand has to be rigid, though. With more than eight kilograms on four points, a thin tabletop will sag, and the geometry will drift after you've finished setting up.
 
@@ -259,7 +259,7 @@ The good news is that I couldn't see any difference in speckle between the Aethe
 
 Let's start with the good news: **XPR-Shift**. It's the standard pixel-shifting technology, and here it builds a 4K image from a **0.47″** DMD with a physical resolution of 1920×1080. Every projector I've come across shifts at the same **240 Hz**, including the sister **Valerion VisionMaster Max** and the **XGIMI Titan Noir Max** with its new controller. That makes sense: **4K/60** needs four shift passes per frame, and 4 × 60 is exactly **240 Hz**. The Aetherion is the exception. Despite a previous-generation DMD and a controller from the same family as the Titan's, AWOL's engineers squeezed higher shift rates out of it, and with just one controller.
 
-<figure><img src="/images/ax/tech/xpr-shift-dark.png" alt="How XPR works: a 1920x1080 DMD, four half-pixel shift positions, the resulting 3840x2160 grid, and a comparison of cycle length for conventional XPR at 240 Hz and the Aetherion at 480 Hz"><figcaption>How 4K is built from a 1920×1080 DMD. Four shift phases, each offset by half a micromirror, produce 3840×2160 pixels on screen. Below: the cycle length within one 4K/60 frame — conventional XPR runs four phases per frame, while the Aetherion completes the cycle twice. Ratio captured with slow-motion video next to an XGIMI Titan Noir Max on the same signal</figcaption></figure>
+<figure><div class="chart-section" id="ax-xpr"></div><noscript><img src="/images/ax/tech/xpr-shift-dark.png" alt="How XPR works: a 1920x1080 DMD, four half-pixel shift positions, the resulting 3840x2160 grid, and a comparison of cycle length for conventional XPR at 240 Hz and the Aetherion at 480 Hz"></noscript><figcaption>How 4K is built from a 1920×1080 DMD. Four shift phases, each offset by half a micromirror, produce 3840×2160 pixels on screen. Below: the cycle length within one 4K/60 frame — conventional XPR runs four phases per frame, while the Aetherion completes the cycle twice. Ratio captured with slow-motion video next to an XGIMI Titan Noir Max on the same signal</figcaption></figure>
 
 We confirmed this on slow-motion video, with an **XGIMI Titan Noir Max** running the same signal alongside. In the same span of time, the Aetherion gets through roughly **twice as many shift cycles**, so the four-phase cycle completes twice per frame instead of once. The XGIMI runs at the standard **240 Hz**; the Aetherion comes out at **roughly 480 Hz**.
 
@@ -297,7 +297,7 @@ Now the numbers. Input was 1080p and 4K from a MacBook over **DisplayPort**, all
 
 <div class="gallery"><figure><img src="/images/ax/tech/pixellock-bands-h.jpg" alt=""></figure><figure><img src="/images/ax/tech/pixellock-bands-v.jpg" alt=""></figure></div>
 
-<div class="chart-section" id="ax-pixellock"></div>
+<div class="chart-section" id="ax-pixellock-how"></div>
 
 Horizontally, the error is three times larger than vertically, which you can see with the naked eye in the shots above: **about seventeen bands** across the frame versus **just six** along it.
 
@@ -608,6 +608,8 @@ The Aetherion Max's list of gaming features reads like a good gaming monitor's:
 First, the figure on the box. AWOL claims **1 ms** at 1080p/240 Hz. For 4K/60, the manual states **2 ms**, while press materials say **10 ms**.
 
 The millisecond is real, but it applies to the top edge of the screen, not to the screen as a whole. The **DLPC8445** controller draws the picture line by line, top to bottom, so the bottom line of the frame lags the top by exactly one frame period: **4.2 ms** at **240 Hz**, **8.3 ms** at 120, and **16.7 ms** at 60. So in the best case, at **240 Hz**, you get roughly **1 ms at the top, 3 in the middle, and 5 at the bottom**. All three numbers are correct. They just describe different parts of the same picture.
+
+<div class="chart-section" id="ax-lag-scan"></div>
 
 ### Which Refresh Rates Are Actually Supported
 
